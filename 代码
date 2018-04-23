@@ -203,5 +203,5 @@ def main():
     
     LoopInterval = max(LoopInterval, 1)
     while True:
-        onTick(exchange)
+        onTick(exchange) 
         Sleep(LoopInterval * 1000)
