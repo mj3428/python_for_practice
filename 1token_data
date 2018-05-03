@@ -1,0 +1,18 @@
+#解决取url的数据gzip解压并能调用
+import urllib.request
+import gzip
+def getUrlContent(url):
+    #返回页面内容
+    doc = urllib.request.urlopen(url).read()
+    #解码
+    try:
+        html=gzip.decompress(doc).decode("utf-8")
+    except:
+        html=doc.decode("utf-8")
+    return html
+
+if __name__=="__main__":
+    url='http://alihz-net-0.qbtrade.org/hist-ticks?date=2018-05-02&contract=binance/btc.usdt&format=json'
+    data=getUrlContent(url)
+    print(data)
+#接下去的任务是将数据取出形成数据库（可以考虑取high或者low）
