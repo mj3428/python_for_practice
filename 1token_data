@@ -16,3 +16,17 @@ if __name__=="__main__":
     data=getUrlContent(url)
     print(data)
 #接下去的任务是将数据取出形成数据库（可以考虑取high或者low）
+with open("e:/btcdata/2018-05-02.json","w") as f:
+        a=json.dump(data,f)
+    print(type(a))
+#用上述的方法保存其实保存的数据对象类型是没有类型的 输出为NoneType
+f=codecs.open("e:/btcdata/2018-05-02.json","a","utf-8")
+    a=json.dumps(data,ensure_ascii=False)
+    f.write(a)
+    f.close()
+#而这里的问题是open只能打开str类型的数据，则先根据源代码文件声明的字符编码，解码成unicode后再进行写入
+    #decode的作用是将其他编码的字符串转换成unicode编码， 
+    #如str1.decode(‘gb2312’)，表示将gb2312编码的字符串str1转换成unicode编码。
+    #encode的作用是将unicode编码转换成其他编码的字符串， 
+    #如str2.encode(‘gb2312’)，表示将unicode编码的字符串str2转换成gb2312编码。
+#还有生成的数据是带有\符号的 判断为将换行符转换成str
