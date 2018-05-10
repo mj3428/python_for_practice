@@ -30,3 +30,16 @@ f=codecs.open("e:/btcdata/2018-05-02.json","a","utf-8")
     #encode的作用是将unicode编码转换成其他编码的字符串， 
     #如str2.encode(‘gb2312’)，表示将unicode编码的字符串str2转换成gb2312编码。
 #还有生成的数据是带有\符号的 判断为将换行符转换成str
+
+#可能遇到的问题：
+#问题描述
+#初学python，在用python中的urllib.request.urlopen()方法打开网页时，有些网站会抛出异常: HTTP Error 403:Forbidden
+
+#问题原因
+#网站对爬虫的操作进行了限制
+
+#解决方法
+#伪装成浏览器，以火狐为例，用firebug查一下
+headers = {'User-Agent':'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0'}
+req=urllib.request.Request(url=target_url,headers=headers) 
+urllib.request.urlopen(req).read()
