@@ -8,16 +8,16 @@ from matplotlib.finance import candlestick_ohlc
 from matplotlib.dates import DateFormatter, WeekdayLocator, DayLocator, MONDAY,YEARLY
 from matplotlib.dates import MonthLocator,MONTHLY
 import datetime as dt
-from movingaverage import movingaverage
+
 
 import pylab
 
-daylinefilespath = 'D:\\'
+daylinefilespath = 'e:\\'
 stock_b_code = '200000' 
 MA1 = 10
 MA2 = 20
 MA3 = 5
-startdate = dt.date(2017, 3, 01)
+startdate = dt.date(2017, 3, 1)
 enddate = dt.date(2017, 9, 19)
 
 
@@ -58,8 +58,8 @@ def main():
     daysreshape.drop('Volume', axis=1, inplace = True)
     daysreshape = daysreshape.reindex(columns=['DateTime','Open','High','Low','Close'])  
     
-    MA10 = list(movingaverage(daysreshape.Close.values, MA1))
-    MA20 = list(movingaverage(daysreshape.Close.values, MA2))
+    MA10 = pd.rolling_mean(daysreshape.Close.values, MA1)
+    MA20 = pd.rolling_mean(daysreshape.Close.values, MA2)
     SP = len(daysreshape.DateTime.values[MA2-1:])
     countmkt = len(daysreshape.DateTime.values[0:])
     fig = plt.figure(facecolor='#07000d',figsize=(15,10))
@@ -70,9 +70,9 @@ def main():
     Label2 = str(MA2)+' SMA'
 
     AA_input = (daysreshape.Close.values*2+daysreshape.High.values+daysreshape.Low.values)/4  #(2*CLOSE+HIGH+LOW)/4
-    AA = list((movingaverage(AA_input, MA3)))  #AA:=MA((2*CLOSE+HIGH+LOW)/4,5);
-    XS_1 = [AA[i]*102/100 for i in range(SP)]  #通道1:AA*N/100;
-    XS_2 = [AA[i]*(200-102)/100 for i in range(SP)]	#通道2:AA*(200-N)/100;
+    AA = pd.rolling_mean(AA_input, MA3) #AA:=MA((2*CLOSE+HIGH+LOW)/4,5);
+    XS_1 = [AA[i]*102/100 for i in range(SP)]  #通锟斤拷1:AA*N/100;
+    XS_2 = [AA[i]*(200-102)/100 for i in range(SP)]	#通锟斤拷2:AA*(200-N)/100;
     CC_input = AA_input   #(2*CLOSE+HIGH+LOW)/4
     ABS_input=[CC_input[i]-MA20[i] for i in range(SP)]   #((2*CLOSE+HIGH+LOW)/4-MA(CLOSE,20))
     ABS = [abs(ABS_input[i]) for i in range(SP)]	
