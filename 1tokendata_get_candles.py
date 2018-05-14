@@ -1,21 +1,11 @@
+###第一步####下载数据
+#因为之前是下载的txt数据，这里下载的数据将改为.json格式，且每次取15min数据只能取2天，因此循环的时候2天为一个json文件
 import datetime
 import urllib.request
-import gzip
-import json
-'''
-def getUrlContent(url):
-    #返回页面内容
-    doc = urllib.request.urlopen(url).read()
-    #解码
-    try:
-        html=gzip.decompress(doc).decode("utf-8")
-    except:
-        html=doc.decode("utf-8")
-    return html'''
 
 if __name__=="__main__":
     startdate=datetime.date(2017,8,17)
-    enddate=datetime.date(2018,5,9)
+    enddate=datetime.date(2018,5,11)
     headers = {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0'}
     for i in range((enddate-startdate).days+1):
         if i%2==0:
@@ -27,62 +17,53 @@ if __name__=="__main__":
             data=urllib.request.urlopen(req).read()
 
             #print(type(data))
-            with open("f:/btcdata/"+str(day1)+"-"+str(day2)+".txt", "wb+") as f:
+            with open("e:/binancedata/"+str(day1)+"-"+str(day2)+".json", "wb+") as f:
             #a = json.dump(data, f)
                 f.write(data)
                 f.close()
-
-            #print(data)
-##################################
-#下一步将所有的txt的内容放入一张txt中（暂时）
-#然后将数据转换csv方便调用
-import csv
-import os
+##################
+####第二步######将所有的json的数据提取出来合并成一张csv报表，难度是解析json的字典文件（庆幸的是只有一级字典）
 import pandas
 import codecs
 import glob
 import pandas as pd
 from pandas import DataFrame
+import datetime
+import json
+import collections
 
-
-os.getcwd()
-os.chdir('f:/btcdata')
-
-'''def txtcombine():
-
-    files = glob.glob('*.txt')
-
-    all = codecs.open('merge.txt','a')
-
-    for filename in files:
-        print(filename)
-        fopen=codecs.open(filename,'r',encoding='utf-8')
-        lines=[]
-        lines=fopen.readlines()
-
-        fopen.close()
-        i=0
-        for line in lines:
-            for x in line:
-                all.write(x)
-        #读取为DataFrame格式
-        #all1 = pd.read_csv('all.txt',sep=' ',encoding='GB2312')
-        #保存为csv格式
-        #all1.to_csv('all.csv',encoding='GB2312')'''
 def concattxt():
-    with open('f:/btcdata/all.txt','r',encoding='gb2312')as f:
-        data=f.readlines()
-    f.close()
-    #df = DataFrame(data, index=['time'], columns=['open', 'close', 'high', 'low', 'volume'])
-    header=['time','open','close','high','low','volume']
-    with open('f:/btcdata/merge.csv', 'wb',encoding='utf-8') as dstfile:  # 写入方式选择wb，否则有空行
-        writer = csv.DictWriter(dstfile, fieldnames=header)
-        writer.writeheader()  # 写入表头
-        writer.writerows(data)  # 批量写入
-    dstfile.close()
+    startdate = datetime.date(2017, 8, 17)
+    enddate = datetime.date(2018, 5, 11)
+    headers = {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0'}
+    n=0
+    list=[]
+    for i in range((enddate - startdate).days + 1):
+        if i % 2 == 0:
+            day1 = startdate + datetime.timedelta(days=i)
+            day2 = startdate + datetime.timedelta(days=i + 2)
+            # print(type(data))
+            load_f=open("e:/binancedata/" + str(day1) + "-" + str(day2) + ".json",)
+            load_dict=json.load(load_f)
+            #print(load_dict)
+            dd1=[flatten(j) for j in load_dict]
+            createVar['d' + str(n)] = pd.DataFrame(dd1,columns=['time','close','high','low','open','volume','contract'])
+            list.append(createVar['d' + str(n)])
+            n=n+1
+    MG=pd.concat(list)
+    MG.to_csv("e:/binancedata/merge.csv",index=None)
 
-
+def flatten(d, parent_key='', sep='_'):
+    items = []
+    for k, v in d.items():
+        new_key = parent_key + sep + k if parent_key else k
+        if isinstance(v, collections.MutableMapping):
+            items.extend(flatten(v, new_key, sep=sep).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)
 
 if __name__ == '__main__':
-    #txtcombine()
+    createVar = locals()
     concattxt()
+###总结 总共两个py文件 第一个用于下载数据，第二个合并数据，新知识createVar中的locals是python的内置函数，可以用于建立动态的自变量
