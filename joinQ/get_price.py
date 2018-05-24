@@ -1,3 +1,56 @@
+#six用于兼容py2和py3
+@assert_auth
+def get_price(security, start_date=None, end_date=None, frequency='daily',
+    fields=None, skip_paused=False, fq='pre', count=None):
+    """
+    获取一支或者多只证券的行情数据
+    :param security 一支证券代码或者一个证券代码的list
+    :param count 与 start_date 二选一，不可同时使用.数量, 返回的结果集的行数, 即表示获取 end_date 之前几个 frequency 的数据
+    :param start_date 与 count 二选一，不可同时使用. 字符串或者 datetime.datetime/datetime.date 对象, 开始时间
+    :param end_date 格式同上, 结束时间, 默认是'2015-12-31', 包含此日期.
+    :param frequency 单位时间长度, 几天或者几分钟, 现在支持'Xd','Xm', 'daily'(等同于'1d'), 'minute'(等同于'1m'), X是一个正整数, 分别表示X天和X分钟
+    :param fields 字符串list, 默认是None(表示['open', 'close', 'high', 'low', 'volume', 'money']这几个标准字段), 支持以下属性 ['open', 'close', 'low', 'high', 'volume', 'money', 'factor', 'high_limit', 'low_limit', 'avg', 'pre_close', 'paused']
+    :param skip_paused 是否跳过不交易日期(包括停牌, 未上市或者退市后的日期). 如果不跳过, 停牌时会使用停牌前的数据填充, 上市前或者退市后数据都为 nan
+    :return 如果是一支证券, 则返回pandas.DataFrame对象, 行索引是datetime.datetime对象, 列索引是行情字段名字; 如果是多支证券, 则返回pandas.Panel对象, 里面是很多pandas.DataFrame对象, 索引是行情字段(open/close/…), 每个pandas.DataFrame的行索引是datetime.datetime对象, 列索引是证券代号.
+    """
+    security = convert_security(security)
+    start_date = to_date_str(start_date)
+    end_date = to_date_str(end_date)
+    if (not count) and (not start_date):
+            start_date = "2015-01-01"
+    if count and start_date:
+        raise ParamsError("(start_date, count) only one param is required")
+    return JQDataClient.instance().get_price(**locals())
+
+def convert_security(s):
+    if isinstance(s, six.string_types):
+        return s
+    elif isinstance(s, Security):
+        return str(s)
+    elif isinstance(s, (list, tuple)):
+        res = []
+        for i in range(len(s)):
+            if isinstance(s[i], Security):
+                res.append(str(s[i]))
+            elif isinstance(s[i], six.string_types):
+                res.append(s[i])
+            else:
+                raise ParamsError("can't find symbol {}".format(s[i]))
+        return res
+    elif s is None:
+        return s
+    else:
+        raise ParamsError("security's type should be Security or list")
+
+def to_date_str(dt):
+    if dt is None:
+        return None
+    if isinstance(dt, six.string_types):
+        return dt
+    if isinstance(dt, datetime.datetime):
+        return dt.strftime("%Y-%m-%d %H:%M:%S")
+    if isinstance(dt, datetime.date):
+        return dt.strftime("%Y-%m-%d")
 class JQDataClient(object):
 
     _threading_local = threading.local()
