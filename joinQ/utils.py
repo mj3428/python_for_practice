@@ -217,4 +217,4 @@ def assert_auth(func):
             print("run jqdatasdk.auth first")
         else:
             return func(*args, **kwargs)
-        return _wrapper
+    return _wrapper
