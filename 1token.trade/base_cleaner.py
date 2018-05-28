@@ -1,3 +1,4 @@
+##从onepy取一个cleaner打算用于提取ticker，来替代聚宽的get_price模块
 from collections import defaultdict, deque
 from functools import partial
 from itertools import count
