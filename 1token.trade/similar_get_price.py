@@ -62,6 +62,7 @@ class CleanerBase(OnePyEnvBase):
 #想多少就取多少
 #按日期取
 #写cleaner
+#以下是mongodb load里的load 区别于 csvreader的load
 def load(self, fromdate=None, todate=None):
     coll = self.set_collection()
     if fromdate is None:
