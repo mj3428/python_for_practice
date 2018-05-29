@@ -53,3 +53,28 @@ class CleanerBase(OnePyEnvBase):
 
     def calculate(self, ticker):
         raise NotImplementedError
+###
+#按照po主给的思路
+#
+#key为ticker
+#取readers
+#给load函数提供from date函数和todate函数就可以
+#想多少就取多少
+#按日期取
+#写cleaner
+def load(self, fromdate=None, todate=None):
+    coll = self.set_collection()
+    if fromdate is None:
+        fromdate = self.fromdate
+
+    if todate is None:
+        todate = self.todate
+
+    if fromdate and todate:
+        return coll.find({'date': {'$gte': fromdate, '$lt': todate}})
+    elif fromdate:
+        return coll.find({'date': {'$gte': fromdate}})
+    elif todate:
+        return coll.find({'date': {'$lt': todate}})
+    else:
+        return coll.find()
