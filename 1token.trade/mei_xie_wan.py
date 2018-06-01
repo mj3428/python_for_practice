@@ -1,10 +1,11 @@
 %matplotlib inline
+import numpy as np
 import statsmodels.api as sm
 from pandas.stats.api import ols
 from pandas import DataFrame
 import OnePy as op
 from OnePy.builtin_module.recorders.stock_recorder import StockRecorder
-from OnePy.custom_module.cleaner_sma import SMA
+from OnePy.sys_module.base_cleaner import CleanerBase
 global N,M,init,buy,sell,ans,ans_rightdev
 init=True
 N=18
@@ -13,6 +14,27 @@ buy=7
 sell=7
 ans=[]
 ans_right=[]
+class attribute(CleanerBase):
+    def calculatehighs(self,ticker):
+        self.data = defaultdict(partial(deque, maxlen=self.rolling_window))
+        for key, value in self.env.readers.items():
+            buffer_data = value.load(
+                fromdate=self.startdate, todate=self.env.fromdate)
+
+            self.data[key].extend((i['high'] for i in buffer_data))
+            self._check_length(key)
+        highs=self.dara[ticker]
+        
+    def calculatelows(self,ticker):
+        self.data = defaultdict(partial(deque, maxlen=self.rolling_window))
+        for key, value in self.env.readers.items():
+            buffer_data = value.load(
+                fromdate=self.startdate, todate=self.env.fromdate)
+
+            self.data[key].extend((i['low'] for i in buffer_data))
+            self._check_length(key)
+        lows=self.dara[ticker]
+    
 class SmaStrategy(op.StrategyBase):
 
     def __init__(self):
@@ -21,7 +43,7 @@ class SmaStrategy(op.StrategyBase):
         global N,M,ans,ans_rightdev
         N=18
         M=300
-        prices=op.data_readers.CSVReader('e:/binancedata/merge2.csv', 'merge2',fromdate='2017-08-17 20:00:00', todate='2018-05-12 14:00:00')
+        prices=op.data_readers.CSVReader('e:/binancedata/merge2.csv', 'merge2',fromdate='2017-08-18 08:00:00', todate='2018-05-12 14:00:00')
         highs=prices.high
         lows=prices.low
         ans=[]
@@ -47,16 +69,37 @@ class SmaStrategy(op.StrategyBase):
     return times'''
 
 def main():
-    global init
+    global init,ans_rightdev,ans,M,buy,sell
     SS=SmaStrategy()
     beta=0
     r2=0
     if init:
         init=False
     else:
-        prices=
+        a=attribute(10)
+        highs=a.calculatehighs
+        lows=a.calculatelows
+        X = sm.add_constant(lows)
+        model = sm.OLS(highs, X)
+        beta = model.fit().params[1]
+        ans.append(beta)
+        #计算r2
+        r2=model.fit().rsquared
+        ans_rightdev.append(r2)
+    section =ans[-M:]
+    # 计算均值序列
+    mu = np.mean(section)
+    # 计算标准化RSRS指标序列
+    sigma = np.std(section)
+    zscore = (section[-1]-mu)/sigma
+    #计算右偏RSRS标准分
+    zscore_rightdev= zscore*beta*r2
     
-    
+    if zscore_rightdev > buy:
+        order_value(security, cash)
+    # 如果上一时间点的RSRS斜率小于卖出阈值, 则空仓卖出
+    elif zscore_rightdev < sell:
+        
     
 
 
