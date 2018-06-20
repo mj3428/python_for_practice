@@ -177,7 +177,7 @@ class Gross_Profitability_lib():
             DIF = macd_tmp[0]
             DEA = macd_tmp[1]
             MACD = macd_tmp[2]
-            if sll <= 1.1*bll and (sll/bhh) > 0.3 and MACD[-1] < 0 and currentP < MA20 or sll > 1.5*bll:
+            if sll <= 1.1*bll or (sll/bhh) > 0.3 or MACD[-1] < 0 or currentP < MA20 or sll > 1.5*bll:
                 stock_list.remove(stock)
         #log.info(len(stock_list))
         log.info(stock_list[:hold_number*4])
