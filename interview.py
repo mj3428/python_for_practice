@@ -138,3 +138,98 @@ Python的每个对象都分为可变和不可变，主要的核心类型中，�
 对于不可变类型int，无论创建多少个不可变类型，只要值相同，都指向同个内存地址。同样情况的还有比较短的字符串
 可变类型的话，以list为例。list在append之后，还是指向同个内存地址，因为list是可变类型，可以在原处修改
 
+
+如何实现[‘1’,’2’,’3’]变成[1,2,3] ?
+[int(k) for k in ['1','2','3']]
+
+
+一行代码实现删除列表中重复的值
+alist = [3,1,3,5,6,7,8,9]
+blist = list(set(alist))
+
+
+请用代码简答实现stack
+stack的实现代码（使用python内置的list），实现起来是非常的简单，就是list的一些常用操作
+class Stack(object):
+    def __init__(object):
+        self.stack = []
+
+    def push(self, value):
+        self.stack.append(value)
+
+    def pop(self):
+        if self.stack:
+            self.stack.pop()
+        else:
+            raise LookupError('stack is empty!')
+
+    def is_empty(self):
+        return bool(self.stack)
+
+    def top(self):
+        #取出目前stack中最新的元素
+        return self.stack[-1]
+        
+
+常用字符串格式化哪几种
+print('hello %(first)s and %(second)s'%{'first':'df' , 'second':'another df'})最好用
+print('hello {first} and {second}'.format(first='df',second='another df'))最先进
+
+
+生成器、迭代器、可迭代对象 以及应用场景
+可以直接作用于for循环的对象统称为：可迭代对象（Iterable）
+可以被next调用并不断返回下一个值的对象称为：迭代器（Iterator）
+把list、dict、str等Iterable变成Iterator可以使用iter()函数
+
+from collections import Iterator
+print(isinstance(iter([]),Iterator))
+print(isinstance(iter({}),Iterator))
+print(isinstance((x for x in range(10)),Iterator))
+print(isinstance(iter('abc'), Iterator))
+True
+True
+True
+True
+
+
+用Python实现一个二分查找的函数
+data = [1, 3, 6, 7, 9, 12, 14, 16, 17, 18, 20, 21, 22, 23, 30, 32, 33, 35]
+
+def binary_search(dataset,find_num):
+    if len(dataset) > 1:
+        mid = int(len(dataset) / 2)
+        if dataset[mid] == find_num:  # find it
+            print("找到数字", dataset[mid])
+        elif dataset[mid] > find_num:  # 找的数在mid左面
+            print("\033[31;1m找的数在mid[%s]左面\033[0m" % dataset[mid])
+            return binary_search(dataset[0:mid], find_num)
+        else:  # 找的数在mid右面
+            print("\033[32;1m找的数在mid[%s]右面\033[0m" % dataset[mid])
+            return binary_search(dataset[mid + 1:], find_num)
+    else:
+        if dataset[0] == find_num:  # find it
+            print("找到数字啦", dataset[0])
+        else:
+            print("没的分了,要找的数字[%s]不在列表里" % find_num)
+binary_search(data,20)
+
+
+谈谈你对闭包的理解：
+在一个外函数中定义了一个内函数，内函数里运用了外函数的临时变量，并且外函数的返回值是内函数的引用。
+这样就构成了一个闭包
+　  一般情况下，在我们认知当中，如果一个函数结束，函数的内部所有东西都会释放掉，还给内存，局部变量都会消失。
+但是闭包是一种特殊情况，如果外函数在结束的时候发现有自己的临时变量将来会在内部函数中用到，
+就把这个临时变量绑定给了内部函数，然后自己再结束。
+def outer(a):
+    b = 10
+    def inner():
+        print(a+b)
+    return inner
+
+if __name__ == '__main__':
+    demo = outer(5)
+    demo()
+    demo2 = outer(7)
+    demo2()
+'''
+未完待续
