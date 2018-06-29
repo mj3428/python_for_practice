@@ -93,4 +93,49 @@ class FooChild(FooParent):
 >>> FooChild().bar("Hello, Python.")  
 Hello, Python.
 
+class A:  
+  def __init__(self):  
+    print("Enter A")  
+    print("Leave A")  
+class B(A):  
+  def __init__(self):  
+    print("Enter B")  
+    A.__init__(self)  
+    print("Leave B")  
+class C(A):  
+  def __init__(self):  
+    print("Enter C")  
+    A.__init__(self)  
+    print("Leave C")  
+class D(A):  
+  def __init__(self):  
+    print("Enter D")  
+    A.__init__(self)  
+    print("Leave D")  
+class E(B, C, D):  
+  def __init__(self):  
+    print("Enter E")  
+    B.__init__(self)  
+    C.__init__(self)  
+    D.__init__(self)  
+    print("Leave E")  
+E()
+
+结果为：
+
+Enter E
+Enter B
+Enter A
+Leave A
+Leave B
+Enter C
+Enter A
+Leave A
+Leave C
+Enter D
+Enter A
+Leave A
+Leave D
+Leave E
+
 
