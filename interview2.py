@@ -139,3 +139,80 @@ Leave D
 Leave E
 
 
+是否使用过functools中的函数？
+import functools
+foo = functools.partial(int, base=8)
+foo('11111')  # print 4681
+假设要转换大量的二进制字符串，每次都传入int(x, base=2)非常麻烦，于是，我们想到，可以定义一个int2()的函数，默认把base=2传进去：
+def int2(x, base=2):
+  return int(x, base)
+>>> int2('1000000')
+64
+>>> int2('1010101')
+85
+functools.partial就是帮助我们创建一个偏函数的，不需要我们自己定义int2()，可以直接使用下面的代码创建一个新的函数int2：
+>>> import functools
+>>> int2 = functools.partial(int, base=2)
+>>> int2('1000000')
+64
+>>> int2('1010101')
+85
+所以，简单总结functools.partial的作用就是，
+把一个函数的某些参数给固定住（也就是设置默认值），返回一个新的函数，调用这个新函数会更简单
+
+
+__new__()方法的特性：
+   __new__()方法是在类准备将自身实例化时调用。
+   __new__()方法始终都是类的静态方法，即使没有被加上静态方法装饰器
+第一个参数cls是当前正在实例化的类。
+   如果要得到当前类的实例，应当在当前类中的__new__()方法语句中调用当前类的父类 的__new__()方法。
+例如，如果当前类是直接继承自object，那当前类的__new__()方法返回的对象应该为：
+def __new__(cls, *args, **kwargs):
+   ...
+   return object.__new__(cls)
+
+class Foo(object):
+    def __init__(self, *args, **kwargs):
+        ...
+    def __new__(cls, *args, **kwargs):
+        return object.__new__(cls, *args, **kwargs)    
+    
+# 以上return等同于 
+# return object.__new__(Foo, *args, **kwargs)
+# return Stranger.__new__(cls, *args, **kwargs)
+# return Child.__new__(cls, *args, **kwargs)
+
+
+静态方法和类方法区别？
+class Foo(object):  
+    def test(self): #定义了实例方法  
+        print("object")  
+    @classmethod  # 装饰器
+    def test2(clss): #定义了类方法  
+        print("class")  
+    @staticmethod  # 装饰器
+    def test3(): #定义了静态方法  
+        print("static")
+实例方法访问方式：
+ff=Foo()
+ff.test();//通过实例调用  
+Foo.test(ff)//直接通过类的方式调用，但是需要自己传递实例引用
+类方法访问方式：
+Foo.test2();
+如果Foo有了子类并且子类覆盖了这个类方法，最终调用会调用子类的方法并传递的是子类的类对象
+class Foo2(Foo):  
+    @classmethod  
+    def test2(self):  
+        print(self)  
+        print("foo2 object")  
+f2=Foo2()  
+print(f2.test2())
+
+输出结果：
+<class '__main__.Foo2'>
+foo2 object
+None
+静态方法调用方式：
+Foo.test3();//直接静态方式调用
+
+实例方法针对的是实例，类方法针对的是类，他们都可以继承和重新定义，而静态方法则不能继承，可以认为是全局函数
