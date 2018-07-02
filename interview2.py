@@ -216,3 +216,38 @@ None
 Foo.test3();//直接静态方式调用
 
 实例方法针对的是实例，类方法针对的是类，他们都可以继承和重新定义，而静态方法则不能继承，可以认为是全局函数
+
+
+列举面向对象中的特殊成员以及应用场景？
+__doc__  描述类的信息
+class Foo(object):  
+    # 单引号和双引号都可以  
+    """这里描述类的信息"""  
+    def func(self):  
+        pass  
+print(Foo.__doc__) 
+显示的结果：
+    这里描述类的信息
+
+__call__ 对象后面加括号，触发执行
+# __call__方法的执行是由对象加括号触发的，即：对象()或者 类()()  
+class Foo(object):  
+    def __call__(self, *args, **kwargs):  
+        print("running call", args, kwargs)  
+foo = Foo()  
+foo(1, 2, 3, name = "UserPython")   
+Foo()(1, 2, 3, name = "UserPython")
+
+# __call__方法的执行是由对象加括号触发的，即：对象()或者 类()()  
+class Foo(object):  
+    def __call__(self, *args, **kwargs):  
+        print("running call", args, kwargs)  
+foo = Foo()  
+foo(1, 2, 3, name = "UserPython")   
+Foo()(1, 2, 3, name = "UserPython") 
+running call(1,2,3){'name' : 'UserPython'}
+running call(1,2,3){'name' : 'UserPython'}
+
+
+什么是反射？以及应用场景
+
