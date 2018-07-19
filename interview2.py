@@ -250,4 +250,82 @@ running call(1,2,3){'name' : 'UserPython'}
 
 
 什么是反射？以及应用场景
+http://www.cnblogs.com/zhuifeng-mayi/p/9230975.html
 
+
+metaclass作用及应用场景？
+
+metaclass能有什么用处，先来个感性的认识：
+1. 你可以自由的、动态的修改/增加/删除 类的或者实例中的方法或者属性
+2. 批量的对某些方法使用decorator，而不需要每次都在方法的上面加入@decorator_func
+3. 当引入第三方库的时候，如果该库某些类需要patch的时候可以用metaclass
+4. 可以用于序列化(参见yaml这个库的实现，我没怎么仔细看）
+5. 提供接口注册，接口格式检查等
+6. 自动委托(auto delegate)
+7. more...
+
+也就是说metaclass的实例化结果是类，而class实例化的结果是instance。我是这么理解的：
+metaclass是类似创建类的模板，所有的类都是通过他来create的(调用__new__)，这使得你可以自由的控制
+创建类的那个过程，实现你所需要的功能
+一般情况下, 如果你要用类来实现metaclass的话，该类需要继承于type，而且通常会重写type的__new__方法来控制创建过程。
+
+如何使用metaclass
+类继承于type, 例如： class Meta(type):pass
+将需要使用metaclass来构建class的类的__metaclass__属性（不需要显示声明，直接有的了）赋值为Meta（继承于type的类）
+
+ 构建一个函数，例如叫metaclass_new, 需要3个参数：name, bases, attrs，
+name: 类的名字
+bases: 基类，通常是tuple类型
+attrs: dict类型，就是类的属性或者函数
+将需要使用metaclass来构建class的类的__metaclass__属性（不需要显示声明，直接有的了）赋值为函数metaclas_new
+
+metaclass 原理：
+metaclass的原理其实是这样的：当定义好类之后，创建类的时候其实是调用了type的__new__方法为这个类分配内存空间，创建
+好了之后再调用type的__init__方法初始化（做一些赋值等）。所以metaclass的所有magic其实就在于这个__new__方法里面了
+说说这个方法：__new__(cls, name, bases, attrs)
+cls: 将要创建的类，类似与self，但是self指向的是instance，而这里cls指向的是class
+name: 类的名字，也就是我们通常用类名.__name__获取的。
+bases: 基类
+attrs: 属性的dict。dict的内容可以是变量(类属性），也可以是函数（类方法）
+
+例子：
+#!/usr/bin/python  
+#coding :utf-8  
+def ma(cls):  
+    print 'method a'    
+def mb(cls):  
+    print 'method b'  
+
+method_dict = {  
+    'ma': ma,  
+    'mb': mb,  
+}  
+ 
+class DynamicMethod(type):  
+    def __new__(cls, name, bases, dct):  
+        if name[:3] == 'Abc':  
+            dct.update(method_dict)  
+        return type.__new__(cls, name, bases, dct) 
+  
+    def __init__(cls, name, bases, dct):  
+        super(DynamicMethod, cls).__init__(name, bases, dct)  
+
+class AbcTest(object):  
+    __metaclass__ = DynamicMethod 
+    def mc(self, x):  
+        print x * 3  
+class NotAbc(object):  
+    __metaclass__ = DynamicMethod  
+    def md(self, x):  
+        print x * 3  
+def main():  
+    a = AbcTest()  
+    a.mc(3)  
+    a.ma()  
+    print dir(a)  
+    b = NotAbc()  
+    print dir(b) 
+if __name__ == '__main__':  
+    main()  
+######还是有点难#####后续重点看#######
+https://www.cnblogs.com/liunnis/articles/4606371.html
