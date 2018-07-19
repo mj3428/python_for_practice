@@ -61,3 +61,37 @@ def singleton(cls, *args, **kw):
 @singleton
 class A:
     pass
+
+异常处理写法与跑出异常：
+执行的流程分两类：
+1.try->若有异常发生->except->finally
+2.try->若无异常发生->else->finally
+其中try块执行了可能抛出异常的语句，except块负责处理抛出的异常，处理的尝试顺序与多个except块的编写顺序一致
+当尝试发现第一个异常类型匹配的except块时就进入该块内执行该except块的语句
+最后一个不指定异常类型的except:块匹配任何类型的异常（由于所有异常都继承自Exception类所有except Exception：与不指定异常类型效果一致）
+except块至少要有一个，可以使用pass语句
+except:
+　　pass
+表示“抓到”异常后不进行任何处理
+finally类是可选的块，如前面的流程所示，无论是否有异常抛出，只要finally块存在就会被最终执行
+（该块中的语句一般用于关闭打开的资源，比如在try块中打开的磁盘文件）
+
+with open('abc.txt', 'r') as f:
+　　f语句块....
+上面的f就是打开的文件对象，而采用with..as..方式会在执行完f语句块后自动关闭打开的文件资源
+而不用自己写finally语句块。
+例子：
+class myerr(Exception):
+    def __init__(self,err):
+        Exception.__init__(self)
+        self.err=err
+try:
+    raise myerr('myexception')
+except myerr as var :
+    print(var.err)
+定义自己的异常类一般都继承自Exception类，初始化时同时使用Exception类的__init__方法
+引发自己定义的异常的语法是raise exceptiontype(arg...),直接生成该异常类的一个实例（实例化时需要的参数自行提供）并抛出该异常
+在捕获异常时使用except exceptiontype as var的语法获取异常实例var，从而可以在后续的处理中访问该异常实例的属性
+输出为：
+    myexception
+
