@@ -110,3 +110,31 @@ super使用一致
 事实上，super 和父类没有实质性的关联。
 super(cls, inst) 获得的是 cls 在 inst 的 MRO 列表中的下一个类
 
+
+Given an array of integers, return indices of the two numbers such that they add up to a specific target.
+You may assume that each input would have exactly one solution, 
+and you may not use the same element twice.
+Example:
+          Given nums = [2, 7, 11, 15], target = 9,
+Because nums[0] + nums[1] = 2 + 7 = 9,
+           return [0, 1]
+
+class Solution(object):
+    def twoSum(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: List[int]
+        """
+        self.nums = []
+        self.target = int
+
+        for i in range(len(nums)):
+            for j in range(i + 1, len(nums)):
+                if nums[i] + nums[j] == target:
+                    return i, j
+if __name__ == "__main__":
+    a = Solution()
+    print a.twoSum([1,2,3,4,5], 5)
+    
+
