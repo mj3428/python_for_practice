@@ -196,8 +196,29 @@ assert x%2 == 0, "x is not an even number"
 下面是我建议的不要用断言的场景：
 
 　　☆不要用它测试用户提供的数据
-　　☆不要用断言来检查你觉得在你的程序的常规使用时会出错的地方。断言是用来检查非常罕见的问题。你的用户不应该看到任何断言错误，如果他们看到了，这是一个bug，修复它。
+　　☆不要用断言来检查你觉得在你的程序的常规使用时会出错的地方。断言是用来检查非常罕见的问题。
+         你的用户不应该看到任何断言错误，如果他们看到了，这是一个bug，修复它。
 　　☆有的情况下，不用断言是因为它比精确的检查要短，它不应该是懒码农的偷懒方式。
 　　☆不要用它来检查对公共库的输入参数，因为它不能控制调用者，所以不能保证调用者会不会打破双方的约定。
 　　☆不要为你觉得可以恢复的错误用断言。换句话说，不用改在产品代码里捕捉到断言错误。
 　　☆不要用太多断言以至于让代码很晦涩。
+
+
+使用代码实现查看列举目录下的所有文件。
+import os
+for filename in os.listdir(r'c:\windows'):
+    print filename
+
+方法2：使用glob模块，可以设置文件过滤
+import glob
+for filename in glob.glob(r'c:\windows\*.exe'):
+    print filename
+方法3:通过os.path.walk递归遍历，可以访问子文件夹
+import os.path
+def processDirectory ( args, dirname, filenames ):
+    print 'Directory',dirname
+    for filename in filenames:
+        print ' File',filename
+os.path.walk(r'c:\windows', processDirectory, None)
+
+
