@@ -138,3 +138,66 @@ if __name__ == "__main__":
     print a.twoSum([1,2,3,4,5], 5)
     
 
+json序列化可以处理的数据类型：
+使用Json主要用来表示对象和数组这样的复杂数据结构，当然也可以
+表示基本数据类型(String, Boolean, Number, Null, Undefine)
+
+JSON与Python之间数据类型对应关系：
+
+Python	JSON
+dict	Object
+list, tuple	array
+str	string
+int, float, int- & float-derived Enums	numbers
+True	true
+False	false
+None	null
+
+JSON转Python：
+JSON	Python
+object	dict
+array	list
+string	str
+number(int)	int
+number(real)	float
+true	True
+false	False
+null	None
+
+JSON序列化时定制支持datetime
+import json
+from json import JSONEncoder
+from datetime import datetime
+class ComplexEncoder(JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.strftime('%Y-%m-%d %H:%M:%S')
+        else:
+            return super(ComplexEncoder,self).default(obj)
+d = { 'name':'alex','data':datetime.now()}
+print(json.dumps(d,cls=ComplexEncoder))
+# {"name": "alex", "data": "2018-05-18 19:52:05"}
+
+
+json序列化时遇到中文会默认转换成unicode  ，如何让他保留中文形式
+import json
+a=json.dumps({"ddf":"你好"},ensure_ascii=False)
+print(a) #{"ddf": "你好"}
+
+
+什么是断言，它的应用场景？
+Python的assert是用来检查一个条件，如果它为真，就不做任何事。如果它为假，则会抛出AssertError并且包含错误信息。
+例如：
+x = 23
+assert x > 0, "x is not zero or negative"
+assert x%2 == 0, "x is not an even number"
+
+
+下面是我建议的不要用断言的场景：
+
+　　☆不要用它测试用户提供的数据
+　　☆不要用断言来检查你觉得在你的程序的常规使用时会出错的地方。断言是用来检查非常罕见的问题。你的用户不应该看到任何断言错误，如果他们看到了，这是一个bug，修复它。
+　　☆有的情况下，不用断言是因为它比精确的检查要短，它不应该是懒码农的偷懒方式。
+　　☆不要用它来检查对公共库的输入参数，因为它不能控制调用者，所以不能保证调用者会不会打破双方的约定。
+　　☆不要为你觉得可以恢复的错误用断言。换句话说，不用改在产品代码里捕捉到断言错误。
+　　☆不要用太多断言以至于让代码很晦涩。
