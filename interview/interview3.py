@@ -220,5 +220,5 @@ def processDirectory ( args, dirname, filenames ):
     for filename in filenames:
         print ' File',filename
 os.path.walk(r'c:\windows', processDirectory, None)
-
+'''
 
