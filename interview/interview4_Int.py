@@ -105,3 +105,24 @@ ARP（Address Resolution Protocol）即地址解析协议，
 
 
 TCP和UDP的区别？
+TCP面向连接（如打电话要先拨号建立连接）;UDP是无连接的，即发送数据之前不需要建立连接
+TCP提供可靠的服务;UDP尽最大努力交付，即不保证可靠交付
+UDP具有较好的实时性，工作效率比TCP高，适用于对高速传输和实时性有较高的通信或广播通信
+每一条TCP连接只能是点到点的;UDP支持一对一，一对多，多对一和多对多的交互通信
+TCP对系统资源要求较多，UDP对系统资源要求较少
+TCP编程的服务器端一般步骤是： 
+　1、创建一个socket，用函数socket()； SOCKET SocketListen =socket(AF_INET,SOCK_STREAM, IPPROTO_TCP);
+　2、设置socket属性，用函数setsockopt(); * 可选 
+　3、绑定IP地址、端口等信息到socket上，用函数bind(); SOCKET_ERROR = bind(SocketListen,(const sockaddr*)&addr,sizeof(addr))
+　4、开启监听，用函数listen()；   SOCKET_ERROR == listen(SocketListen,2)
+　5、接收客户端上来的连接，用函数accept()； SOCKET SocketWaiter = accept(SocketListen,_Out_struct sockaddr *addr_Inout_  int *addrlen);
+　6、收发数据，用函数send()和recv()，或者read()和write(); 
+　7、关闭网络连接； closesocket(SocketListen);closesocket(SocketWaiter);
+　8、关闭监听；
+UDP编程的服务器端一般步骤是： 
+　1、创建一个socket，用函数socket()； 
+　2、设置socket属性，用函数setsockopt();* 可选 
+　3、绑定IP地址、端口等信息到socket上，用函数bind(); 
+　4、循环接收数据，用函数recvfrom(); 
+　5、关闭网络连接；
+ 
