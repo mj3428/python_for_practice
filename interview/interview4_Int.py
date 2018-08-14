@@ -51,3 +51,57 @@ g> 能有效地保护数据平台和管理访问权限，确保服务器数据�
 3. B/S架构的缺点
 a> 服务器承担着重要的责任，数据负荷较重。一旦发生服务器“崩溃”等问题，后果不堪设想。
 b> 页面需要不断地动态刷新，当用户增多时，网速会变慢。
+
+
+简述三次握手、四次挥手的流程？
+
+（1）序号：Seq序号，占32位，用来标识从TCP源端向目的端发送的字节流，发起方发送数据时对此进行标记。
+（2）确认序号：Ack序号，占32位，只有ACK标志位为1时，确认序号字段才有效，Ack=Seq+1。
+（3）标志位：共6个，即URG、ACK、PSH、RST、SYN、FIN等，具体含义如下：
+       （A）URG：紧急指针（urgent pointer）有效。
+       （B）ACK：确认序号有效。
+       （C）PSH：接收方应该尽快将这个报文交给应用层。
+       （D）RST：重置连接。
+       （E）SYN：发起一个新连接。
+       （F）FIN：释放一个连接。
+
+需要注意的是：
+（A）不要将确认序号Ack与标志位中的ACK搞混了。
+（B）确认方Ack=发起方Req+1，两端配对。 
+
+（1）第一次握手：
+Client将标志位SYN置为1，随机产生一个值seq=J，并将该数据包发送给Server，Client进入SYN_SENT状态，等待Server确认。
+（2）第二次握手：
+Server收到数据包后由标志位SYN=1知道Client请求建立连接，
+Server将标志位SYN和ACK都置为1，ack=J+1，随机产生一个值seq=K，
+并将该数据包发送给Client以确认连接请求，Server进入SYN_RCVD状态。
+（3）第三次握手：
+Client收到确认后，检查ack是否为J+1，ACK是否为1，
+如果正确则将标志位ACK置为1，ack=K+1，并将该数据包发送给Server，
+Server检查ack是否为K+1，ACK是否为1，如果正确则连接建立成功，Client和Server进入ESTABLISHED状态，
+完成三次握手，随后Client与Server之间可以开始传输数据了。
+
+所谓四次挥手（Four-Way Wavehand）即终止TCP连接，就是指断开一个TCP连接时，
+需要客户端和服务端总共发送4个包以确认连接的断开。
+在socket编程中，这一过程由客户端或服务端任一方执行close来触发
+第一次挥手：
+Client发送一个FIN，用来关闭Client到Server的数据传送，Client进入FIN_WAIT_1状态。
+第二次挥手：
+Server收到FIN后，发送一个ACK给Client，确认序号为收到序号+1（与SYN相同，一个FIN占用一个序号），Server进入CLOSE_WAIT状态。
+第三次挥手：
+Server发送一个FIN，用来关闭Server到Client的数据传送，Server进入LAST_ACK状态。
+第四次挥手：
+Client收到FIN后，Client进入TIME_WAIT状态，接着发送一个ACK给Server，
+确认序号为收到序号+1，Server进入CLOSED状态，完成四次挥手
+
+
+ARP协议
+ARP（Address Resolution Protocol）即地址解析协议，
+用于实现从 IP 地址到 MAC 地址的映射，即询问目标IP对应的MAC地址；
+在网络通信中，主机和主机通信的数据包需要依据OSI模型从上到下进行数据封装，当数据封装完整后，再向外发出
+所以在局域网的通信中，不仅需要源目IP地址的封装，也需要源目MAC的封装
+一般情况下，上层应用程序更多关心IP地址而不关心MAC地址，所以需要通过ARP协议来获知目的主机的MAC地址，完成数据封装
+详细查找，里面包含图解https://www.cnblogs.com/csguo/p/7527303.html
+
+
+TCP和UDP的区别？
