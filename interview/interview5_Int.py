@@ -70,3 +70,92 @@ GIL是什么？
 
 
 Python中如何使用线程池和进程池？
+concurent.future模块需要了解的
+1.concurent.future模块是用来创建并行的任务，提供了更高级别的接口，为了异步执行调用
+2.concurent.future这个模块用起来非常方便，它的接口也封装的非常简单
+3.concurent.future模块既可以实现进程池，也可以实现线程池
+4.模块导入进程池和线程池
+from  concurrent.futures import ProcessPoolExecutor,ThreadPoolExecutor
+还可以导入一个Executor,但是你别这样导，这个类是一个抽象类
+抽象类的目的是规范他的子类必须有某种方法（并且抽象类的方法必须实现），但是抽象类不能被实例化
+5.
+  p = ProcessPoolExecutor(max_works)对于进程池如果不写max_works：默认的是cpu的数目,默认是4个
+  p = ThreadPoolExecutor(max_works)对于线程池如果不写max_works：默认的是cpu的数目*5
+6.如果是进程池，得到的结果如果是一个对象。我们得用一个.get()方法得到结果
+  但是现在用了concurent.future模块，我们可以用obj.result方法
+  p.submit(task,i)  #相当于apply_async异步方法
+  p.shutdown()  #默认有个参数wite=True (相当于close和join)
+我们知道多进程可以利用多核CPU进行并行计算，但多进程的资源开销很大，因此不可能无限开。
+举个栗子，假设有100块砖，是请5个人去搬，还是请100个人去搬？
+答案是5个人，100个人工钱太贵了。。。这就和开多进程是一样的道理。
+那如何限制进程数量呢？通过进程池。
+Pool可以提供指定数量的进程，供用户调用，当有新的请求提交到pool中时，如果池还没有满，那么就会创建一个新的进程用来执行该请求；
+但如果池中的进程数已经达到规定最大值，那么该请求就会等待，直到池中有进程结束，就重用进程池中的进程。
+from multiprocessing import Pool
+import os, time
+
+def foo(i):
+    print('进程【%s】,id-->%s'%(i,os.getpid()))
+    time.sleep(2)
+
+if __name__ == '__main__':
+    pool = Pool(4)  # 指定进程池大小，默认为CPU核心数
+    for i in range(1,10):
+        pool.apply_async(func=foo, args=(i,)) # 如果没有返回计算结果就不用赋值
+
+    pool.close()    # 关闭进程池
+    pool.join() # 等待进程池内任务处理完,否则主进程走完就结束了
+
+进程池的方法： 
+pool = Pool() 创建进程池 
+pool.apply(func=func_name, args=()) 从进程池里取一个进程并执行 
+pool.apply_async(func=func_name, args=()) apply的异步版本 
+apply() 和apply_async的返回值是结果对象obj, 通过obj.get()可以收集结果。 
+pool.close() 关闭进程池 
+pool.terminate() 终止所有工作进程 
+pool.join() 主进程等待所有子进程执行完毕，必须在close或terminate之后
+
+python3中针对进程池和线程池提供了更易用的接口。
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor # 导入
+import random, time
+
+def get_html(url):
+    print('请求%s' % url)
+    time.sleep(random.randint(1, 3))
+    return '%s html......' % url
+
+def parse_html(res):
+    html = res.result()  # 任务完成返回的是结果对象，回调函数接收该对象通过.result()获取真实结果
+    print(html)
+
+if __name__ == "__main__":
+    start = time.time()
+
+    pool = ProcessPoolExecutor(4)  # 默认进程池大小等于CPU核心数
+    # pool = ThreadPoolExecutor(6)  # 线程池一般20-30左右足够，可以根据任务适当调整
+
+    urls = ['url_1', 'url_2', 'url_3', 'url_4', 'url_5', 'url_6']
+    for url in urls:
+        pool.submit(get_html, url).add_done_callback(parse_html)  # 提交任务到进程池并指定回调函数，
+                                                                    即子进程执行结果出来后，通知主进程处理结果（执行回调函数）
+    pool.shutdown(wait=True)  # 关闭进程等待任务结束；这里主要是为了阻塞主进程，统计时间用
+
+    end = time.time()
+    print('一共耗时：', end - start)
+
+    """
+    请求url_1
+    请求url_2
+    请求url_3
+    请求url_4
+    请求url_5
+    url_1 html......
+    请求url_6
+    url_4 html......
+    url_6 html......
+    url_5 html......
+    url_2 html......
+    url_3 html......
+    一共耗时： 3.2524783611297607
+    """
+    可以看到，如果要用线程，只需要实例化线程池对象即可。使用非常方便
