@@ -135,4 +135,7 @@ mysql>UPDATE hit_counter SET cnt = cnt + 1 WHERE slot = RAND()*100;
 mysql> SELECT SUM(cnt) FROM hit_counter;
 
 
+★★★SQL语句练习：（一定要会）
+https://www.cnblogs.com/wupeiqi/articles/5729934.html
+
 
