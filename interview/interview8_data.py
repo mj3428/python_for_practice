@@ -135,7 +135,19 @@ mysql>UPDATE hit_counter SET cnt = cnt + 1 WHERE slot = RAND()*100;
 mysql> SELECT SUM(cnt) FROM hit_counter;
 
 
-★★★SQL语句练习：（一定要会）
+★★★SQL语句练习：（一定要会）！！！
 https://www.cnblogs.com/wupeiqi/articles/5729934.html
 
 
+简述触发器、函数、视图、存储过程？
+视图的定义：
+视图是由查询结果形成的一张虚拟表，是表通过某种运算得到的一个投影。
+同一张表可以创建多个视图
+
+创建视图的语法：
+create view view_name as select 语句
+说明：
+（1）视图名跟表名是一个级别的名字，隶属于数据库；
+（2）该语句的含义可以理解为：就是将该select命名为该名字（视图名）；
+（3）视图也可以设定自己的字段名，而不是select语句本身的字段名——通常不设置。
+（4）视图的使用，几乎跟表一样！
