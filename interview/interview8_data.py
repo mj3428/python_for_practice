@@ -137,7 +137,7 @@ mysql> SELECT SUM(cnt) FROM hit_counter;
 
 ★★★SQL语句练习：（一定要会）！！！
 https://www.cnblogs.com/wupeiqi/articles/5729934.html
-答案：https://www.cnblogs.com/xone/p/6249353.html
+答案：https://www.cnblogs.com/xone/p/6249353.html(部分题)
 
 
 简述触发器、函数、视图、存储过程？
