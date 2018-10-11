@@ -7,7 +7,7 @@ browser.find_element_by_xpath("//*[@class='btn btn-lg btn-block btn-signin']").c
 
 # 等待3秒
 time.sleep(3)
-url = "http://yun.zjnad.com/csc/abn-log/index?username=&dayS=2018-09-01&dayE=2018-09-30&danger=0&state=0&opt=search&codex="
+url = "http://yun.zjnad.com/csc/abn-log/index?username=&dayS=2018-09-01&dayE=2018-09-30&danger=0&state=0&opt=search&codex=&page=1"
 browser.get(url)
 
 #获取cookie
@@ -23,8 +23,8 @@ cookies = '''
 jar = requests.cookies.RequestsCookieJar()
 for cookie in cookies.split(';'):
     key,value = cookie.split('=',1)
-    jar.set(key,value)
-wb_data = requests.get(url)
+    jar.set(key,value)  #set方法设置好每个cookie的key和value
+wb_data = requests.get(url,cookies=jar,headers=headers) #要写头部
 print(wb_data.text)
 #print(wb_data) #登录不成功 说明没有记录cookie或者别的方法试试
 soup = BeautifulSoup(wb_data.text,'lxml') #lxml HTML解析器 用"html.parser"是Python的标准库
