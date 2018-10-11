@@ -17,6 +17,7 @@ cookies_db.set(username,json.dumps(cookies))
 
 time.sleep(1)
 wb_data = requests.get(url)
-#print(wb_data) #登录不成功 说明没有记录cookie或者别的方法试试
+#print(wb_data) #登录不成功 说明没有记录cookie或者别的方法试试 这里还是要在header写cookie的
+#cookie也可以单独写 也可以用session来维持会话
 soup = BeautifulSoup(wb_data.text,'lxml') #lxml HTML解析器 用"html.parser"是Python的标准库
 print(soup.prettify())
