@@ -30,3 +30,16 @@ print(wb_data.text)
 soup = BeautifulSoup(wb_data.text,'lxml') #lxml HTML解析器 用"html.parser"是Python的标准库
 print(soup.prettify())
 
+html = etree.parse('test.html',etree.HTMLParser())
+table_head = html.xpath("//table[@class='table table-striped table-hover']/thead/tr/th/text()")
+print (table_head)
+table_data = html.xpath("//tbody[@id='log_list']/tr/td//text()")
+table_data = list(map(lambda x:x.replace(' ',""),table_data))
+
+for i in table_data:
+    result = re.match('',i,re.S)
+    if i == result.group():
+        table_data.remove(i)
+    else:
+        continue
+print (table_data)
