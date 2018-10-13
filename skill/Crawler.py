@@ -41,6 +41,10 @@ for i in table_data[:]:
     if i == result.group():
         table_data.remove(i)
 
-
+table_data = list(table_data[i:i+12] for i in range(0,length,12)) #分割
+#记得导入csv模块
+with open('zjnad_data.csv','wb+') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerows(table_data)
 print (len(table_data))
 print (table_data)
