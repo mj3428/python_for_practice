@@ -36,10 +36,11 @@ print (table_head)
 table_data = html.xpath("//tbody[@id='log_list']/tr/td//text()")
 table_data = list(map(lambda x:x.replace(' ',""),table_data))
 
-for i in table_data:
-    result = re.match('',i,re.S)
+for i in table_data[:]:
+    result = re.match('\s*',i) #匹配所有换行符和无任何字符的字符串
     if i == result.group():
         table_data.remove(i)
-    else:
-        continue
+
+
+print (len(table_data))
 print (table_data)
