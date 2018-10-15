@@ -16,19 +16,7 @@ browser.get_cookies()
 cookies_db.set(username,json.dumps(cookies))
 
 time.sleep(1)
-
-cookies = '''
-          
-          '''
-jar = requests.cookies.RequestsCookieJar()
-for cookie in cookies.split(';'):
-    key,value = cookie.split('=',1)
-    jar.set(key,value)  #set方法设置好每个cookie的key和value
-wb_data = requests.get(url,cookies=jar,headers=headers) #要写头部
-print(wb_data.text)
-#print(wb_data) #登录不成功 说明没有记录cookie或者别的方法试试
-soup = BeautifulSoup(wb_data.text,'lxml') #lxml HTML解析器 用"html.parser"是Python的标准库
-print(soup.prettify())
+html_source = browser.page_source #网页源码
 
 html = etree.parse('test.html',etree.HTMLParser()) #html_source其实也是一个html格式文件
 table_head = html.xpath("//table[@class='table table-striped table-hover']/thead/tr/th/text()")
