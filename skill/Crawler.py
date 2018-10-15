@@ -18,7 +18,7 @@ cookies_db.set(username,json.dumps(cookies))
 time.sleep(1)
 html_source = browser.page_source #网页源码
 
-html = etree.parse('test.html',etree.HTMLParser()) #html_source是一个str类型
+html = etree.parse('test.html',etree.HTMLParser()) #html_source是一个str类型 etree是解析本地html的模块，所以不能直接解析html_source
 table_head = html.xpath("//table[@class='table table-striped table-hover']/thead/tr/th/text()")
 print (table_head)
 table_data = html.xpath("//tbody[@id='log_list']/tr/td//text()")
