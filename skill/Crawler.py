@@ -19,7 +19,7 @@ time.sleep(1)
 html_source = browser.page_source #网页源码
 
 html = etree.parse('test.html',etree.HTMLParser()) #html_source是一个str类型 etree_parse是解析本地html的模块，所以不能直接解析html_source
-                                                   #不过可以用etree.HTMLParser(html_parse)直接解析
+                                                   #不过可以用etree.HTML(html_parse)直接解析
                                                    #具体参考https://www.jianshu.com/p/71b31fb0d47f
 table_head = html.xpath("//table[@class='table table-striped table-hover']/thead/tr/th/text()")
 print (table_head)
