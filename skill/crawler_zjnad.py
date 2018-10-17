@@ -29,20 +29,22 @@ page_num = 0 #记录页数
 while True:
     page_num += 1
     html_s = browser.page_source
-    query = etree.HTML(html_s).xpath("//ul[@class='pagination']/li[@class]")
+    query = etree.HTML(html_s).xpath("//ul[@class='pagination']/li/@class")
     print('正在抓取第%d页'%page_num)
+    print (query[-1])
     if query[-1] != 'next disabled':
+        wait.until(EC.presence_of_element_located((By.XPATH, "//ul[@class='pagination']/li/a")))
         t_Data = parse_page(html_s)
         with open('zjnad_data.csv', 'a') as csvfile:
             writer = csv.writer(csvfile)  # delimiter是控制分割符
             writer.writerows(t_Data)
-            csvfile.close()
-        wait.until(EC.presence_of_element_located((By.XPATH, "//ul[@class='pagination']/li/a")))
-        browser.find_element_by_xpath("//ul[@class='pagination']/li/a").click()
-        wait.until(EC.element_to_be_clickable((By.XPATH,"//ul[@class='pagination']/li[@class='next']/a[@data-page]")))
-
-        continue
+        wait.until(EC.element_to_be_clickable((By.XPATH, "//ul[@class='pagination']/li[@class='next']/a[@data-page]")))
+        browser.find_element_by_xpath("//ul[@class='pagination']/li[@class='next']/a").click()
     else:
-        t_Data.append(parse_page(html_s))
+        t_Data = parse_page(html_s)
+        with open('zjnad_data.csv', 'a') as csvfile:
+            writer = csv.writer(csvfile)  # delimiter是控制分割符
+            writer.writerows(t_Data)
         browser.close()
         break
+
