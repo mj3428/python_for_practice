@@ -1,0 +1,18 @@
+▌pprint
+
+Python 的默认 print 函数可以完成打印作业。但是如果尝试让 Python 打印任何大型的嵌套对象，打印结果会非常难看。
+
+这就要用到 Python 标准库中的 pretty-print 模块了。这个模块能够以易于阅读的格式打印出复杂的结构化对象。参阅：
+
+https://docs.python.org/3/library/pprint.html
+
+这个模块对于任何使用复杂数据结构的 Python 开发者来说都是必备的。
+
+et:
+import requests
+import pprint
+
+url = 'https://randomuser.me/api/?results=1'
+users = requests.get(url).json()
+
+pprint.pprint(users)
