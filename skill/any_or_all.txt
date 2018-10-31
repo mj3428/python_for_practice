@@ -1,0 +1,12 @@
+x = [True, True, False]
+if any(x):
+    print("At least one True") 
+if all(x):
+    print("Not one False")
+if any(x) and not all(x):
+    print("At least one True and one False")
+
+结果输出：At least one True
+         At least one True and one False
+也就是说any是取数列中至少有一个为真的就为真
+all必须所有为真
