@@ -114,3 +114,23 @@ mysqldump -uroot -ppasswd  dbname >db.sql;
 4,导出dbname库test表结构和数据
 mysqldump -uroot -ppasswd dbname test>db.sql;
 (以上均为操作系统命令,不是mysql命令)
+
+
+数据库优化方案？
+https://blog.csdn.net/u013628152/article/details/82184809
+
+
+数据库中char与varchar类型的区别
+在建立数据库表结构的时候，为了给一个String类型的数据定义一个数据库的数据库类型，一般参考的都是char或者varchar，
+这两种选择有时候让人很纠结，今天想总结一下它们两者的区别，明确一下两者的区别。
+
+首先明确的是，char的长度是不可变的，而varchar的长度是可变的，也就是说，
+定义一个char[10]和varchar[10],如果存进去的是‘csdn’,那么char所占的长度依然为10，除了字符‘csdn’外，
+后面跟六个空格，而varchar就立马把长度变为4了，取数据的时候，char类型的要用trim()去掉多余的空格，而varchar是不需要的。
+
+尽管如此，char的存取数度还是要比varchar要快得多，因为其长度固定，方便程序的存储与查找；
+但是char也为此付出的是空间的代价，因为其长度固定，所以难免会有多余的空格占位符占据空间，可谓是以空间换取时间效率，而varchar是以空间效率为首位的。
+
+再者，char的存储方式是，对英文字符（ASCII）占用1个字节，对一个汉字占用两个字节；
+而varchar的存储方式是，对每个英文字符占用2个字节，汉字也占用2个字节。
+两者的存储数据都非unicode的字符数据。
