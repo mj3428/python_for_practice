@@ -100,3 +100,17 @@ SET GLOBAL slow_query_log = 'ON';
 SET GLOBAL long_query_time = X;
 X默认是10s，也就是说超过10s的查询会被记入慢日志。
 
+
+数据库导入导出命令（结构+数据）？
+1,导出dbname库所有表结构
+mysqldump -uroot -ppasswd -d dbname >db.sql;
+
+2,导出dbname库test表结构
+mysqldump -uroot -ppasswd -d dbname test>db.sql;
+
+3,导出dbname库结构和数据
+mysqldump -uroot -ppasswd  dbname >db.sql;
+
+4,导出dbname库test表结构和数据
+mysqldump -uroot -ppasswd dbname test>db.sql;
+(以上均为操作系统命令,不是mysql命令)
