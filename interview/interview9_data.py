@@ -134,3 +134,26 @@ https://blog.csdn.net/u013628152/article/details/82184809
 再者，char的存储方式是，对英文字符（ASCII）占用1个字节，对一个汉字占用两个字节；
 而varchar的存储方式是，对每个英文字符占用2个字节，汉字也占用2个字节。
 两者的存储数据都非unicode的字符数据。
+
+
+Mysql的执行计划
+https://www.cnblogs.com/xinysu/p/7860609.html
+
+
+在对name做了唯一索引前提下，简述以下区别： 
+select * from tb where name = ‘Oldboy-Wupeiqi’ 
+select * from tb where name = ‘Oldboy-Wupeiqi’ limit 1
+在mysql中limit可以实现快速分页，但是如果数据到了几百万时我们的limit必须优化才能有效的合理的实现分页了，否则可能卡死你的服务器哦。
+当一个表数据有几百万的数据的时候成了问题！
+如 * from table limit 0,10 这个没有问题 当 limit 200000,10 的时候数据读取就很慢，可以按照一下方法解决第一页会很快
+当一个数据库表过于庞大，LIMIT offset, length中的offset值过大，则SQL查询语句会非常缓慢，你需增加order by，并且order by字段需要建立索引。
+如果使用子查询去优化LIMIT的话，则子查询必须是连续的，某种意义来讲，子查询不应该有where条件，where会过滤数据，使数据失去连续性。
+如果你查询的记录比较大，并且数据传输量比较大，比如包含了text类型的field，则可以通过建立子查询。
+SELECT id,title,content FROM items WHERE id IN (SELECT id FROM items ORDER BY id limit 900000, 10);
+如果limit语句的offset较大，你可以通过传递pk键值来减小offset = 0，这个主键最好是int类型并且auto_increment
+SELECT * FROM users WHERE uid > 456891 ORDER BY uid LIMIT 0, 10;
+
+这条语句，大意如下:
+SELECT * FROM users WHERE uid >=  (SELECT uid FROM users ORDER BY uid limit 895682, 1) limit 0, 10;
+如果limit的offset值过大，用户也会翻页疲劳，你可以设置一个offset最大的，超过了可以另行处理，一般连续翻页过大，
+用户体验很差，则应该提供更优的用户体验给用户。
