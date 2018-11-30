@@ -143,6 +143,7 @@ https://www.cnblogs.com/xinysu/p/7860609.html
 在对name做了唯一索引前提下，简述以下区别： 
 select * from tb where name = ‘Oldboy-Wupeiqi’ 
 select * from tb where name = ‘Oldboy-Wupeiqi’ limit 1
+
 在mysql中limit可以实现快速分页，但是如果数据到了几百万时我们的limit必须优化才能有效的合理的实现分页了，否则可能卡死你的服务器哦。
 当一个表数据有几百万的数据的时候成了问题！
 如 * from table limit 0,10 这个没有问题 当 limit 200000,10 的时候数据读取就很慢，可以按照一下方法解决第一页会很快
@@ -157,3 +158,5 @@ SELECT * FROM users WHERE uid > 456891 ORDER BY uid LIMIT 0, 10;
 SELECT * FROM users WHERE uid >=  (SELECT uid FROM users ORDER BY uid limit 895682, 1) limit 0, 10;
 如果limit的offset值过大，用户也会翻页疲劳，你可以设置一个offset最大的，超过了可以另行处理，一般连续翻页过大，
 用户体验很差，则应该提供更优的用户体验给用户。
+
+
