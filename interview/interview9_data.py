@@ -162,3 +162,20 @@ SELECT * FROM users WHERE uid >=  (SELECT uid FROM users ORDER BY uid limit 8956
 用户体验很差，则应该提供更优的用户体验给用户。
 
 
+什么是索引合并？
+https://www.cnblogs.com/digdeep/archive/2015/11/18/4975977.html
+
+
+什么是覆盖索引？
+http://www.cnblogs.com/chillsrc/archive/2012/09/04/2671092.html
+
+
+简述数据库读写分离？
+https://www.cnblogs.com/0zcl/p/7141459.html
+
+
+简述数据库分库分表？（水平、垂直）
+水平分表：把一个表拆分按某个字段拆分称多个表 （用户表）
+垂直分表：把表的大字段，并且不是经常查询，单独的放入到一张表去（文章表）
+水平分库方式主要根据用户属性（如地市）拆分物理数据库。（一种常见的方式是将全省划分为几个大区）
+垂直分库方式：根据业务维度和数据的访问量等，进行数据的分离，剥离为多个数据库。（收藏夹和博客的库分开）
