@@ -9,5 +9,7 @@ redis配置文件中下面的参数来控制数据库总数：
 import redis
 r = redis.Redis(host='localhost', port=6379, decode_responses=True)#host是redis主机需要redis服务端和客户端都启动 redis默认端口是6379
 r = redis.Redis(connection_pool=pool)
-r.set('gender', 'male')     # key是"gender" value是"male" 将键值对存入redis缓存
+r.set('food', 'mutton', ex=3) #key是"food" value是"mutton" 将键值对存入redis缓存
+#ex，过期时间（秒） 这里过期时间是3秒，3秒后p，键food的值就变成None
+print(r.get('food'))  #mutton 取出键food对应的值
 ```
