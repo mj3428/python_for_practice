@@ -6,6 +6,7 @@ redis配置文件中下面的参数来控制数据库总数：
 
 ## python操作redis的模块？
 ```
+<font size= 4>
 import redis
 r = redis.Redis(host='localhost', port=6379, decode_responses=True)
 #host是redis主机需要redis服务端和客户端都启动 redis默认端口是6379
