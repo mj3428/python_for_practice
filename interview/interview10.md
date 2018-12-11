@@ -16,3 +16,12 @@ r.set('food', 'mutton', ex=3) #key是"food" value是"mutton" 将键值对存入r
 
 print(r.get('food'))  #mutton 取出键food对应的值
 ```
+
+##  hash， set，zset，list 中存储过多的元素
+以hash为例，原先的正常存取流程是  hget(hashKey, field) ; hset(hashKey, field, value) 
+现在，固定一个桶的数量，比如 10000， 每次存取的时候，先在本地计算field的hash值，模除 10000， 确定了该field落在哪个key上。
+```
+newHashKey  =  hashKey + (*hash*(field) % 10000）;   
+hset (newHashKey, field, value) ;  
+hget(newHashKey, field)
+```
