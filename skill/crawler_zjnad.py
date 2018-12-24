@@ -62,6 +62,8 @@ url = "http://************page=1"
 
 browser.get(url)
 
+#在测试解析的时候如果出现gbk的字样的时候，我们可以通过在with open里加encoding='utf-8'来解决该问题
+
 page_num = 0 #记录页数
 #print (type(t_Data[0])) #返回list
 while True:
