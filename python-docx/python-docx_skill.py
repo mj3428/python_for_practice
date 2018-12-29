@@ -36,6 +36,14 @@ pic = document.add_picture('./pic/poweryun.png', height=Cm(3.43), width=Cm(9.83)
 last_paragraph = document.paragraphs[-1]
 last_paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER  # 图片居中设置
 
+#标题1样式无法被替代就使用如下方法：
+new_heading_style = styles.add_style('New Heading', WD_STYLE_TYPE.PARAGRAPH)
+new_heading_style.base_style = styles['Heading 1']
+font = new_heading_style.font
+font.name = 'Arial'
+font.size = Pt(16)
+self.document.add_paragraph('Header One', style='New Heading')
+
 style_T1 = document.styles.add_style('T1', WD_STYLE_TYPE.PARAGRAPH) #创建T1样式
 style_T1.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER #居中
 document.styles['T1'].font.name = u'宋体' #T1样式使用字体
