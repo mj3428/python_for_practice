@@ -9,7 +9,7 @@ cell_font.size = Pt(10)
 #方法2
 cells[0].text = 'Some text'   #Write the text to the cell
 #Modify the paragraph alignment, 
-first paragraph cells[0].paragraphs[0].paragraph_format.alignment=WD_ALIGN_PARAGRAPH.CENTER
+first paragraph cells[0].paragraphs[0].paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
 #or
 row_cells[0].text = ''
 row_cells[0].paragraphs[0].add_run('Total').bold = True
