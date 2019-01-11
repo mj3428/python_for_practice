@@ -180,5 +180,10 @@ document.add_heading('2.1.1 电压数据体检分析', level=3)
 document.add_paragraph('根据国家标准《GB/T 12325-2008》中规定单相220V供电电压允许偏差为标称系统电压的+7％、-10%。'
                        '由此计算出电压标准上限值为235.4V。从以下分析中可以看出A、B、C三相电压达标率为XX%左右，基本符合标准。')
 document.add_paragraph('1）电压趋势图', level=4)
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_page_break() #插入分页符
+document.add_heading('2）电压数据概率分布', level=4)
+document.add_picture('./pic/I.png', height=Cm(6.6), width=Cm(17.2))
+document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
 
 document.save('./text/test.docx')
