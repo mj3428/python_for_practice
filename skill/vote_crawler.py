@@ -30,8 +30,12 @@ browser = webdriver.Chrome(chrome_options=options)
 #browser.get("http://httpbin.org/ip")
 
 browser.get('http://m.10pinping.com/v/p.php?s=a6290d47f9a18be1?goo36wy&from=groupmessage')
+
 wait = WebDriverWait(browser, 10)
-browser.find_element_by_xpath('//div[@class="stin_content"]/div[@class="stin_content_one"]/span[contains(@title, "日禾")]').click()
+js = "var q=document.documentElement.scrollTop=800"
+browser.execute_script(js)
+
+browser.find_element_by_xpath('//div[@class="stin_content_one"]/span[@dataimg="http://pic.10pinping.com/201811/16/16-11-21-qt4ptn-378337.png"]').click()
 
 #browser.find_element_by_xpath('').click()
 
@@ -74,3 +78,4 @@ except:
 # 退出，清除浏览器缓存
 browser.quit()
 browser.close()
+
