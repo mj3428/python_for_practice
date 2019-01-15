@@ -1,3 +1,7 @@
+
+# 多窗口打开技巧新开一个窗口，通过执行js来新开一个窗口
+#js = 'window.open("https://www.sogou.com");'
+#browser.execute_script(js)
 from selenium import webdriver
 import time
 from urllib import request
