@@ -66,3 +66,5 @@ if __name__ == "__main__":
  
 #其余参考
 #https://blog.csdn.net/qq_42435653/article/details/80653376
+#验证码处理
+#https://www.cnblogs.com/qqandfqr/p/7866650.html
