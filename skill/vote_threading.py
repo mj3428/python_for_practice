@@ -64,3 +64,5 @@ if __name__ == "__main__":
         print """刷票工具 
                 python brush.py IP文件 Get地址: 
  
+#其余参考
+#https://blog.csdn.net/qq_42435653/article/details/80653376
