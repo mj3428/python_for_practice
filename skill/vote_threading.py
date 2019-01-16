@@ -68,3 +68,5 @@ if __name__ == "__main__":
 #https://blog.csdn.net/qq_42435653/article/details/80653376
 #验证码处理
 #https://www.cnblogs.com/qqandfqr/p/7866650.html
+#基于selenium与itchat模块的自动打卡签到
+#https://blog.csdn.net/shuryuu/article/details/82620602
