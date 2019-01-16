@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 '''
-@author: mj
+@author: miaojue
 @contact: major3428@foxmail.com
 @software: pycharm
 @file: test.py
@@ -10,12 +10,11 @@
 '''
 
 from docx import Document
-from docx.shared import Cm, RGBColor, Inches
+from docx.shared import Cm, RGBColor
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from docx.enum.style import WD_STYLE_TYPE
 from docx.shared import Pt
-
-from docx.shared import Inches
+from docx.enum.table import WD_TABLE_ALIGNMENT
 import numpy as np
 import pandas as pd
 from docx.oxml.ns import qn
@@ -34,14 +33,11 @@ hiddenrisk = 120 #隐患数
 now = datetime.datetime.now() #当前时间的datetime
 document = Document('./text/demo.docx')
 
-#开始写
-#for i in range(0,5):
-    #document.add_paragraph('')
-#pic = document.add_picture('./pic/poweryun.png', height=Cm(3.43), width=Cm(9.83))
+
 #南德电气1.82×6.07 电能卫士3.43×9.83
 #last_paragraph = document.paragraphs[-1]
 #last_paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER  # 图片居中设置
-
+#开始写入
 style_T1 = document.styles.add_style('T1', WD_STYLE_TYPE.PARAGRAPH) #创建T1样式
 style_T1.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER #居中
 document.styles['T1'].font.name = u'宋体' #T1样式使用字体
@@ -79,7 +75,7 @@ document.paragraphs[14].add_run(text=now.strftime('%Y')+'年 '+now.strftime('%m'
 #document.add_page_break() #插入分页符
 last = document.paragraphs[-1]
 last.style = 'Heading 1'
-last.add_run(text='一、监测概况及问题')
+last.add_run(text='一、监测概况及结论')
 document.add_heading('1.1电能参数体检结果', level=2)
 result = ['—', '↑', '↑', '↑', '—', '↑', '—']
 max_value = ['243.9V', '10.1%', '98.6%', '730A', '0.96', '113.5%', '11.9%']
@@ -90,15 +86,15 @@ records = (('电压数据', result[0], max_value[0], '205~235V', '《GB/T 12325-
           ('功率因数', result[4], max_value[4], '0.9~1.0', '《JGJ16-2008》'),
           ('负荷率', result[5], max_value[5], '＜额定容量85%', '《JGJ16-2008》'),
           ('三相电流不平衡度', result[6], max_value[6], '＜15%', '《GB/T 1094-2013》'))
-table = document.add_table(rows=1, cols=5)
-hdr_cells = table.rows[0].cells
+table1 = document.add_table(rows=1, cols=5)
+hdr_cells = table1.rows[0].cells
 hdr_cells[0].text = '体检项目'
 hdr_cells[1].text = '体检结果'
 hdr_cells[2].text = '体检值(MAX)'
 hdr_cells[3].text = '参考值'
 hdr_cells[4].text = '参考标准'
 for sty, res, mv, ran, txt in records:
-    row_cells = table.add_row().cells
+    row_cells = table1.add_row().cells
     row_cells[0].text = sty
     row_cells[1].text = res
     row_cells[2].text = mv
@@ -107,18 +103,18 @@ for sty, res, mv, ran, txt in records:
 
 widths = [3.99, 2.64, 3.15, 3.53, 4.11]
 for i in range(0, 5):
-    for cell in table.columns[i].cells:
+    for cell in table1.columns[i].cells:
         cell.width = Cm(widths[i])
 
 for i in range(0, 8):
     for j in range(0, 5):
-        cell = table.cell(i, j)
+        cell = table1.cell(i, j)
         cell_font = cell.paragraphs[0].runs[0].font
         cell_font.color.rgb = RGBColor(0x36, 0x5f, 0x91)
         cell.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-        cell.paragraphs[0].paragraph_format.left_indent = -Cm(1.0)
+        cell.paragraphs[0].paragraph_format.left_indent = -Cm(0.74)
 #cell.font.color.rgb = RGBColor(0x36, 0x5f, 0x91)
-table.style = 'ListCLF'
+table1.style = 'ListCLF'
 note = document.add_paragraph("注：（1）‘", style='N1')
 fine = note.add_run("—")
 fine.bold = True
@@ -159,8 +155,10 @@ document.add_paragraph().add_run('三相电流不平衡体检结论：').bold = 
 document.paragraphs[-1].add_run('三相电流不平衡度均在15%以内，概率为XX%，' 
                                 '在XX月XX号XX分时发生过一次23%的情况，此时为用电负荷大量下降，' 
                                 '属于小电流短暂超标，三相电流不平衡度达标。')
-document.add_paragraph().add_run('注：本报告分析数据来源为XXXX年XX月XX日到XXXX年XX月XX日的监测数据。' 
-                                 '共采集了XX次（正常情况下15分钟为一个周期点，异常情况即时事件推送）。').bold = True
+attention = document.add_paragraph(style='N1').add_run('注：分析数据来源为2018年12月1日到2018年12月31日，'
+                                 '共采集了2962次（正常情况15分钟为一个周期点，异常时即时推送）')
+attention.bold = True
+attention.font.size = Pt(7.5)
 document.add_page_break() #插入分页符
 document.add_heading('1.3体检不正常项目说明', level=2)
 document.add_heading('1.3.1谐波电压', level=3)
@@ -178,12 +176,123 @@ document.add_paragraph('数据点为%s变压器，变压器容量%dKVA。'% (tra
 document.add_heading('2.1电压数据', level=2)
 document.add_heading('2.1.1 电压数据体检分析', level=3)
 document.add_paragraph('根据国家标准《GB/T 12325-2008》中规定单相220V供电电压允许偏差为标称系统电压的+7％、-10%。'
-                       '由此计算出电压标准上限值为235.4V。从以下分析中可以看出A、B、C三相电压达标率为XX%左右，基本符合标准。')
-document.add_paragraph('1）电压趋势图', level=4)
+                       '由此计算出电压标准上限值为235.4V。'
+                       '从以下分析中可以看出A、B、C三相电压达标率为XX%左右，基本符合标准。',style='Normal')
+document.add_heading('1）电压趋势图', level=4)
+document.add_paragraph('XXX时段内监测数据，标准限值198V~235V，'
+                       '下图中最大值XXX，最小值XXX，用户可在平台内自行查看，一周内每日显示96个数据点，一月内显示每日平均值，'
+                       '可根据此图(该图使用2小时均值聚合而成)看出该时段内电压变化状态，用来分析用电情况。', style='Normal')
+document.add_picture('./pic/U_trend.png', height=Cm(9.91), width=Cm(17.2))
+document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74) #五号一个字符长度0.371厘米 缩进了两个字符
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('图2-1  电压趋势图')
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 document.add_page_break() #插入分页符
 document.add_heading('2）电压数据概率分布', level=4)
-document.add_picture('./pic/I.png', height=Cm(6.6), width=Cm(17.2))
+document.add_picture('./pic/U.png', height=Cm(6.6), width=Cm(17.2)) #电压图17.2*6.6
 document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('图2-2 电压值概率分布图')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_heading('3）电压数据合格率', level=4)
+document.add_paragraph('取导出数据中各相电压实际超出标准235.4V次数，与总次数对比分析得出该合格率，'
+                       '此分析结果可用于查看该时段内各相电压在标准范围的占比，来判断该时段内的电压是否合格。', style='Normal')
+document.add_picture('./pic/Upie.png', height=Cm(5.71), width=Cm(17.21)) #环形图17.1*5.71
+document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('图2-3 电压合格率环形图')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('--------------------------------------------------------------------', style='Normal')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
+document.add_heading('2.1.2 电压释义', level=3)
+document.add_heading('1）电压的定义', level=4)
+document.add_paragraph('电压（voltage），也称作电势差或电位差，是衡量单位电荷在静电场中由于电势不同所产生的能量差的物理量。'
+                       '其大小等于单位正电荷因受电场力作用从A点移动到B点所做的功，'
+                       '电压的方向规定为从高电位指向低电位的方向。', style='Normal')
+document.add_page_break()
+document.add_heading('2）电压的算法', level=4)
+p = document.add_paragraph('线电压算法:', style='Normal')
+r = p.add_run()
+r.add_picture('./pic/U_line.png', width=Cm(3.36), height=Cm(1.19))
+p = document.add_paragraph('相电压算法:', style='Normal')
+r = p.add_run()
+r.add_picture('./pic/U_phase.png', width=Cm(1.80), height=Cm(1.19))
+document.add_heading('3）参考标准', level=4)
+document.add_paragraph('参考《GB/T 12325-2003、2008》电能质量供电电压偏差，'
+                       '单相220V供电电压允许偏差为标称系统电压的+7%、-10%。', style='Normal')
+document.add_paragraph('--------------------------------------------------------------------', style='Normal')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
+document.add_heading('2.2 谐波电压数据', level=2)
+document.add_heading('2.2.1 谐波电压体检数据分析小结', level=3)
+document.add_paragraph('国家标准《GB/T14549-1993》中相电压最大谐波畸变率限值为5%，从以下分析中可以看出A、B、C各相电压总谐'
+                       '波畸变率已明显超出国家5%标准，最大值已达11.5%，电网电压谐波含量需要治理。', style='Normal')
+document.add_heading('1）谐波电压趋势图', level=4)
+document.add_paragraph('XX月份时段内监测数据，标准限值5%，下图中最大值11.5%，最小值4.2%，用户可在平台内自行查看，'
+                       '一周内每日显示96个数据点，一月内显示每日平均值，可根据此图(该图使用2小时均值聚合而成)看出该时段内谐波电压变'
+                       '化状态，用来分析谐波电压发生在哪个时段内。', style='Normal')
+document.add_picture('./pic/UTHD_trend.png', height=Cm(9.91), width=Cm(17.2))
+document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('图2-4  谐波电压含量趋势图')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_heading('2）谐波电压数据详情', level=4)
+document.add_paragraph('根据导出数据中各相电压谐波含量发生次数分析得出该分布图，标准限值5%。此分析结果可用于观察该时段内电压谐波'
+                       '含量主要分布在多少范围内，并可以看出该范围内谐波电压含量发生的概率，以及超出标准的概率。', style='Normal')
+document.add_picture('./pic/U_THD.png', height=Cm(6.6), width=Cm(17.2))
+document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('图2-5  谐波电压含量概率分布图')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_heading('3）谐波电压含量合格率', level=4)
+document.add_paragraph('取导出数据中各相谐波电压含量实际超出5%标准次数，与总次数对比分析得出该合格率，此分析结果可用于查看该时段内各'
+                       '相谐波电压含量在标准范围的占比，来判断该时段内的电压是否合格。', style='Normal')
+document.add_picture('./pic/UTHD_pie.png', height=Cm(5.74), width=Cm(17.21))
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('图2-6 谐波电压含量合格率环形图')
+document.add_paragraph('--------------------------------------------------------------------', style='Normal')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
+document.add_page_break()
+document.add_heading('2.2.2 谐波电压释义', level=3)
+document.add_heading('1）谐波电压定义', level=4)
+document.add_paragraph('谐波电压是谐波电流流过线路阻抗时产生的，对于特定的配电系统，谐波电流与谐波电压之间的关系如下（欧姆定律）：'
+                       '谐波电压=谐波电流*电网阻抗。', style='Normal')
+document.add_heading('2）电压总谐波含量算法', level=4)
+document.add_picture('./pic/UTHD_percent.png', height=Cm(1.2), width=Cm(3.38))
+document.add_paragraph('式中：Uh——第h次谐波电压（方根均值）；\n\t\t  U1——基波电压（方根均值）；', style='Normal')
+document.add_heading('3）参考标准', level=4)
+document.add_paragraph('依据《GB/T14549-1993》电能质量公用电网谐波国家标准进行。\n\t'
+                       '国标《GB/T14549-1993》中公用电网谐波电压（相电压）谐波含量限值：', style='Normal')
+table2 = document.add_table(rows=1, cols=4)
+hdr_cells = table2.rows[0].cells
+hdr_cells[0].text = '电网标称电压kV'
+hdr_cells[1].text = '电压总谐波畸变率 %'
+hdr_cells[2].text = '各次谐波电压含有率 ％'
+hdr_cells[3].text = ''
+contents = (('', '', '奇次', '偶次'),
+           ('0.38', '5.0', '4.0', '2.0'))
+for c1, c2, c3, c4 in contents:
+    row_cells = table2.add_row().cells
+    row_cells[0].text = c1
+    row_cells[1].text = c2
+    row_cells[2].text = c3
+    row_cells[3].text = c4
+
+table2widths = [3.07, 3.07, 2.23, 2.23]
+for i in range(0, 4):
+    for cell in table2.columns[i].cells:
+        cell.width = Cm(table2widths[i])
+
+a = table2.cell(0, 0)
+b = table2.cell(1, 0)
+c = table2.cell(0, 1)
+d = table2.cell(1, 1)
+e = table2.cell(0, 2)
+f = table2.cell(0, 3)
+a.merge(b)
+c.merge(d)
+e.merge(f)
+table2.style = 'ListCLF2'
+table2.alignment = WD_TABLE_ALIGNMENT.CENTER
 
 document.save('./text/test.docx')
+
