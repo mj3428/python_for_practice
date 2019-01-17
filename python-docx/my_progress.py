@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 '''
-@author: miaojue
+@author: miaoj
 @contact: major3428@foxmail.com
 @software: pycharm
 @file: test.py
@@ -247,8 +247,10 @@ document.add_heading('3）谐波电压含量合格率', level=4)
 document.add_paragraph('取导出数据中各相谐波电压含量实际超出5%标准次数，与总次数对比分析得出该合格率，此分析结果可用于查看该时段内各'
                        '相谐波电压含量在标准范围的占比，来判断该时段内的电压是否合格。', style='Normal')
 document.add_picture('./pic/UTHD_pie.png', height=Cm(5.74), width=Cm(17.21))
+document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 document.add_paragraph('图2-6 谐波电压含量合格率环形图')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 document.add_paragraph('--------------------------------------------------------------------', style='Normal')
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
 document.add_page_break()
@@ -263,19 +265,19 @@ document.add_heading('3）参考标准', level=4)
 document.add_paragraph('依据《GB/T14549-1993》电能质量公用电网谐波国家标准进行。\n\t'
                        '国标《GB/T14549-1993》中公用电网谐波电压（相电压）谐波含量限值：', style='Normal')
 table2 = document.add_table(rows=1, cols=4)
-hdr_cells = table2.rows[0].cells
-hdr_cells[0].text = '电网标称电压kV'
-hdr_cells[1].text = '电压总谐波畸变率 %'
-hdr_cells[2].text = '各次谐波电压含有率 ％'
-hdr_cells[3].text = ''
-contents = (('', '', '奇次', '偶次'),
+hdr_cells2 = table2.rows[0].cells
+hdr_cells2[0].text = '电网标称电压\t(kV)'
+hdr_cells2[1].text = '电压总谐波畸变率(%)'
+hdr_cells2[2].text = '各次谐波电压含有率(%)'
+
+contents2 = (('奇次', '偶次'),
            ('0.38', '5.0', '4.0', '2.0'))
-for c1, c2, c3, c4 in contents:
-    row_cells = table2.add_row().cells
-    row_cells[0].text = c1
-    row_cells[1].text = c2
-    row_cells[2].text = c3
-    row_cells[3].text = c4
+addr = table2.add_row().cells
+addr[2].text = contents2[0][0]
+addr[3].text = contents2[0][1]
+addr1 = table2.add_row().cells
+for j in range(0, 4):
+    addr1[j].text = contents2[1][j]
 
 table2widths = [3.07, 3.07, 2.23, 2.23]
 for i in range(0, 4):
@@ -293,6 +295,132 @@ c.merge(d)
 e.merge(f)
 table2.style = 'ListCLF2'
 table2.alignment = WD_TABLE_ALIGNMENT.CENTER
+document.add_paragraph('表2-1 《GB/T14549-1993》中公用电网谐波电压（相电压）谐波含量限值')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('--------------------------------------------------------------------', style='Normal')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
+document.add_heading('2.3 电流数据', level=2)
+document.add_heading('2.3.1 电流数据体检分析小结', level=3)
+document.add_paragraph('该变压器容量为XXXKVA，则二次侧额定电流约为XXXA。监测时间段三相电流基本处于超载状态，最大电流为 '
+                       'A相为XXXA，B相为XXXA，C相为XXXA，最高时超出额定电流XXX%左右。', style='Normal')
+document.add_page_break()
+document.add_heading('1）电流趋势图', level=4)
+document.add_paragraph(' 12月份时段内监测数据，标准限值XXA（变压器额定电流），下图中最大值XXA，最小值XXA，用户可在'
+                       '平台内自行查看，一周内每日显示96个数据点，一月内显示每日平均值，可根据此图(该图使用2小时均值聚合而成)'
+                       '看出该时段内电流变化状态，用来分析用电情况。', style='Normal')
+document.add_picture('./pic/I_trend.png', height=Cm(9.91), width=Cm(17.2))
+document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('图2-7 电流趋势图')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_heading('2）电流数据详情', level=4)
+document.add_paragraph('根据导出数据中各相电流发生次数分析得出该概率图，标准限值454.7A。此分析结果可用于观察该时段内电流主要分'
+                       '布在多少范围内，并可以看出该范围内电流值发生的概率，以及超出标准的概率。', style='Normal')
+document.add_picture('./pic/I.png', height=Cm(6.6), width=Cm(17.2))
+document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('图2-8 电流概率分布图')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_page_break()
+document.add_heading('3）电流数据合格率', level=4)
+document.add_paragraph('取导出数据中各相电流实际超出454.7A次数，与总次数对比分析得出该合格率，此分析结果可用于查看该时段内各相电'
+                       '流在标准范围内、外的占比，来判断该时段内的电流数据是否合格。', style='Normal')
+document.add_picture('./pic/I_Pie.png', height=Cm(5.74), width=Cm(17.21))
+document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('图2-9 电流合格率环形图')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('--------------------------------------------------------------------', style='Normal')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
+document.add_heading('2.3.2 电流释义',level=3)
+document.add_heading('1）电流定义', level=4)
+document.add_paragraph('单位时间里通过导体任一横截面的电量叫做电流强度，简称电流。', style='Normal')
+document.add_heading('2）电流算法', level=4)
+r0 = document.add_paragraph('电流算法：', style='Normal').add_run()
+r0.add_picture('./pic/I_format.png', width=Cm(3.35), height=Cm(1.27))
+document.add_heading('3) 参考标准', level=4)
+document.add_paragraph('根据国标JGJ16-2008《民用建筑电气设计手册》中4.3.2要求：配变压器长期工作电流不宜大于变压器额'
+                       '定电流的85%。', style='Normal')
+document.add_paragraph('--------------------------------------------------------------------', style='Normal')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
+document.add_heading('2.4 谐波电流数据', level=2)
+document.add_heading('2.4.1 谐波电流体检数据分析小结', level=3)
+document.add_paragraph('从以下分析中可以看出三相各分次谐波电流值，根据‘国标《GB/T14549-1993》注入公共连接点的谐波电流允许值’中'
+                       '规定，该电网谐波电流X次、7X次、X次、X次、X次、XX次、X次、X次均有超出国家标准范围，'
+                       '以其中X次、X次谐波为主，X次最大值为216.7A，X次最大值为195.5A，'
+                       '电流谐波不达标，需要进行谐波治理。', style='Normal')
+document.add_page_break()
+document.add_heading('1）谐波电流趋势图', level=4)
+document.add_paragraph('12月份时段内监测数据，下图中最大值71.6A，最小值1A，用户可在平台内自行查看，一周内每日显示96个数据点，'
+                       '一月内显示每日平均值，可根据此图(该图使用2小时均值聚合而成)看出该时段内谐波电流变化状态，'
+                       '用来分析电网谐波含量情况。', style='Normal')
+document.add_picture('./pic/ITHD_trend.png',  height=Cm(9.91), width=Cm(17.2))
+document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('图2-10 总谐波电流值趋势图')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_heading('2）谐波电流数据详情', level=4)
+document.add_paragraph('取导出数据中每相各分次电流谐波最大值与平均值分析得出如下两图。此分析结果可用于观察该时段'
+                       '内各分次谐波电流值，主要谐波电流为几次，并可以根据国标《GB/T14549-1993》看出该'
+                       '范围内各分次谐波电流值是否超出标准，以判断谐波电流是否合格。', style='Normal')
+document.add_picture('./pic/HVmax.png', height=Cm(7.4), width=Cm(16.7))
+document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('图2-11 各分次谐波电流最大值')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_page_break()
+document.add_picture('./pic/HVmean.png', height=Cm(7.4), width=Cm(16.7))
+document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('图2-12 各分次谐波电流平均值')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_heading('各相各分次谐波电流值合格率', level=4)
+document.add_paragraph('取导出数据中各相电流分次谐波实际超出标准次数，与总次数对比分析得出该合格率，此分析结果可用于查看该时段'
+                       '内各相电流谐波含量在标准范围的占比，来判断该时段内的电流谐波是否合格。', style='Normal')
+document.add_picture('./pic/HVqrate.png', height=Cm(7.4), width=Cm(16.7))
+document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('图2-13 各分次谐波电流合格率图')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('--------------------------------------------------------------------', style='Normal')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
+document.add_page_break()
+document.add_heading('2.4.2 谐波电流释义', level=3)
+document.add_heading('1）谐波电流定义', level=4)
+document.add_paragraph('供电系统谐波的定义是对周期性非正弦电量进行傅立叶级数分解，除了得到与电网基波频率相同的分量，还得到一系列'
+                       '大于电网基波频率的分量，这部分电量称为谐波。', style='Normal')
+document.add_heading('2）电流总谐波含量算法', level=4)
+r1 = document.add_paragraph(style='Normal').add_run()
+r1.add_picture('./pic/thdi_format.png', width=Cm(3.3), height=Cm(1.2))
+document.add_heading('3）参考标准', level=4)
+document.add_paragraph('依据《GB/T14549-1993》电能质量公用电网谐波国家标准进行。\n\t'
+                       '国标《GB/T14549-1993》中注入公共连接点的谐波电流允许值：',style='Normal')
+table3 = document.add_table(rows=1, cols=14)
+hdr_cells3 = table3.rows[0].cells
+thead3 = ('标准电压（KV）', '基准短路容量（MVA）', '谐波次数及谐波电流允许值（A）')
+for i in range(0, 14):
+    hdr_cells3[0].text = thead3[0]
+    hdr_cells3[1].text = thead3[1]
+    hdr_cells3[2].text = thead3[2]
+tr3_1 = ('', '', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23', '25')
+tr3_2 = ('0.38', '10', '62', '62', '44', '21', '28', '24', '12', '18', '16', '8.9', '14', '12')
+table3_add1 = table3.add_row().cells
+for i in range(2, 14):
+    table3_add1[i].text = tr3_1[i]
+table3_add2 = table3.add_row().cells
+for i in range(0, 14):
+    table3_add2[i].text = tr3_2[i]
+g = table3.cell(0, 2)
+h = table3.cell(0, 13)
+i = table3.cell(0, 0)
+j = table3.cell(1, 0)
+k = table3.cell(0, 1)
+l = table3.cell(1, 1)
+g.merge(h)
+i.merge(j)
+k.merge(l)
+
+table3.style = 'ListCLF2'
 
 document.save('./text/test.docx')
 
