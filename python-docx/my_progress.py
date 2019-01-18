@@ -269,16 +269,24 @@ hdr_cells2 = table2.rows[0].cells
 hdr_cells2[0].text = '电网标称电压\t(kV)'
 hdr_cells2[1].text = '电压总谐波畸变率(%)'
 hdr_cells2[2].text = '各次谐波电压含有率(%)'
+for i in range(0, 3):
+    hdr_cells2[i].paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    hdr_cells2[i].paragraphs[0].paragraph_format.left_indent = -Cm(0.74)
 
 contents2 = (('奇次', '偶次'),
            ('0.38', '5.0', '4.0', '2.0'))
 addr = table2.add_row().cells
 addr[2].text = contents2[0][0]
+addr[2].paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+addr[2].paragraphs[0].paragraph_format.left_indent = -Cm(0.74)
 addr[3].text = contents2[0][1]
+addr[3].paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+addr[3].paragraphs[0].paragraph_format.left_indent = -Cm(0.74)
 addr1 = table2.add_row().cells
 for j in range(0, 4):
     addr1[j].text = contents2[1][j]
-
+    addr1[j].paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    addr1[j].paragraphs[0].paragraph_format.left_indent = -Cm(0.74)
 table2widths = [3.07, 3.07, 2.23, 2.23]
 for i in range(0, 4):
     for cell in table2.columns[i].cells:
@@ -402,14 +410,21 @@ for i in range(0, 14):
     hdr_cells3[0].text = thead3[0]
     hdr_cells3[1].text = thead3[1]
     hdr_cells3[2].text = thead3[2]
+for i in range(0, 3):
+    hdr_cells3[i].paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    hdr_cells3[i].paragraphs[0].paragraph_format.left_indent = -Cm(0.74)
 tr3_1 = ('', '', '3', '5', '7', '9', '11', '13', '15', '17', '19', '21', '23', '25')
 tr3_2 = ('0.38', '10', '62', '62', '44', '21', '28', '24', '12', '18', '16', '8.9', '14', '12')
 table3_add1 = table3.add_row().cells
 for i in range(2, 14):
     table3_add1[i].text = tr3_1[i]
+    table3_add1[i].paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    table3_add1[i].paragraphs[0].paragraph_format.left_indent = -Cm(0.74)
 table3_add2 = table3.add_row().cells
 for i in range(0, 14):
     table3_add2[i].text = tr3_2[i]
+    table3_add2[i].paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    table3_add2[i].paragraphs[0].paragraph_format.left_indent = -Cm(0.74)
 g = table3.cell(0, 2)
 h = table3.cell(0, 13)
 i = table3.cell(0, 0)
@@ -419,8 +434,12 @@ l = table3.cell(1, 1)
 g.merge(h)
 i.merge(j)
 k.merge(l)
-
+for i in range(0, 2):
+    for cell in table3.columns[i].cells:
+        cell.width = Cm(2.8)
+for i in range(2, 14):
+    for cell in table3.columns[i].cells:
+        cell.width = Cm(1.0)
 table3.style = 'ListCLF2'
 
 document.save('./text/test.docx')
-
