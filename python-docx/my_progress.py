@@ -182,7 +182,7 @@ document.add_heading('1）电压趋势图', level=4)
 document.add_paragraph('XXX时段内监测数据，标准限值198V~235V，'
                        '下图中最大值XXX，最小值XXX，用户可在平台内自行查看，一周内每日显示96个数据点，一月内显示每日平均值，'
                        '可根据此图(该图使用2小时均值聚合而成)看出该时段内电压变化状态，用来分析用电情况。', style='Normal')
-document.add_picture('./pic/U_trend.png', height=Cm(9.91), width=Cm(17.2))
+document.add_picture('./pic/U_trend.png', height=Cm(9.2), width=Cm(17.2))
 document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74) #五号一个字符长度0.371厘米 缩进了两个字符
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 document.add_paragraph('图2-1  电压趋势图')
@@ -230,7 +230,7 @@ document.add_heading('1）谐波电压趋势图', level=4)
 document.add_paragraph('XX月份时段内监测数据，标准限值5%，下图中最大值11.5%，最小值4.2%，用户可在平台内自行查看，'
                        '一周内每日显示96个数据点，一月内显示每日平均值，可根据此图(该图使用2小时均值聚合而成)看出该时段内谐波电压变'
                        '化状态，用来分析谐波电压发生在哪个时段内。', style='Normal')
-document.add_picture('./pic/UTHD_trend.png', height=Cm(9.91), width=Cm(17.2))
+document.add_picture('./pic/UTHD_trend.png', height=Cm(9.2), width=Cm(17.2))
 document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 document.add_paragraph('图2-4  谐波电压含量趋势图')
@@ -316,7 +316,7 @@ document.add_heading('1）电流趋势图', level=4)
 document.add_paragraph(' 12月份时段内监测数据，标准限值XXA（变压器额定电流），下图中最大值XXA，最小值XXA，用户可在'
                        '平台内自行查看，一周内每日显示96个数据点，一月内显示每日平均值，可根据此图(该图使用2小时均值聚合而成)'
                        '看出该时段内电流变化状态，用来分析用电情况。', style='Normal')
-document.add_picture('./pic/I_trend.png', height=Cm(9.91), width=Cm(17.2))
+document.add_picture('./pic/I_trend.png', height=Cm(9.2), width=Cm(17.2))
 document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 document.add_paragraph('图2-7 电流趋势图')
@@ -362,7 +362,7 @@ document.add_heading('1）谐波电流趋势图', level=4)
 document.add_paragraph('12月份时段内监测数据，下图中最大值71.6A，最小值1A，用户可在平台内自行查看，一周内每日显示96个数据点，'
                        '一月内显示每日平均值，可根据此图(该图使用2小时均值聚合而成)看出该时段内谐波电流变化状态，'
                        '用来分析电网谐波含量情况。', style='Normal')
-document.add_picture('./pic/ITHD_trend.png',  height=Cm(9.91), width=Cm(17.2))
+document.add_picture('./pic/ITHD_trend.png',  height=Cm(9.2), width=Cm(17.2))
 document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 document.add_paragraph('图2-10 总谐波电流值趋势图')
@@ -441,5 +441,133 @@ for i in range(2, 14):
     for cell in table3.columns[i].cells:
         cell.width = Cm(1.0)
 table3.style = 'ListCLF2'
+document.add_paragraph('表2-2 《GB/T14549-1993》中注入公共连接点的谐波电流允许值')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+r2 = document.add_paragraph('由于PCC点的短路容量不同于假定基准最小短路容量,应按照国标附录B进行换'
+                            '算,换算公式如下：\n\t\t', style='Normal').add_run()
+r2.add_picture('./pic/thdi_trans.png', height=Cm(1.25), width=Cm(2.11))
+document.add_paragraph('式中∶Sk1:公共连接点的最小短路容量,MVA；\n\t\t  Sk2:基准短路容量,MVA；\n\t\t  Ihp:表2中的第h次谐波'
+                       '电流允许值,A；\n\t\t  Ih:短路容量为Sk1时的第h次谐波电流允许值,A。', style='Normal')
+document.add_paragraph('--------------------------------------------------------------------', style='Normal')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
+document.add_heading('2.5 功率因数数据', level=2)
+document.add_heading('2.5.1 总功率因数体检数据分析小结', level=3)
+document.add_paragraph('根据国标《JGJ16-2008》中要求，功率因数不宜低于0.9。从以下分析中可以看出功率因数0.9到1的占比为XXX%%，'
+                       '0.9以下占比XXX%%，基本符合要求，应到加强对功率因数的巡查监管，避免可能带来的功率因数罚款。', style='Normal')
+document.add_page_break()
+document.add_heading('1）总功率因数趋势图', level=4)
+document.add_paragraph('12月份时段内监测数据，标准限值0.9，下图中最大值XXX，最小值XXX，用户可在平台内自行查看，'
+                       '一周内每日显示96个数据点，一月内显示每日平均值，可根据此图(该图使用2小时均值聚合而成)看出该时段内功率因数变'
+                       '化状态，用来分析功率因数是否达标。')
+document.add_picture('./pic/PF_trend.png', height=Cm(9.1), width=Cm(17.2))
+document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('图2-14 总功率因数趋势图')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_heading('2）总功率因数体检数据详情', level=4)
+document.add_paragraph('根据导出数据中功率因数发生次数和该时段内超出0.9次数与总次数的对比进行分析。此分析结果可用于观察该时段内功'
+                    '率因数主要分布在多少范围内，并可以看出该范围内功率因数发生的概率，以及超出标准的概率，'
+                    '可用于分析该时段内功率因数在标准范围内、外的占比，来判断该时段内的功率因数是否合格。', style='Normal')
+document.add_picture('./pic/PF.png', height=Cm(6.3), width=Cm(17.2))
+document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('图2-15 总功率因数分析图')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('--------------------------------------------------------------------', style='Normal')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
+document.add_page_break()
+document.add_heading('2.5.2功率因数释义', level=3)
+document.add_heading('1）功率因数定义', level=4)
+document.add_paragraph('所谓功率因数就是有功功率与视在功率的比值，通俗地讲就是用'
+                       '电设备的实际出力与用电设备的容量的比值，又简称为力率。', style='Normal')
+document.add_heading('2）功率因数的算法', level=4)
+document.add_paragraph('在交流电路中，电压与电流之间的相位差(Φ)的余弦叫做功率因数，用符号cosΦ表示，在数值上，功率因数是有功功率和'
+                       '视在功率的比值，即cosΦ=P/S，功率因数表是指测量交流电路中有功功率'
+                       '与视在功率的比值或测量电压、电流间相位角余弦的电表；', style='Normal')
+document.add_picture('./pic/PF_format.png', height=Cm(2.54), width=Cm(8.9))
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_heading('3）参考标准', level=4)
+document.add_paragraph('（1）国标《JGJ16-2008》民用建筑电气设计规范中第3.6.2条规定：10（6）kV及以下无功补偿宜在配电变压器低压侧'
+                       '集中补偿，且功率因数不宜低于0.9。高压侧的功率因数指示应符合当地供电部门的规定。'
+                       '\n\t（2）现行的《国家电网公司电力系统电压质量和无功电力管理规定》规定，100kVA及以上10kV供电的电力用户在'
+                       '用户在用户高峰负荷时变压器高压侧功率因数不宜低于0.95；其他电力用户功率因数不宜低于0.9。', style='Normal')
+document.add_paragraph('--------------------------------------------------------------------', style='Normal')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
+document.add_heading('2.6 负荷率数据', level=2)
+document.add_heading('2.6.1 负荷率体检数据分析小结', level=3)
+document.add_paragraph('从以下分析中可以看出最大负荷率在XXX，负荷率已达XXX左右，属于二级超载，基本是长时间处于超载状态，'
+                       '长期在此状态工作可能会发生安全隐患，建议进行整改。', style='Normal')
+document.add_heading('1）负荷率趋势图', level=4)
+document.add_paragraph('12月份时段内监测数据，标准限值85%，下图中最大值XX，最小值XX%，用户可在平台内自行查看，一周内每日'
+                       '显示96个数据点，一月内显示每日平均值，可根据此图(该图使用2小时均值聚合而成)看'
+                       '出该时段内负荷率变化状态，用来分析用电情况。', style='Normal')
+document.add_page_break()
+document.add_picture('./pic/LF_trend.png',  height=Cm(9.1), width=Cm(17.2))
+document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('图2-16 变压器负荷率趋势图')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_heading('2）负荷率数据详情', level=4)
+document.add_paragraph('根据导出数据中负荷率发生次数和该时段内超出85%次数与总次数的对比进行分析。此分析结果可用于观察该时'
+                       '段内变压器负荷率主要分布在多少范围，并可以看出该范围内负荷率发生的概率，以及超出标准的概率，可用于分析该'
+                       '时段内负荷率在标准范围内、外的占比，来判断该时段内的负荷率是否合格。', style='Normal')
+document.add_picture('./pic/LF.png', height=Cm(6.3), width=Cm(17.0))
+document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('图2-17 负荷率数据分析图')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('--------------------------------------------------------------------', style='Normal')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
+document.add_heading('2.6.2 变压器负荷率释义', level=3)
+document.add_heading('1）负荷率定义', level=4)
+document.add_paragraph('一定时间内，变压器平均输出的视在功率与变压器额定容量之比称之为负荷率。', style='Normal')
+document.add_heading('2）负荷率的算法', level=4)
+r3 = document.add_paragraph('负荷率 = S/变压器容量 * 100%；\n\t视在功率', style='Normal').add_run()
+r3.add_picture('./pic/S_format.png', height=Cm(0.69), width=Cm(2.76))
+document.add_paragraph('总有功功率P = U*I*cosφ\n\t总无功功率Q = U*I*sinφ', style='Normal')
+document.add_heading('3）参考标准', level=4)
+document.add_paragraph('根据国标JGJ16-2008《民用建筑电气设计手册》中4.3.2要求：配电变压器的长期工'
+                       '作负载率不宜大于85%。', style='Normal')
+document.add_heading('2.7 三相电流不平衡数据', level=2)
+document.add_heading('2.7.1三相电流不平衡体检数据分析小结', level=3)
+document.add_paragraph('从以下分析可以看出三相电流不平衡度最大为XX%，结合电流趋势图可以看出此时负载未全部开启，'
+                       '属于小电流超标，但在大量负载启用时电流不平衡度也可达XX%，主要是因为C相电流一直高于其他两相，'
+                       '导致电流不平衡度被放大，三相电流不平衡度已超出国家标准15%限值，建议对其进行治理。', style='Normal')
+document.add_heading('1）三相电流不平衡趋势图', level=4)
+document.add_paragraph('XXX时段内监测数据，标准限值15%，下图中最大值145.6%，最小值60.4%，用户可在平台内自行查看，'
+                       '一周内每日显示96个数据点，一月内显示每日平均值，可根据此图(该图使用2小时均值聚合而成)'
+                       '看出该时段内三相电流不平衡状态，用来分析各相用电情况。', style='Normal')
+document.add_picture('./pic/Unb_trend.png', height=Cm(8.93), width=Cm(16.33))
+document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('图2-18 三相电流不平衡趋势图')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_page_break()
+document.add_heading('3）三相电流不平衡数据详情', level=4)
+document.add_paragraph('根据导出数据中三相不平衡度发生次数和该时段内超出15%次数与总次数的对比进行分析。此分析结果可用于观察该'
+                       '时段内变压器三相电流平衡度主要分布在多少范围，并可以看出该范围内发生的概率，以及超出标准的概率，'
+                       '可用于分析该时段内三相不平衡在标准范围内、外的占比，来判断该时段内的三相电流平衡度是否合格。', style='Normal')
+document.add_picture('./pic/Unb.png', height=Cm(6.57), width=Cm(16.9))
+document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('图2-19 三相电流不平衡数据分析')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_paragraph('--------------------------------------------------------------------', style='Normal')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
+document.add_heading('2.7.2三相不平衡释义', level=3)
+document.add_heading('1)变压器三相不平衡定义', level=4)
+document.add_paragraph('是指在电力系统中三相电流（或电压）幅值不一致，且幅值差超过规定范围。', style='Normal')
+document.add_heading('2)不平衡度的计算公式', level=4)
+document.add_picture('./pic/Unb_format.png', height=Cm(1.20), width=Cm(9.63))
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_heading('3)参考标准', level=4)
+document.add_paragraph('国标《GB/T 1094-2013》下《SD292-1988》第五节 负荷管理 第7.5.2条  变压器的三相负荷力求平衡，不平'
+                       '衡度不应大于15%，只带少量单相负荷的三相变压器，零线电流不应超过'
+                       '额定电流的25%，不符合上述规定时，应将负荷进行调整。', style='Normal')
+document.add_paragraph('--------------------------------------------------------------------', style='Normal')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
+document.add_page_break()
+
 
 document.save('./text/test.docx')
+
