@@ -320,3 +320,5 @@ function checkanswer() {
             });
         }
     }
+#这里代码几乎非常像
+#原网址：https://www.52pojie.cn/forum.php?mod=viewthread&tid=354036&page=5
