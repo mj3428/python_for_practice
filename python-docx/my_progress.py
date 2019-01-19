@@ -567,7 +567,65 @@ document.add_paragraph('国标《GB/T 1094-2013》下《SD292-1988》第五节 �
 document.add_paragraph('--------------------------------------------------------------------', style='Normal')
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
 document.add_page_break()
+document.add_heading('三、我们的服务', level=1)
+document.add_heading('3.1健康体检', level=2)
+document.add_paragraph('在12月份时段内，为您的1#变压器做了电流数据、电压数据、谐波电压、谐波电流、三相不平衡、功率因数、变压器负'
+                       '荷率数据的采集及分析管理服务，数据界面在PC和微信公众号界面均有呈现，采集时间为15分钟一次'
+                       '（异常时即时采集），可随时随地读取、查看各个回路参数信息。电能健康体检设备可以动态体检，'
+                       '把每天采集的多个点形成趋势图记录下来，以便后续分析查看。可监测多个项目，如您需要监测'
+                       '其他参数，我们可以根据您的需求提供相应的监测服务。', style='Normal')
+document.add_heading('3.2隐患管理', level=2)
+document.add_paragraph('设备采集的数据经过阿里云混合云服务器的解析，结合国家标准对隐患级别进行分类、分级管理。使得其各类'
+                       '参数的更清楚、更明确的呈现出来，隐患变得一目了然。\n\t在数据时段内，对各监测项XXX条信息进行了'
+                       '分析，其中高危xxx条，隐患xxx条，详情如下表格：')
+table4 = document.add_table(rows=1, cols=9)
+th4 = ('体检项', '电压', '电流', '电压谐波含量', '谐波电流', '电流不平衡', '功率因数', '负荷率', '温度')
+tr4 = (('高危（次）',	0, 255, 2, 2, 0, 0, 79, '-'), ('隐患（次）', 527, 735, 5, 5, 302, 2, 721, '-'),
+       ('总计', 527, 990, 7,	7, 302, 2, 800, '-'))
+hdr_cells4 = table4.rows[0].cells
+for i in range(0, 9):
+    hdr_cells4[i].text = th4[i]
+    hdr_cells4[i].paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    hdr_cells4[i].paragraphs[0].paragraph_format.left_indent = -Cm(0.74)
+
+for i in range(0,3):
+    table4_add = table4.add_row().cells
+    for j in range(0, 9):
+        table4_add[j].text = str(tr4[i][j])
+        table4_add[j].paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        table4_add[j].paragraphs[0].paragraph_format.left_indent = -Cm(0.74)
+
+table4.style = 'ListCLF3'
+table4widths = (1.75, 1.75, 1.6, 3, 2.25, 2.4, 2.25, 1.75, 1.25)
+for i in range(0, 9):
+    for cell in table4.columns[i].cells:
+        cell.width = Cm(table4widths[i])
+document.add_heading('3.3健康干预', level=2)
+document.add_heading('\t“未病先防，既病防变”', level=4)
+document.add_paragraph('在隐患分类分级后，健康干预也会针对不同隐患等级有不同的推送方式，这些通知方式也是可供用户自主选择的，在'
+                       '用户没有提出通知方式之前，我们对用户的健康干预考虑了有效实时，不会对用户生活造成干扰。当预警达到一定的数量'
+                       '的时候，而这时用户自身没有留意到风险本身，XXXX的专业团队便会对风险用户进行致电，甚至就风险问题根源'
+                       '进行上门排查、解决。\n\t在数据时段内，系统共监测到2665条预警信息，'
+                       '并以线上和客服方式通知，共预警了338条，详情如下表格：', style='Normal')
+table5 = document.add_table(rows=1, cols=5)
+th5 = ('干预方式', '微信通知', '短信通知', '邮件通知', '客服致电')
+tr5 = ('干预次数', 388, 0, 0, 0)
+hdr_cells5 = table5.rows[0].cells
+for i in range(0, 5):
+    hdr_cells5[i].text = th5[i]
+    hdr_cells5[i].paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    hdr_cells5[i].paragraphs[0].paragraph_format.left_indent = -Cm(0.74)
+table5_add = table5.add_row().cells
+for j in range(0, 5):
+    table5_add[j].text = str(tr5[j])
+    table5_add[j].paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    table5_add[j].paragraphs[0].paragraph_format.left_indent = -Cm(0.74)
+table5.style = 'ListCLF3'
+document.add_page_break()
+
+
 
 
 document.save('./text/test.docx')
+
 
