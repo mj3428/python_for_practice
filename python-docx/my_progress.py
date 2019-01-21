@@ -406,10 +406,9 @@ document.add_paragraph('依据《GB/T14549-1993》电能质量公用电网谐波
 table3 = document.add_table(rows=1, cols=14)
 hdr_cells3 = table3.rows[0].cells
 thead3 = ('标准电压（KV）', '基准短路容量（MVA）', '谐波次数及谐波电流允许值（A）')
-for i in range(0, 14):
-    hdr_cells3[0].text = thead3[0]
-    hdr_cells3[1].text = thead3[1]
-    hdr_cells3[2].text = thead3[2]
+hdr_cells3[0].text = thead3[0]
+hdr_cells3[1].text = thead3[1]
+hdr_cells3[2].text = thead3[2]
 for i in range(0, 3):
     hdr_cells3[i].paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     hdr_cells3[i].paragraphs[0].paragraph_format.left_indent = -Cm(0.74)
@@ -622,10 +621,28 @@ for j in range(0, 5):
     table5_add[j].paragraphs[0].paragraph_format.left_indent = -Cm(0.74)
 table5.style = 'ListCLF3'
 document.add_page_break()
-
+document.add_heading('3.4 O2O服务', level=2)
+document.add_paragraph('线上对线上，当用户在有困惑时，点击“呼叫服务”，XXXX就能知晓客户有疑问与反馈，在客户未'
+                        '拨通客服电话，乃至在拨通电话前，XXXX的健康指导师会直接联系客户，或微信，'
+                        '或电话，直至将客户的心中的疑虑排除。\n\t已为您提供O2O服务0次。', style='Normal')
+r4 = document.add_paragraph().add_run()
+r4.add_picture('./pic/phone_poweryun.png', height=Cm(4.15), width=Cm(6.59))
+r4.add_picture('./pic/service_poweryun.png', height=Cm(10.37), width=Cm(5.84))
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+document.add_heading('3.5电能健康档案', level=2)
+document.add_paragraph('客户使用我们的Nande Cloud电能大脑，自设备建点那一刻起就建立了档案，您的电能健康档案已于2018年10月11日建立，'
+                       '并长期有效存储在阿里云服务器中，数据传输以15分钟为间隔，都存档在案，若追溯，最长可长达2年。'
+                       '也就是病史可查，若经过治理，治理前与治理后的数据可轻松调用对比。', style='Normal')
+document.add_paragraph('如您对电能质量隐患有治理需求可与我公司联系，我公司将派专业服务团队进行对接！', style='N1')
+r5 = document.add_paragraph().add_run()
+r5.add_picture('./pic/poweryun_seal.png', height=Cm(2.19), width=Cm(3.0))
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+document.add_paragraph('XXX(部门) XX年XX月XX日', style='Normal')
+document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
 
 
 
 document.save('./text/test.docx')
+
 
 
