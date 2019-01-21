@@ -99,4 +99,17 @@ html_source = browser.page_source
 with open("E:/Pr/text/test.txt", "w", encoding='utf-8') as f:
     f.write(html_source)
     f.close()
+
+html = etree.parse('./text/test.txt', etree.HTMLParser())
+fd = html.xpath("//table[@class='table table-bordered table-striped table-hover']/tbody/tr/td/code/text()")
+
+print(fd)
+for i in fd[:]:  # 这里这个[:]不能少
+    #result1 = re.match('\s*', i)  # 匹配所有换行符和无任何字符的字符串
+    #print(i)
+    res = re.match('(.*?)Ex(.*)', i)
+    #print(res)
+    if res is not None and i == res.group():
+        fd.remove(i)
+print(fd)
 '''
