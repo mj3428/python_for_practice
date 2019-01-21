@@ -100,7 +100,7 @@ with open("E:/Pr/text/test.txt", "w", encoding='utf-8') as f:
     f.write(html_source)
     f.close()
 
-html = etree.parse('./text/test.txt', etree.HTMLParser())
+html = etree.parse('./text/test.txt', etree.HTMLParser(encoding='utf-8'))
 fd = html.xpath("//table[@class='table table-bordered table-striped table-hover']/tbody/tr/td/code/text()")
 
 print(fd)
