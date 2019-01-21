@@ -93,3 +93,10 @@ while True:
     wait.until(EC.presence_of_element_located((By.XPATH, "//table[@class='table table-striped table-hover']/tbody[@id='log_list']/tr")))
 
 ##大功告成
+#另外测试的时候保存到本地txt
+'''
+html_source = browser.page_source
+with open("E:/Pr/text/test.txt", "w", encoding='utf-8') as f:
+    f.write(html_source)
+    f.close()
+'''
