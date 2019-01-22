@@ -320,5 +320,10 @@ function checkanswer() {
             });
         }
     }
-#这里代码几乎非常像
-#原网址：https://www.52pojie.cn/forum.php?mod=viewthread&tid=354036&page=5
+//这里代码几乎非常像
+//原网址：https://www.52pojie.cn/forum.php?mod=viewthread&tid=354036&page=5
+//http://v.10pinping.com/api/captcha.check.2.php?rnd=4868944880959973&authType=10&id=448809&sign=6d101bd058c4d28a11602584e91907a2
+//返回结果为_checkcaptcha(1)
+//GET的时候GET /api/captcha.check.2.php?captcha=2SGH&rnd=4868944880959973&authType=10&id=448809&callbackparam=_checkcaptcha&_=1548153572083 HTTP/1.1
+//cookie中带有
+//Hm_lvt_54a0788fec161f0476e41c6a89cf9520=1548153573; Hm_lpvt_54a0788fec161f0476e41c6a89cf9520=1548153573
