@@ -18,6 +18,40 @@ class Calculate:
         self.kva = kva
         self.ele = ELECTRIC[str(kva)]
 
+    def add_model(self):
+        '''
+        模型初始
+        :return:
+        '''
+        df0 = pd.read_csv(self.path, index_col=0)
+        df0.rename(columns={'采集时间': 'ds', 'A相电流': 'Ia', 'B相电流': 'Ib', 'C相电流': 'Ic',
+                            'A相电流THD': 'Ia_THD', 'B相电流THD': 'Ib_THD', 'C相电流THD': 'Ic_THD',
+                            'A相电压': 'Ua', 'B相电压': 'Ub', 'C相电压': 'Uc',
+                            'A相电压THD': 'Ua_THD', 'B相电压THD': 'Ub_THD', 'C相电压THD': 'Uc_THD',
+                            '总功率因数': 'PF', '三相无功功率': 'Q', '三相有功功率': 'P',
+                            'A相电流H3': 'Ia_H3', 'A相电流H5': 'Ia_H5', 'A相电流H7': 'Ia_H7',
+                            'A相电流H9': 'Ia_H9', 'A相电流H11': 'Ia_H11', 'A相电流H13': 'Ia_H13',
+                            'A相电流H15': 'Ia_H15', 'A相电流H17': 'Ia_H17', 'A相电流H19': 'Ia_H19',
+                            'A相电流H21': 'Ia_H21',
+                            'B相电流H3': 'Ib_H3', 'B相电流H5': 'Ib_H5', 'B相电流H7': 'Ib_H7',
+                            'B相电流H9': 'Ib_H9', 'B相电流H11': 'Ib_H11', 'B相电流H13': 'Ib_H13',
+                            'B相电流H15': 'Ib_H15', 'B相电流H17': 'Ib_H17', 'B相电流H19': 'Ib_H19',
+                            'B相电流H21': 'Ib_H21',
+                            'C相电流H3': 'Ic_H3', 'C相电流H5': 'Ic_H5', 'C相电流H7': 'Ic_H7',
+                            'C相电流H9': 'Ic_H9', 'C相电流H11': 'Ic_H11', 'C相电流H13': 'Ic_H13',
+                            'C相电流H15': 'Ic_H15', 'C相电流H17': 'Ic_H17', 'C相电流H19': 'Ic_H19',
+                            'C相电流H21': 'Ic_H21'
+                            }, inplace=True)
+        self.freq = len(df0.ds)
+        df0['I_ave'] = (df0.Ia + df0.Ib + df0.Ic) / 3
+        df0['U_ave'] = (df0.Ua + df0.Ub + df0.Uc) / 3
+        df0['LF'] = np.sqrt(pow(df0.P, 2) + pow(df0.Q, 2)) / (self.kva * 10)
+        df0['I_UP'] = df0.apply(lambda x: self.jungle(x), axis=1) * 100
+        df1 = df0.ix[df0.I_ave >= self.ele]
+        df1 = df1.sort_values(by='ds')
+        df1.reset_index(inplace=True, drop=True)  # 重新构造索引 drop=True替换原index
+        return df1
+
     # 判断不平衡
     def jungle(self, a):
         if a['I_ave'] == 0:
@@ -27,34 +61,11 @@ class Calculate:
             return value
 
     def calculate(self):
-        df0 = pd.read_csv(self.path, index_col=0)
-        df0.rename(columns={'采集时间': 'ds', 'A相电流': 'Ia', 'B相电流': 'Ib', 'C相电流': 'Ic',
-                           'A相电流THD': 'Ia_THD', 'B相电流THD': 'Ib_THD', 'C相电流THD': 'Ic_THD',
-                           'A相电压': 'Ua', 'B相电压': 'Ub', 'C相电压': 'Uc',
-                           'A相电压THD': 'Ua_THD', 'B相电压THD': 'Ub_THD', 'C相电压THD': 'Uc_THD',
-                           '总功率因数': 'PF', '三相无功功率': 'Q', '三相有功功率': 'P',
-                           'A相电流H3': 'Ia_H3', 'A相电流H5': 'Ia_H5', 'A相电流H7': 'Ia_H7',
-                           'A相电流H9': 'Ia_H9', 'A相电流H11': 'Ia_H11', 'A相电流H13': 'Ia_H13',
-                           'A相电流H15': 'Ia_H15', 'A相电流H17': 'Ia_H17', 'A相电流H19': 'Ia_H19',
-                           'A相电流H21': 'Ia_H21',
-                           'B相电流H3': 'Ib_H3', 'B相电流H5': 'Ib_H5', 'B相电流H7': 'Ib_H7',
-                           'B相电流H9': 'Ib_H9', 'B相电流H11': 'Ib_H11', 'B相电流H13': 'Ib_H13',
-                           'B相电流H15': 'Ib_H15', 'B相电流H17': 'Ib_H17', 'B相电流H19': 'Ib_H19',
-                           'B相电流H21': 'Ib_H21',
-                           'C相电流H3': 'Ic_H3', 'C相电流H5': 'Ic_H5', 'C相电流H7': 'Ic_H7',
-                           'C相电流H9': 'Ic_H9', 'C相电流H11': 'Ic_H11', 'C相电流H13': 'Ic_H13',
-                           'C相电流H15': 'Ic_H15', 'C相电流H17': 'Ic_H17', 'C相电流H19': 'Ic_H19',
-                           'C相电流H21': 'Ic_H21'
-                           }, inplace=True)
-        self.freq = len(df0.ds)
-        df0['I_ave'] = (df0.Ia + df0.Ib + df0.Ic) / 3
-        df0['U_ave'] = (df0.Ua + df0.Ub + df0.Uc) / 3
-        df0['LF'] = np.sqrt(pow(df0.P, 2) + pow(df0.Q, 2)) / (self.kva * 10)
-        df0['I_UP'] = df0.apply(lambda x: self.jungle(x), axis=1) * 100
-        df1 = df0.ix[df0.I_ave >= self.ele]
-        df1 = df1.sort_values(by='ds')
-        df1.reset_index(inplace=True, drop=True)  # 重新构造索引 drop=True替换原index
-        self.df2 = df1
+        '''
+        获取最大值
+        :return:
+        '''
+        df1 = self.add_model()
         #print(df1.head(12))
         self.max_vals1 = np.max([[df1.Ua.max(), df1.Ub.max(), df1.Uc.max()],
                                  [df1.Ua_THD.max(), df1.Ub_THD.max(), df1.Uc_THD.max()],
@@ -77,9 +88,19 @@ class Calculate:
         self.max_vals4 = np.max([df1.LF, df1.I_UP], axis=1)
 
     def quality(self):
+        '''
+        合格率
+        :return:
+        '''
+        df2 = self.add_model()
+        qr_u = np.min([len(df2.ix[df2.Ua < 235.4]), len(df2.ix[df2.Ub < 235.4]),
+                       len(df2.ix[df2.Uc < 235.4])], axis=0) / len(df2.ds)
 
+        print(qr_u)
 
 if __name__ == '__main__':
     calc = Calculate()
-    calc.calculate()
-    print(calc.freq)
+    #calc.calculate()
+    calc.quality()
+    #print(calc.freq)
+
