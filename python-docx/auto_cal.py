@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 '''
-@author: miaoj
+@author: miaojue
 @contact: major3428@foxmail.com
 @software: pycharm
 @file: auto_cal.py
@@ -86,6 +86,9 @@ class Calculate:
         self.max_vals3 = max(max_vals2.values())
         self.min_vals = np.min(df1.PF, axis=0)
         self.max_vals4 = np.max([df1.LF, df1.I_UP], axis=1)
+        max_values = (self.max_vals1[0], self.max_vals1[1], self.max_vals1[2], self.max_vals3, self.min_vals,
+                      self.max_vals4[0], self.max_vals4[1])
+        return max_values
 
     def quality(self):
         '''
@@ -93,10 +96,18 @@ class Calculate:
         :return:
         '''
         df2 = self.add_model()
+        freq2 = len(df2.ds)
         qr_u = np.min([len(df2.ix[df2.Ua < 235.4]), len(df2.ix[df2.Ub < 235.4]),
-                       len(df2.ix[df2.Uc < 235.4])], axis=0) / len(df2.ds)
-
-        print(qr_u)
+                       len(df2.ix[df2.Uc < 235.4])], axis=0) / freq2
+        qr_thdu = np.min([len(df2.ix[df2.Ua_THD < 5]), len(df2.ix[df2.Ub_THD < 5]), len(df2.ix[df2.Uc_THD < 5])],
+                         axis=0) / freq2 #单位为%
+        ele_n = self.kva * 1.44
+        qr_i = np.min([len(df2.ix[df2.Ia < ele_n]), len(df2.ix[df2.Ib < ele_n]),
+                       len(df2.ix[df2.Ic < ele_n])], axis=0) / freq2
+        qr_pf = len(df2.ix[df2.PF >= 0.9]) / freq2
+        qr_lf = len(df2.ix[df2.LF < 85]) / freq2 #单位为%
+        qrlist = (qr_u, qr_thdu, qr_i, qr_lf, qr_pf)
+        
 
 if __name__ == '__main__':
     calc = Calculate()
