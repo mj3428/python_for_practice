@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 '''
-@author: miaoj
+@author: miaojue
 @contact: major3428@foxmail.com
 @software: pycharm
 @file: test.py
@@ -31,6 +31,7 @@ max_value = calc.calculate()
 max_value = np.around(max_value, 2)
 conclusion = (talk.utalk(quality[0]), talk.uthdtalk(quality[1]), talk.lftalk(max_value[5]),
             talk.pftalk(calc.pf_mean), talk.lftalk(max_value[5]), talk.unbtalk(quality[5]))
+riskamount = calc.count_risk()
 result = talk.result
 ele_n = KVA * 1.44
 now = datetime.datetime.now() #当前时间的datetime
@@ -140,10 +141,10 @@ document.add_paragraph('此结论为%s变压器体检结果，' % TRANSFORMER +
                 '以各体检项目在该时段内发生次数及超出各项标准次数进行分析得出：', style='Normal')
 document.add_paragraph().add_run('电压体检结论：').bold = True
 document.paragraphs[-1].add_run('该变压器在此数据时段内，正常工作时，电压数据%s' % conclusion[0] +
-                '谐波电压含量%d以上超出标准，电网谐波电压含量%s；' % (quality[1] * 100, conclusion[1]))
+                '谐波电压含量约%d%%左右符合国家标准，电网谐波电压含量%s' % (quality[1] * 100, conclusion[1]))
 document.add_paragraph().add_run('电流体检结论：').bold = True
 document.paragraphs[-1].add_run('该变压器低压侧额定电流约%.1fA' % (ele_n) +
-                '电流%s；' % conclusion[2] +
+                '电流%s' % conclusion[2] +
                 '各分次最大谐波电流值都有明显超出标准情况，在均值下5次、7次、11次超出标准，谐波电流不合格；')#########未添加#########
 document.add_paragraph().add_run('功率因数体检结论：').bold = True
 document.paragraphs[-1].add_run('工作时，功率因数在0.9~1之间的占比为%.1f%%，' % (quality[3] * 100) +
@@ -151,7 +152,7 @@ document.paragraphs[-1].add_run('工作时，功率因数在0.9~1之间的占比
 document.add_paragraph().add_run('负荷率体检结论：').bold = True
 document.paragraphs[-1].add_run('该变压器容量为%dKVA，额定电流约%.1fA，' % (KVA, ele_n) +
                 '工作时，变压器负荷率基本在%.1f%%左右运行，' % calc.lf_mean +
-                '监测期间变压器负荷率%s，' % conclusion[4])
+                '综合来看，监测期间变压器负荷率%s' % conclusion[4])
 document.add_paragraph().add_run('三相电流不平衡体检结论：').bold = True
 document.paragraphs[-1].add_run('正常工作时，三相电流不平衡度均在15%%以内的概率为%.1f%%，' % quality[5] +
                 '带负载时最大为%.1f%%，发生时间为%s' % (calc.unb_max, calc.unb_maxtime) +
@@ -161,7 +162,9 @@ attention = document.add_paragraph(style='N1').add_run('注：分析数据来源
 attention.bold = True
 attention.font.size = Pt(7.5)
 document.add_page_break() #插入分页符
-document.add_heading('1.3体检不正常项目说明', level=2)###########进度###############
+position = 1
+
+document.add_heading('1.3体检不正常项目说明', level=2)###############未判断##################
 document.add_heading('1.3.1谐波电压', level=3)
 document.add_paragraph('...')
 document.add_heading('1.3.2谐波电流', level=3)
@@ -169,13 +172,13 @@ document.add_paragraph('...')
 document.add_page_break() #插入分页符
 document.add_heading('二、专项体检数据分析说明', level=2)
 document.add_paragraph('数据点为%s变压器，变压器容量%dKVA。'% (TRANSFORMER, KVA) +
-                       '从%s到%s共采集了%d次数据，'%(STARTDAY, ENDDAY, calc.freq) +
-                       '结合各项标准，此时段内存在谐波电压含量、谐波电流含量、负荷率超标隐患。' 
-                       '此时段电压数据超出标准限值约XX次；谐波电压含量超出标准限值约XX次；'
-                       '电流超出变压器额定电流值约XX次；功率因数超出标准限值约XX次；'
-                       '变压器负荷率85%以上约XX次；三相电流不平衡超出标准限值XX次。', style='Normal')
+            '从%s到%s共采集了%d次数据，'%(STARTDAY, ENDDAY, calc.freq) +
+            '结合各项标准，此时段内存在谐波电压含量、谐波电流含量、负荷率超标隐患。' ###########未添加###########
+            '此时段电压数据超出标准限值约%d次；谐波电压含量超出标准限值约%d次；' % (riskamount[0], riskamount[1]) +
+            '电流超出变压器额定电流值约%d次；功率因数超出标准限值约%d次；' % (riskamount[2], riskamount[3]) +
+            '变压器负荷率85%%以上约%d次；三相电流不平衡超出标准限值%d次。'% (riskamount[4], riskamount[5]), style='Normal')
 document.add_heading('2.1电压数据', level=2)
-document.add_heading('2.1.1 电压数据体检分析', level=3)
+document.add_heading('2.1.1 电压数据体检分析', level=3)###################进度#####################
 document.add_paragraph('根据国家标准《GB/T 12325-2008》中规定单相220V供电电压允许偏差为标称系统电压的+7％、-10%。'
                        '由此计算出电压标准上限值为235.4V。'
                        '从以下分析中可以看出A、B、C三相电压达标率为XX%左右，基本符合标准。',style='Normal')
