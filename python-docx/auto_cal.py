@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 '''
-@author: miaoj
+@author: miaojue
 @contact: major3428@foxmail.com
 @software: pycharm
 @file: auto_cal.py
@@ -11,13 +11,14 @@
 from auto_config import *
 import pandas as pd
 import numpy as np
+from random import choice
 
 class Calculate:
-    def __init__(self, path=PATH, kva=KVA):
+    def __init__(self, path=PATH, kva=KVA, frequence=None):
         self.path = path
         self.kva = kva
         self.ele = ELECTRIC[str(kva)]
-
+        self.freq = frequence
     def add_model(self):
         '''
         模型初始
@@ -104,14 +105,133 @@ class Calculate:
         ele_n = self.kva * 1.44
         qr_i = np.min([len(df2.ix[df2.Ia < ele_n]), len(df2.ix[df2.Ib < ele_n]),
                        len(df2.ix[df2.Ic < ele_n])], axis=0) / freq2
+        self.pf_mean = np.mean(df2.PF, axis=0)
         qr_pf = len(df2.ix[df2.PF >= 0.9]) / freq2
+        self.lf_mean = np.mean(df2.LF, axis=0)
         qr_lf = len(df2.ix[df2.LF < 85]) / freq2 #单位为%
-        qrlist = (qr_u, qr_thdu, qr_i, qr_lf, qr_pf)
-        
+        self.unb_max = df2.I_UP.max()
+        self.unb_maxtime = df2.ix[df2.I_UP == self.unb_max].ds.values[0]
+        qr_unb = len(df2.ix[df2.I_UP <= 15.0]) / freq2
+        qrlist = (qr_u, qr_thdu, qr_i, qr_pf, qr_lf, qr_unb)
+        return qrlist
+
+class Talk:
+    def __init__(self):
+        self.untext = ['不合格', '未达标', '不达标', '不理想']
+        self.switchDic = {0: '健康；结果合格',
+                          1: '偶尔超出标准；结果合格',
+                          2: '超标现象明显；结果' + choice(self.untext),
+                          3: '超标严重；结果' + choice(self.untext)
+                          }
+        self.result = []
+    def utalk(self, args):
+        if args > 0.92 and args <= 1.0:
+            rank = 0
+            res = 'u—'
+        elif args >0.82 and args <= 0.92:
+            rank = 1
+            res = 'u↑'
+        elif args > 0.67 and args <= 0.82:
+            rank = 2
+            res = 'u↑'
+        elif args <=0.67:
+            rank = 3
+            res = 'u↑'
+        else:
+            return None
+        self.result.append(res)
+        return self.switchDic[rank] + '。在监测点离变压器较近时，电压值会偏高，在远距离输电时会存在压降，末端电压会' \
+                                      '有所下降，合理的提高变压器电压可避免末端回路电压偏低'
+
+    def uthdtalk(self, args):
+        if args > 0.92 and args <= 1.0:
+            rank = 0
+            res = 'uthd—'
+        elif args >0.82 and args <= 0.92:
+            rank = 1
+            res = 'uthd↑'
+        elif args > 0.67 and args <= 0.82:
+            rank = 2
+            res = 'uthd↑'
+        elif args <=0.67:
+            rank = 3
+            res = 'uthd↑'
+        else:
+            return None
+        self.result.append(res)
+        return self.switchDic[rank]
+
+    def pftalk(self, args):
+        if args > 0.91 and args <= 1.0:
+            rank = 0
+            res = 'pf—'
+        elif args > 0.85 and args <= 0.91:
+            rank = 1
+            res = 'pf↑'
+        elif args <= 0.85:
+            rank = 2
+            res = 'pf↑'
+        else:
+            return None
+        self.result.append(res)
+        talkDic = {0: '健康且符合要求。',
+                   1: '基本符合要求，可能会有力调电费罚款，应加强对功率因数的巡查监管，避免可能带来的经济损失。',
+                   2: '不达标，且有较大可能会有力调电费罚款，亟需治理。'}
+        return talkDic[rank]
+
+    def unbtalk(self, args):
+        if args > 0.95 and args <= 1.0:
+            rank = 0
+            res = 'unb—'
+        elif args >0.85 and args <= 0.95:
+            rank = 1
+            res = 'unb↑'
+        elif args > 0.67 and args <= 0.85:
+            rank = 2
+            res = 'unb↑'
+        elif args <=0.67:
+            rank = 3
+            res = 'unb↑'
+        else:
+            return None
+        self.result.append(res)
+        return self.switchDic[rank]
+
+    def lftalk(self, args):
+        if args <= 85:
+            rank = 0
+            res = 'lf—'
+        elif args >85 and args <= 100:
+            rank = 1
+            res = 'lf↑'
+        elif args > 100:
+            rank = 2
+            res = 'lf↑'
+        elif args > 110 and args <=150:
+            rank = 3
+            res = 'lf↑'
+        else:
+            return None
+        self.result.append(res)
+        talkDic = {0: '健康且符合要求。',
+                   1: '负载较重，超出额定电流的百分之85，应多留意变压器的负载。',
+                   2: '不达标，有发生过1级过载现象；负载过大，变压器存在超载隐患，长期如此会对变压器产生损害。',
+                   3: '不达标，或是有异常值，异常值一般与现场特殊负载有关；'
+                      '或是有2级过载现象，若2级过载，已严重损害变压器；需要尽快排查解决问题'}
+        return talkDic[rank]
 
 if __name__ == '__main__':
     calc = Calculate()
-    #calc.calculate()
-    calc.quality()
+    talk = Talk()
+    calc.calculate()
+    quality = calc.quality()
+    #print(calc.pf_mean)
+    #talk.pftalk(calc.pf_mean)
+    conclusion = (talk.utalk(quality[0]), talk.uthdtalk(quality[1]), talk.lftalk(calc.max_vals4[0]),
+                  talk.pftalk(calc.pf_mean), talk.lftalk(calc.max_vals4[0]), talk.unbtalk(quality[5]))
+    result = talk.result
+    print(result)
+    #talk.utalk(quality[0])
+    #print(calc.quality())
     #print(calc.freq)
 
