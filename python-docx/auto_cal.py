@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 '''
-@author: miaojue
+@author: miaoj
 @contact: major3428@foxmail.com
 @software: pycharm
 @file: auto_cal.py
@@ -48,6 +48,7 @@ class Calculate:
         df0['U_ave'] = (df0.Ua + df0.Ub + df0.Uc) / 3
         df0['LF'] = np.sqrt(pow(df0.P, 2) + pow(df0.Q, 2)) / (self.kva * 10)
         df0['I_UP'] = df0.apply(lambda x: self.jungle(x), axis=1) * 100
+        self.dforignal = df0
         df1 = df0.ix[df0.I_ave >= self.ele]
         df1 = df1.sort_values(by='ds')
         df1.reset_index(inplace=True, drop=True)  # 重新构造索引 drop=True替换原index
@@ -93,7 +94,7 @@ class Calculate:
 
     def quality(self):
         '''
-        合格率
+        获取合格率
         :return:
         '''
         df2 = self.add_model()
@@ -115,65 +116,80 @@ class Calculate:
         qrlist = (qr_u, qr_thdu, qr_i, qr_pf, qr_lf, qr_unb)
         return qrlist
 
+    def count_risk(self):
+        '''
+        获取超标次数
+        :return:
+        '''
+        self.add_model()
+        df3 = self.dforignal
+        u_risk = np.max([len(df3.query('Ua > 235.4 or Ua < 198')),
+                         len(df3.query('Ub > 235.4 or Ub < 198')),
+                         len(df3.query('Uc > 235.4 or Uc < 198'))], axis=0)
+        i_risk = np.max([len(df3.ix[df3.Ia > (self.kva * 1.44)]),
+                         len(df3.ix[df3.Ib > (self.kva * 1.44)]),
+                         len(df3.ix[df3.Ic > (self.kva * 1.44)])], axis=0)
+        uthd_risk = np.max([len(df3.query('Ua_THD > 5')),
+                            len(df3.query('Ub_THD > 5')),
+                            len(df3.query('Uc_THD > 5'))], axis=0)
+        pf_risk = len(df3.ix[df3.PF < 0.9])
+        lf_risk = len(df3.ix[df3.LF > 85])
+        unb_risk = len(df3.ix[df3.I_UP > 15])
+        riskamount = (u_risk, uthd_risk, i_risk, pf_risk, lf_risk, unb_risk)
+        return riskamount
+
 class Talk:
     def __init__(self):
-        self.untext = ['不合格', '未达标', '不达标', '不理想']
-        self.switchDic = {0: '健康；结果合格',
-                          1: '偶尔超出标准；结果合格',
+        self.untext = ['不合格。', '未达标。', '不达标。', '不理想。']
+        self.switchDic = {0: '健康；结果合格。',
+                          1: '偶尔超出标准；结果合格。',
                           2: '超标现象明显；结果' + choice(self.untext),
                           3: '超标严重；结果' + choice(self.untext)
                           }
+        self.rankDic = {0: 'green',
+                        1: 'yellow',
+                        2: 'red',
+                        3: 'red'}
         self.result = []
     def utalk(self, args):
         if args > 0.92 and args <= 1.0:
             rank = 0
-            res = 'u—'
         elif args >0.82 and args <= 0.92:
             rank = 1
-            res = 'u↑'
         elif args > 0.67 and args <= 0.82:
             rank = 2
-            res = 'u↑'
         elif args <=0.67:
             rank = 3
-            res = 'u↑'
         else:
             return None
-        self.result.append(res)
-        return self.switchDic[rank] + '。在监测点离变压器较近时，电压值会偏高，在远距离输电时会存在压降，末端电压会' \
-                                      '有所下降，合理的提高变压器电压可避免末端回路电压偏低'
+        self.result.append(self.rankDic[rank])
+        return self.switchDic[rank] + '在监测点离变压器较近时，电压值会偏高，在远距离输电时会存在压降，末端电压会' \
+                                      '有所下降，合理的提高变压器电压可避免末端回路电压偏低。'
 
     def uthdtalk(self, args):
         if args > 0.92 and args <= 1.0:
             rank = 0
-            res = 'uthd—'
         elif args >0.82 and args <= 0.92:
             rank = 1
-            res = 'uthd↑'
         elif args > 0.67 and args <= 0.82:
             rank = 2
-            res = 'uthd↑'
         elif args <=0.67:
             rank = 3
-            res = 'uthd↑'
         else:
             return None
-        self.result.append(res)
+        self.result.append(self.rankDic[rank])
         return self.switchDic[rank]
 
     def pftalk(self, args):
         if args > 0.91 and args <= 1.0:
             rank = 0
-            res = 'pf—'
         elif args > 0.85 and args <= 0.91:
             rank = 1
-            res = 'pf↑'
         elif args <= 0.85:
             rank = 2
-            res = 'pf↑'
         else:
             return None
-        self.result.append(res)
+        self.result.append(self.rankDic[rank])
         talkDic = {0: '健康且符合要求。',
                    1: '基本符合要求，可能会有力调电费罚款，应加强对功率因数的巡查监管，避免可能带来的经济损失。',
                    2: '不达标，且有较大可能会有力调电费罚款，亟需治理。'}
@@ -182,42 +198,34 @@ class Talk:
     def unbtalk(self, args):
         if args > 0.95 and args <= 1.0:
             rank = 0
-            res = 'unb—'
         elif args >0.85 and args <= 0.95:
             rank = 1
-            res = 'unb↑'
         elif args > 0.67 and args <= 0.85:
             rank = 2
-            res = 'unb↑'
         elif args <=0.67:
             rank = 3
-            res = 'unb↑'
         else:
             return None
-        self.result.append(res)
+        self.result.append(self.rankDic[rank])
         return self.switchDic[rank]
 
     def lftalk(self, args):
         if args <= 85:
             rank = 0
-            res = 'lf—'
         elif args >85 and args <= 100:
             rank = 1
-            res = 'lf↑'
         elif args > 100:
             rank = 2
-            res = 'lf↑'
         elif args > 110 and args <=150:
             rank = 3
-            res = 'lf↑'
         else:
             return None
-        self.result.append(res)
+        self.result.append(self.rankDic[rank])
         talkDic = {0: '健康且符合要求。',
                    1: '负载较重，超出额定电流的百分之85，应多留意变压器的负载。',
                    2: '不达标，有发生过1级过载现象；负载过大，变压器存在超载隐患，长期如此会对变压器产生损害。',
                    3: '不达标，或是有异常值，异常值一般与现场特殊负载有关；'
-                      '或是有2级过载现象，若2级过载，已严重损害变压器；需要尽快排查解决问题'}
+                      '或是有2级过载现象，若2级过载，已严重损害变压器；需要尽快排查解决问题。'}
         return talkDic[rank]
 
 if __name__ == '__main__':
@@ -231,6 +239,7 @@ if __name__ == '__main__':
                   talk.pftalk(calc.pf_mean), talk.lftalk(calc.max_vals4[0]), talk.unbtalk(quality[5]))
     result = talk.result
     print(result)
+    calc.count_risk()
     #talk.utalk(quality[0])
     #print(calc.quality())
     #print(calc.freq)
