@@ -19,17 +19,20 @@ import numpy as np
 import pandas as pd
 from docx.oxml.ns import qn
 import datetime
+from auto_config import *
+from auto_cal import Calculate
+from auto_cal import Talk
 
-
-#参数配置
-com_name = '恒生印染' #公司名
-transformer = '东1#' #变压器名
-KVA = 1600000 #变压器容量
-startday = '2018年11月23日' #起始时间
-endday = '2018年12月4日' #结束时间
-freq = 1085 #数据条数
-highrisk = 99 #高危数
-hiddenrisk = 120 #隐患数
+calc = Calculate()
+talk = Talk()
+calc.add_model()
+quality = calc.quality()
+max_value = calc.calculate()
+max_value = np.around(max_value, 2)
+conclusion = (talk.utalk(quality[0]), talk.uthdtalk(quality[1]), talk.lftalk(max_value[5]),
+            talk.pftalk(calc.pf_mean), talk.lftalk(max_value[5]), talk.unbtalk(quality[5]))
+result = talk.result
+ele_n = KVA * 1.44
 now = datetime.datetime.now() #当前时间的datetime
 document = Document('./text/demo.docx')
 
@@ -53,10 +56,10 @@ document.styles['T2'].font.size = Pt(22)
 document.styles['T2'].font.bold = True
 
 document.paragraphs[10].style = 'T1'
-document.paragraphs[10].add_run(text=com_name+'有限公司')
+document.paragraphs[10].add_run(text=COM_NAME+'有限公司')
 document.paragraphs[11].clear()
 document.paragraphs[11].style = 'T2'
-document.paragraphs[11].add_run(text=transformer+'变压器')
+document.paragraphs[11].add_run(text=TRANSFORMER+'变压器')
 document.paragraphs[12].style = 'T2'
 document.paragraphs[12].add_run(text='电能健康分析评估报告\n')
 
@@ -77,15 +80,13 @@ last = document.paragraphs[-1]
 last.style = 'Heading 1'
 last.add_run(text='一、监测概况及结论')
 document.add_heading('1.1电能参数体检结果', level=2)
-result = ['—', '↑', '↑', '↑', '—', '↑', '—']
-max_value = ['243.9V', '10.1%', '98.6%', '730A', '0.96', '113.5%', '11.9%']
 records = (('电压数据', result[0], max_value[0], '205~235V', '《GB/T 12325-2008》'),
           ('谐波电压数据', result[1], max_value[1], '＜5%', '《GB/T14549-1993》'),
           ('电流数据', result[2], max_value[2], '＜In100%', '《JGJ16-2008》'),
-          ('谐波电流数据', result[3], max_value[3], '＜各分次国标限值', 'GB/T14549-1993》'),
-          ('功率因数', result[4], max_value[4], '0.9~1.0', '《JGJ16-2008》'),
-          ('负荷率', result[5], max_value[5], '＜额定容量85%', '《JGJ16-2008》'),
-          ('三相电流不平衡度', result[6], max_value[6], '＜15%', '《GB/T 1094-2013》'))
+          ('谐波电流数据', '↑', max_value[3], '＜各分次国标限值', '《GB/T14549-1993》'),
+          ('功率因数', result[3], max_value[4], '0.9~1.0', '《JGJ16-2008》'),
+          ('负荷率', result[4], max_value[5], '＜额定容量85%', '《JGJ16-2008》'),
+          ('三相电流不平衡度', result[5], max_value[6], '＜15%', '《GB/T 1094-2013》'))
 table1 = document.add_table(rows=1, cols=5)
 hdr_cells = table1.rows[0].cells
 hdr_cells[0].text = '体检项目'
@@ -97,7 +98,7 @@ for sty, res, mv, ran, txt in records:
     row_cells = table1.add_row().cells
     row_cells[0].text = sty
     row_cells[1].text = res
-    row_cells[2].text = mv
+    row_cells[2].text = str(mv)
     row_cells[3].text = ran
     row_cells[4].text = txt
 
@@ -133,42 +134,42 @@ medium.font.color.rgb = RGBColor(0xff, 0xff, 0x00)
 document.paragraphs[-1].add_run("’为已达临界标准")
 document.add_paragraph("（2）以上依据原始导出数据分析，见附件一或用户由平台自行导出", style='N1')
 document.add_heading('1.2体检结论说明', level=2)
-document.add_paragraph('此结论为%s变压器体检结果，' % transformer +
-                        '变压器容量为%dKVA。' % (KVA / 1000) +
-                       '%s到%s共采集了%d次数据，高危共计%d次，隐患共120次。' % (startday, endday, highrisk, hiddenrisk) +
-                       '以各体检项目在该时段内发生次数及超出各项标准次数进行分析得出：', style='Normal')
+document.add_paragraph('此结论为%s变压器体检结果，' % TRANSFORMER +
+                '变压器容量为%dKVA。' % KVA +
+                '%s到%s共采集了%d次数据，高危共计%d次，隐患共%d次。' % (STARTDAY, ENDDAY, calc.freq, HIGHRISK, HIDDENRISK) +
+                '以各体检项目在该时段内发生次数及超出各项标准次数进行分析得出：', style='Normal')
 document.add_paragraph().add_run('电压体检结论：').bold = True
-document.paragraphs[-1].add_run('该变压器在此数据时段内电压值偶尔超出标准，电压数据基本符合要求；' 
-                                '谐波电压含量80%以上都超出标准，电网谐波电压含量不合格；')
+document.paragraphs[-1].add_run('该变压器在此数据时段内，正常工作时，电压数据%s' % conclusion[0] +
+                '谐波电压含量%d以上超出标准，电网谐波电压含量%s；' % (quality[1] * 100, conclusion[1]))
 document.add_paragraph().add_run('电流体检结论：').bold = True
-document.paragraphs[-1].add_run('变压器低压侧电流值基本在左右，' 
-                                '偶尔会超出变压器额定电流值超载运行，基本属于重载情况；' 
-                                '各分次最大谐波电流值都有明显超出标准情况，在均值下5次、7次、11次超出标准，谐波电流不合格；')
+document.paragraphs[-1].add_run('该变压器低压侧额定电流约%.1fA' % (ele_n) +
+                '电流%s；' % conclusion[2] +
+                '各分次最大谐波电流值都有明显超出标准情况，在均值下5次、7次、11次超出标准，谐波电流不合格；')#########未添加#########
 document.add_paragraph().add_run('功率因数体检结论：').bold = True
-document.paragraphs[-1].add_run('功率因数在0.9~1之间的占比为XX%，功率因数保持良好，功率因数合格；')
+document.paragraphs[-1].add_run('工作时，功率因数在0.9~1之间的占比为%.1f%%，' % (quality[3] * 100) +
+                '功率因数%s' % conclusion[3])
 document.add_paragraph().add_run('负荷率体检结论：').bold = True
-document.paragraphs[-1].add_run('该变压器容量为XXKVA，额定电流约XXA，' 
-                                '变压器负荷率基本在XX%左右运行，已超出标准限值，' 
-                                '监测期间有发生1级过载（100%~110%）和2级过载（110%~150%），' 
-                                '如变压器长期在此状态下工作将会发生安全隐患，变压器负荷率较大；')
+document.paragraphs[-1].add_run('该变压器容量为%dKVA，额定电流约%.1fA，' % (KVA, ele_n) +
+                '工作时，变压器负荷率基本在%.1f%%左右运行，' % calc.lf_mean +
+                '监测期间变压器负荷率%s，' % conclusion[4])
 document.add_paragraph().add_run('三相电流不平衡体检结论：').bold = True
-document.paragraphs[-1].add_run('三相电流不平衡度均在15%以内，概率为XX%，' 
-                                '在XX月XX号XX分时发生过一次23%的情况，此时为用电负荷大量下降，' 
-                                '属于小电流短暂超标，三相电流不平衡度达标。')
-attention = document.add_paragraph(style='N1').add_run('注：分析数据来源为2018年12月1日到2018年12月31日，'
-                                 '共采集了2962次（正常情况15分钟为一个周期点，异常时即时推送）')
+document.paragraphs[-1].add_run('正常工作时，三相电流不平衡度均在15%%以内的概率为%.1f%%，' % quality[5] +
+                '带负载时最大为%.1f%%，发生时间为%s' % (calc.unb_max, calc.unb_maxtime) +
+                '综合来看，三相电流不平衡度数据%s' % conclusion[5])
+attention = document.add_paragraph(style='N1').add_run('注：分析数据来源为%s到%s，' % (STARTDAY, ENDDAY) +
+                                 '共采集了%d次（正常情况15分钟为一个周期点，异常时即时推送）'% calc.freq)
 attention.bold = True
 attention.font.size = Pt(7.5)
 document.add_page_break() #插入分页符
-document.add_heading('1.3体检不正常项目说明', level=2)
+document.add_heading('1.3体检不正常项目说明', level=2)###########进度###############
 document.add_heading('1.3.1谐波电压', level=3)
 document.add_paragraph('...')
 document.add_heading('1.3.2谐波电流', level=3)
 document.add_paragraph('...')
 document.add_page_break() #插入分页符
 document.add_heading('二、专项体检数据分析说明', level=2)
-document.add_paragraph('数据点为%s变压器，变压器容量%dKVA。'% (transformer, KVA / 1000) +
-                       '从%s到%s共采集了%d次数据，'%(startday, endday, freq) +
+document.add_paragraph('数据点为%s变压器，变压器容量%dKVA。'% (TRANSFORMER, KVA) +
+                       '从%s到%s共采集了%d次数据，'%(STARTDAY, ENDDAY, calc.freq) +
                        '结合各项标准，此时段内存在谐波电压含量、谐波电流含量、负荷率超标隐患。' 
                        '此时段电压数据超出标准限值约XX次；谐波电压含量超出标准限值约XX次；'
                        '电流超出变压器额定电流值约XX次；功率因数超出标准限值约XX次；'
@@ -362,7 +363,7 @@ document.add_heading('1）谐波电流趋势图', level=4)
 document.add_paragraph('12月份时段内监测数据，下图中最大值71.6A，最小值1A，用户可在平台内自行查看，一周内每日显示96个数据点，'
                        '一月内显示每日平均值，可根据此图(该图使用2小时均值聚合而成)看出该时段内谐波电流变化状态，'
                        '用来分析电网谐波含量情况。', style='Normal')
-document.add_picture('./pic/ITHD_trend.png',  height=Cm(9.2), width=Cm(17.2))
+document.add_picture('./pic/ITHD_trend.png', height=Cm(8.47), width=Cm(16.36))
 document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 document.add_paragraph('图2-10 总谐波电流值趋势图')
@@ -371,7 +372,7 @@ document.add_heading('2）谐波电流数据详情', level=4)
 document.add_paragraph('取导出数据中每相各分次电流谐波最大值与平均值分析得出如下两图。此分析结果可用于观察该时段'
                        '内各分次谐波电流值，主要谐波电流为几次，并可以根据国标《GB/T14549-1993》看出该'
                        '范围内各分次谐波电流值是否超出标准，以判断谐波电流是否合格。', style='Normal')
-document.add_picture('./pic/HVmax.png', height=Cm(7.4), width=Cm(16.7))
+document.add_picture('./pic/HVmax.png', height=Cm(7.38), width=Cm(16.17))
 document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 document.add_paragraph('图2-11 各分次谐波电流最大值')
@@ -458,7 +459,7 @@ document.add_heading('1）总功率因数趋势图', level=4)
 document.add_paragraph('12月份时段内监测数据，标准限值0.9，下图中最大值XXX，最小值XXX，用户可在平台内自行查看，'
                        '一周内每日显示96个数据点，一月内显示每日平均值，可根据此图(该图使用2小时均值聚合而成)看出该时段内功率因数变'
                        '化状态，用来分析功率因数是否达标。')
-document.add_picture('./pic/PF_trend.png', height=Cm(9.1), width=Cm(17.2))
+document.add_picture('./pic/PF_trend.png', height=Cm(8.7), width=Cm(16.3))
 document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 document.add_paragraph('图2-14 总功率因数趋势图')
@@ -467,7 +468,7 @@ document.add_heading('2）总功率因数体检数据详情', level=4)
 document.add_paragraph('根据导出数据中功率因数发生次数和该时段内超出0.9次数与总次数的对比进行分析。此分析结果可用于观察该时段内功'
                     '率因数主要分布在多少范围内，并可以看出该范围内功率因数发生的概率，以及超出标准的概率，'
                     '可用于分析该时段内功率因数在标准范围内、外的占比，来判断该时段内的功率因数是否合格。', style='Normal')
-document.add_picture('./pic/PF.png', height=Cm(6.3), width=Cm(17.2))
+document.add_picture('./pic/PF.png', height=Cm(6.2), width=Cm(17.15))
 document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 document.add_paragraph('图2-15 总功率因数分析图')
@@ -536,7 +537,7 @@ document.add_heading('1）三相电流不平衡趋势图', level=4)
 document.add_paragraph('XXX时段内监测数据，标准限值15%，下图中最大值145.6%，最小值60.4%，用户可在平台内自行查看，'
                        '一周内每日显示96个数据点，一月内显示每日平均值，可根据此图(该图使用2小时均值聚合而成)'
                        '看出该时段内三相电流不平衡状态，用来分析各相用电情况。', style='Normal')
-document.add_picture('./pic/Unb_trend.png', height=Cm(8.93), width=Cm(16.33))
+document.add_picture('./pic/Unb_trend.png', height=Cm(8.8), width=Cm(16.2))
 document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 document.add_paragraph('图2-18 三相电流不平衡趋势图')
@@ -635,7 +636,7 @@ document.add_paragraph('客户使用我们的Nande Cloud电能大脑，自设备
                        '也就是病史可查，若经过治理，治理前与治理后的数据可轻松调用对比。', style='Normal')
 document.add_paragraph('如您对电能质量隐患有治理需求可与我公司联系，我公司将派专业服务团队进行对接！', style='N1')
 r5 = document.add_paragraph().add_run()
-r5.add_picture('./pic/poweryun_seal.png', height=Cm(2.19), width=Cm(3.0))
+r5.add_picture('./pic/poweryun_seal.png', height=Cm(2.31), width=Cm(3.16))
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
 document.add_paragraph('XXX(部门) XX年XX月XX日', style='Normal')
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
