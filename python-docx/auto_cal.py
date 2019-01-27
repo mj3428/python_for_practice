@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 '''
-@author: miaoj
+@author: miaojue
 @contact: major3428@foxmail.com
 @software: pycharm
 @file: auto_cal.py
@@ -126,18 +126,53 @@ class Calculate:
         u_risk = np.max([len(df3.query('Ua > 235.4 or Ua < 198')),
                          len(df3.query('Ub > 235.4 or Ub < 198')),
                          len(df3.query('Uc > 235.4 or Uc < 198'))], axis=0)
+        u_qr = 1.0 - (u_risk / self.freq)
         i_risk = np.max([len(df3.ix[df3.Ia > (self.kva * 1.44)]),
                          len(df3.ix[df3.Ib > (self.kva * 1.44)]),
                          len(df3.ix[df3.Ic > (self.kva * 1.44)])], axis=0)
+        i_qr = 1.0 - (i_risk / self.freq)
         uthd_risk = np.max([len(df3.query('Ua_THD > 5')),
                             len(df3.query('Ub_THD > 5')),
                             len(df3.query('Uc_THD > 5'))], axis=0)
+        uthd_qr = 1.0 - (uthd_risk / self.freq)
         pf_risk = len(df3.ix[df3.PF < 0.9])
+        pf_qr = 1.0 - (pf_risk / self.freq)
         lf_risk = len(df3.ix[df3.LF > 85])
+        lf_qr = 1.0 - (lf_risk / self.freq)
         unb_risk = len(df3.ix[df3.I_UP > 15])
+        unb_qr = 1.0 - (unb_risk / self.freq)
         riskamount = (u_risk, uthd_risk, i_risk, pf_risk, lf_risk, unb_risk)
+        self.qramount = (u_qr, uthd_qr, i_qr, pf_qr, lf_qr, unb_qr)
+
         return riskamount
 
+    def group(self):
+        self.add_model()
+        df = self.dforignal
+        df.ds = pd.to_datetime(df.ds, format='%Y-%m-%d %H:%M:%S')
+        df4 = df.groupby([pd.Grouper(key='ds', freq='2H')])['Ua', 'Ub', 'Uc', 'Ia', 'Ib', 'Ic',
+                'Ua_THD', 'Ub_THD', 'Uc_THD', 'Ia_THD', 'Ib_THD', 'Ic_THD', 'I_UP', 'LF',
+                'PF', 'P', 'Q'].mean()
+        df4.Ia_THD = df4.Ia_THD * df4.Ia / 100
+        df4.Ib_THD = df4.Ib_THD * df4.Ib / 100
+        df4.Ic_THD = df4.Ic_THD * df4.Ic / 100
+        u_max = np.max([df4.Ua.max(), df4.Ub.max(), df4.Uc.max()], axis=0)
+        u_min = np.min([df4.Ua.min(), df4.Ub.min(), df4.Uc.min()], axis=0)
+        uthd_max = np.max([df4.Ua_THD.max(), df4.Ub_THD.max(), df4.Uc_THD.max()], axis=0)
+        uthd_min = np.min([df4.Ua_THD.min(), df4.Ub_THD.min(), df4.Uc_THD.min()], axis=0)
+        i_max = np.max([df4.Ia.max(), df4.Ib.max(), df4.Ic.max()], axis=0)
+        i_min = np.min([df4.Ia.min(), df4.Ib.min(), df4.Ic.min()], axis=0)
+        ithd_max = np.max([df4.Ia_THD.max(), df4.Ib_THD.max(), df4.Ic_THD.max()], axis=0)
+        ithd_min = np.min([df4.Ia_THD.min(), df4.Ib_THD.min(), df4.Ic_THD.min()], axis=0)
+        pf_max = df4.PF.max()
+        pf_min = df4.PF.min()
+        lf_max = df4.LF.max()
+        lf_min = df4.LF.min()
+        unb_max = df4.I_UP.max()
+        unb_min = df4.I_UP.min()
+        self.max_trend = (u_max, uthd_max, i_max, ithd_max, pf_max, lf_max, unb_max)
+        self.min_trend = (u_min, uthd_min, i_min, ithd_min, pf_min, lf_min, unb_min)
+        return self.max_trend
 class Talk:
     def __init__(self):
         self.untext = ['不合格。', '未达标。', '不达标。', '不理想。']
@@ -243,4 +278,3 @@ if __name__ == '__main__':
     #talk.utalk(quality[0])
     #print(calc.quality())
     #print(calc.freq)
-
