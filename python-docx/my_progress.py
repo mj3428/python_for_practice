@@ -22,6 +22,9 @@ import datetime
 from auto_config import *
 from auto_cal import Calculate
 from auto_cal import Talk
+import time
+
+
 
 calc = Calculate()
 talk = Talk()
@@ -30,15 +33,25 @@ quality = calc.quality()
 max_value = calc.calculate()
 max_value = np.around(max_value, 2)
 conclusion = (talk.utalk(quality[0]), talk.uthdtalk(quality[1]), talk.lftalk(max_value[5]),
-            talk.pftalk(calc.pf_mean), talk.lftalk(max_value[5]), talk.unbtalk(quality[5]))
+              talk.ithdtalk(calc.ithd_risk), talk.pftalk(calc.pf_mean),
+              talk.lftalk(max_value[5]), talk.unbtalk(quality[5]))
 riskamount = calc.count_risk()
-result = talk.result
+qramount = calc.qramount
+max_trend = calc.group()
+min_trend = calc.min_trend
+res_color = talk.result
+resDic = {'green': '—',
+          'yellow': '↑',
+          'red': '↑',}
+result = []
+for i in res_color:
+    result.append(resDic[i])
 ele_n = KVA * 1.44
 now = datetime.datetime.now() #当前时间的datetime
 document = Document('./text/demo.docx')
+#至此时间消耗:1.16-1.32s
 
 
-#南德电气1.82×6.07 电能卫士3.43×9.83
 #last_paragraph = document.paragraphs[-1]
 #last_paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER  # 图片居中设置
 #开始写入
@@ -75,19 +88,20 @@ document.styles['Date1'].font.size = Pt(14)
 document.paragraphs[14].clear()
 document.paragraphs[14].style = 'Date1'
 document.paragraphs[14].add_run(text=now.strftime('%Y')+'年 '+now.strftime('%m')+'月')
+#创建新样式消耗0.01S
 
-#document.add_page_break() #插入分页符
+start = time.clock()#计算导入数据时间
 last = document.paragraphs[-1]
 last.style = 'Heading 1'
 last.add_run(text='一、监测概况及结论')
 document.add_heading('1.1电能参数体检结果', level=2)
-records = (('电压数据', result[0], max_value[0], '205~235V', '《GB/T 12325-2008》'),
-          ('谐波电压数据', result[1], max_value[1], '＜5%', '《GB/T14549-1993》'),
-          ('电流数据', result[2], max_value[2], '＜In100%', '《JGJ16-2008》'),
-          ('谐波电流数据', '↑', max_value[3], '＜各分次国标限值', '《GB/T14549-1993》'),
-          ('功率因数', result[3], max_value[4], '0.9~1.0', '《JGJ16-2008》'),
-          ('负荷率', result[4], max_value[5], '＜额定容量85%', '《JGJ16-2008》'),
-          ('三相电流不平衡度', result[5], max_value[6], '＜15%', '《GB/T 1094-2013》'))
+records = (('电压数据', result[0], str(max_value[0]) + 'V', '205~235V', '《GB/T 12325-2008》'),
+          ('谐波电压数据', result[1], str(max_value[1]) + '%', '＜5%', '《GB/T14549-1993》'),
+          ('电流数据', result[2], str(max_value[2]) + 'A', '＜In100%', '《JGJ16-2008》'),
+          ('谐波电流数据', result[3], str(max_value[3]) + 'A', '＜各分次国标限值', '《GB/T14549-1993》'),
+          ('功率因数', result[4], str(max_value[4]), '0.9~1.0', '《JGJ16-2008》'),
+          ('负荷率', result[5], str(max_value[5]) + '%', '＜额定容量85%', '《JGJ16-2008》'),
+          ('三相电流不平衡度', result[6], str(max_value[6]) + '%', '＜15%', '《GB/T 1094-2013》'))
 table1 = document.add_table(rows=1, cols=5)
 hdr_cells = table1.rows[0].cells
 hdr_cells[0].text = '体检项目'
@@ -99,7 +113,7 @@ for sty, res, mv, ran, txt in records:
     row_cells = table1.add_row().cells
     row_cells[0].text = sty
     row_cells[1].text = res
-    row_cells[2].text = str(mv)
+    row_cells[2].text = mv
     row_cells[3].text = ran
     row_cells[4].text = txt
 
@@ -145,24 +159,27 @@ document.paragraphs[-1].add_run('该变压器在此数据时段内，正常工�
 document.add_paragraph().add_run('电流体检结论：').bold = True
 document.paragraphs[-1].add_run('该变压器低压侧额定电流约%.1fA' % (ele_n) +
                 '电流%s' % conclusion[2] +
-                '各分次最大谐波电流值都有明显超出标准情况，在均值下5次、7次、11次超出标准，谐波电流不合格；')#########未添加#########
+                '谐波电流%s' % conclusion[3] + '对应的最大值分别为%s' % calc.ithd_mv)
 document.add_paragraph().add_run('功率因数体检结论：').bold = True
 document.paragraphs[-1].add_run('工作时，功率因数在0.9~1之间的占比为%.1f%%，' % (quality[3] * 100) +
-                '功率因数%s' % conclusion[3])
+                '功率因数%s' % conclusion[4])
 document.add_paragraph().add_run('负荷率体检结论：').bold = True
 document.paragraphs[-1].add_run('该变压器容量为%dKVA，额定电流约%.1fA，' % (KVA, ele_n) +
                 '工作时，变压器负荷率基本在%.1f%%左右运行，' % calc.lf_mean +
-                '综合来看，监测期间变压器负荷率%s' % conclusion[4])
+                '综合来看，监测期间变压器负荷率%s' % conclusion[5])
 document.add_paragraph().add_run('三相电流不平衡体检结论：').bold = True
 document.paragraphs[-1].add_run('正常工作时，三相电流不平衡度均在15%%以内的概率为%.1f%%，' % quality[5] +
                 '带负载时最大为%.1f%%，发生时间为%s' % (calc.unb_max, calc.unb_maxtime) +
-                '综合来看，三相电流不平衡度数据%s' % conclusion[5])
+                '综合来看，三相电流不平衡度数据%s' % conclusion[6])
 attention = document.add_paragraph(style='N1').add_run('注：分析数据来源为%s到%s，' % (STARTDAY, ENDDAY) +
                                  '共采集了%d次（正常情况15分钟为一个周期点，异常时即时推送）'% calc.freq)
 attention.bold = True
 attention.font.size = Pt(7.5)
 document.add_page_break() #插入分页符
+#第一章消耗0.07s
 position = 1
+elapsed = (time.clock() - start)
+print("Time used:", elapsed)
 
 document.add_heading('1.3体检不正常项目说明', level=2)###############未判断##################
 document.add_heading('1.3.1谐波电压', level=3)
@@ -178,14 +195,15 @@ document.add_paragraph('数据点为%s变压器，变压器容量%dKVA。'% (TRA
             '电流超出变压器额定电流值约%d次；功率因数超出标准限值约%d次；' % (riskamount[2], riskamount[3]) +
             '变压器负荷率85%%以上约%d次；三相电流不平衡超出标准限值%d次。'% (riskamount[4], riskamount[5]), style='Normal')
 document.add_heading('2.1电压数据', level=2)
-document.add_heading('2.1.1 电压数据体检分析', level=3)###################进度#####################
-document.add_paragraph('根据国家标准《GB/T 12325-2008》中规定单相220V供电电压允许偏差为标称系统电压的+7％、-10%。'
-                       '由此计算出电压标准上限值为235.4V。'
-                       '从以下分析中可以看出A、B、C三相电压达标率为XX%左右，基本符合标准。',style='Normal')
+document.add_heading('2.1.1 电压数据体检分析', level=3)
+document.add_paragraph('根据国家标准《GB/T 12325-2008》中规定单相220V供电电压允许偏差为标称系统电压的+7%%、-10%%。'
+            '由此计算出电压标准上限值为235.4V。'
+            '从以下分析中可以看出A、B、C三相电压达标率为%.1f%%左右。' % (qramount[0] * 100), style='Normal')
 document.add_heading('1）电压趋势图', level=4)
-document.add_paragraph('XXX时段内监测数据，标准限值198V~235V，'
-                       '下图中最大值XXX，最小值XXX，用户可在平台内自行查看，一周内每日显示96个数据点，一月内显示每日平均值，'
-                       '可根据此图(该图使用2小时均值聚合而成)看出该时段内电压变化状态，用来分析用电情况。', style='Normal')
+document.add_paragraph('%s至%s时段内监测数据，标准限值198V~235V，' % (STARTDAY, ENDDAY) +
+            '下图中最大值%.1f，最小值%.1f，用户可在平台内自行查看，' % (max_trend[0], min_trend[0]) +
+            '一周内每日显示96个数据点，一月内显示每日平均值，'
+            '可根据此图(该图使用2小时均值聚合而成)看出该时段内电压变化状态，用来分析用电情况。', style='Normal')
 document.add_picture('./pic/U_trend.png', height=Cm(9.2), width=Cm(17.2))
 document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74) #五号一个字符长度0.371厘米 缩进了两个字符
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
@@ -228,10 +246,12 @@ document.add_paragraph('--------------------------------------------------------
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
 document.add_heading('2.2 谐波电压数据', level=2)
 document.add_heading('2.2.1 谐波电压体检数据分析小结', level=3)
-document.add_paragraph('国家标准《GB/T14549-1993》中相电压最大谐波畸变率限值为5%，从以下分析中可以看出A、B、C各相电压总谐'
-                       '波畸变率已明显超出国家5%标准，最大值已达11.5%，电网电压谐波含量需要治理。', style='Normal')
+document.add_paragraph('国家标准《GB/T14549-1993》中相电压最大谐波畸变率限值为5%%，从以下分析中可以看出A、B、C各相电压总谐'
+                       '波畸变率已明显超出国家5%%标准，最大值已达%.1f%%，' % max_value[1] +
+                       '电网电压谐波含量需要治理。', style='Normal')
 document.add_heading('1）谐波电压趋势图', level=4)
-document.add_paragraph('XX月份时段内监测数据，标准限值5%，下图中最大值11.5%，最小值4.2%，用户可在平台内自行查看，'
+document.add_paragraph('%s至%s时段内监测数据，标准限值5%%，' %(STARTDAY, ENDDAY) +
+                       '下图中最大值%.1f%%，最小值%.1f%%，用户可在平台内自行查看，' %(max_trend[1], min_trend[1]) +
                        '一周内每日显示96个数据点，一月内显示每日平均值，可根据此图(该图使用2小时均值聚合而成)看出该时段内谐波电压变'
                        '化状态，用来分析谐波电压发生在哪个时段内。', style='Normal')
 document.add_picture('./pic/UTHD_trend.png', height=Cm(9.2), width=Cm(17.2))
@@ -313,11 +333,13 @@ document.add_paragraph('--------------------------------------------------------
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
 document.add_heading('2.3 电流数据', level=2)
 document.add_heading('2.3.1 电流数据体检分析小结', level=3)
-document.add_paragraph('该变压器容量为XXXKVA，则二次侧额定电流约为XXXA。监测时间段三相电流基本处于超载状态，最大电流为 '
-                       'A相为XXXA，B相为XXXA，C相为XXXA，最高时超出额定电流XXX%左右。', style='Normal')
+document.add_paragraph('该变压器容量为%dKVA，则二次侧额定电流约为%dA。' % (KVA, ele_n) +
+            '监测时间段三相电流%s，' % conclusion[4] +
+            '单相最大电流为%.1fA，最高时超出额定电%.1f%%左右。' % (max_value[2], max_value[2] / ele_n), style='Normal')
 document.add_page_break()
 document.add_heading('1）电流趋势图', level=4)
-document.add_paragraph(' 12月份时段内监测数据，标准限值XXA（变压器额定电流），下图中最大值XXA，最小值XXA，用户可在'
+document.add_paragraph('%s至%s时段内监测数据，标准限值%dA（变压器额定电流），' % (STARTDAY, ENDDAY, KVA) +
+                       '下图中最大值%.1fA，最小值%.1fA，用户可在' % (max_trend[2], max_trend[2]) +
                        '平台内自行查看，一周内每日显示96个数据点，一月内显示每日平均值，可根据此图(该图使用2小时均值聚合而成)'
                        '看出该时段内电流变化状态，用来分析用电情况。', style='Normal')
 document.add_picture('./pic/I_trend.png', height=Cm(9.2), width=Cm(17.2))
@@ -356,7 +378,7 @@ document.add_paragraph('根据国标JGJ16-2008《民用建筑电气设计手册�
 document.add_paragraph('--------------------------------------------------------------------', style='Normal')
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
 document.add_heading('2.4 谐波电流数据', level=2)
-document.add_heading('2.4.1 谐波电流体检数据分析小结', level=3)
+document.add_heading('2.4.1 谐波电流体检数据分析小结', level=3)###################进度#####################
 document.add_paragraph('从以下分析中可以看出三相各分次谐波电流值，根据‘国标《GB/T14549-1993》注入公共连接点的谐波电流允许值’中'
                        '规定，该电网谐波电流X次、7X次、X次、X次、X次、XX次、X次、X次均有超出国家标准范围，'
                        '以其中X次、X次谐波为主，X次最大值为216.7A，X次最大值为195.5A，'
