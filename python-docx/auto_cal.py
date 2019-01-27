@@ -75,17 +75,41 @@ class Calculate:
         A1 = df1.Ia
         df1['iam3'], df1['iam5'] = A1 * df1.Ia_H3 / 100, A1 * df1.Ia_H5 / 100
         df1['iam7'], df1['iam9'] = A1 * df1.Ia_H7 / 100, A1 * df1.Ia_H9 / 100
+        df1['iam11'], df1['iam13'] = A1 * df1.Ia_H11 / 100, A1 * df1.Ia_H13 / 100
+        df1['iam15'], df1['iam17'] = A1 * df1.Ia_H15 / 100, A1 * df1.Ia_H17 / 100
+        df1['iam19'], df1['iam21'] = A1 * df1.Ia_H19 / 100, A1 * df1.Ia_H21 / 100
         A2 = df1.Ib
         df1['ibm3'], df1['ibm5'] = A2 * df1.Ib_H3 / 100, A2 * df1.Ib_H5 / 100
         df1['ibm7'], df1['ibm9'] = A2 * df1.Ib_H7 / 100, A2 * df1.Ib_H9 / 100
+        df1['ibm11'], df1['ibm13'] = A1 * df1.Ib_H11 / 100, A1 * df1.Ib_H13 / 100
+        df1['ibm15'], df1['ibm17'] = A1 * df1.Ib_H15 / 100, A1 * df1.Ib_H17 / 100
+        df1['ibm19'], df1['ibm21'] = A1 * df1.Ib_H19 / 100, A1 * df1.Ib_H21 / 100
         A3 = df1.Ic
         df1['icm3'], df1['icm5'] = A3 * df1.Ic_H3 / 100, A3 * df1.Ic_H5 / 100
         df1['icm7'], df1['icm9'] = A3 * df1.Ic_H7 / 100, A3 * df1.Ic_H9 / 100
-        max_vals2 = {'A3': df1.iam3.max(), 'A5': df1.iam5.max(), 'A7': df1.iam7.max(), 'A9':df1.iam9.max(),
-                     'B3': df1.ibm3.max(), 'B5': df1.ibm5.max(), 'B7': df1.ibm7.max(), 'B9':df1.ibm9.max(),
-                     'C3': df1.icm3.max(), 'C5': df1.icm5.max(), 'C7': df1.icm7.max(), 'C9': df1.icm9.max()}
-        self.key_name = max(max_vals2, key=max_vals2.get)
-        self.max_vals3 = max(max_vals2.values())
+        df1['icm11'], df1['icm13'] = A1 * df1.Ic_H11 / 100, A1 * df1.Ic_H13 / 100
+        df1['icm15'], df1['icm17'] = A1 * df1.Ic_H15 / 100, A1 * df1.Ic_H17 / 100
+        df1['icm19'], df1['icm21'] = A1 * df1.Ic_H19 / 100, A1 * df1.Ic_H21 / 100
+        self.max_vals2 = {'3': max(df1.iam3.max(), df1.ibm3.max(), df1.icm3.max()),
+                      '5': max(df1.iam5.max(), df1.ibm5.max(), df1.icm5.max()),
+                      '7': max(df1.iam7.max(), df1.ibm7.max(), df1.icm7.max()),
+                      '9': max(df1.iam9.max(), df1.ibm9.max(), df1.icm9.max()),
+                     '11': max(df1.iam11.max(), df1.ibm11.max(), df1.icm11.max()),
+                     '13': max(df1.iam13.max(), df1.ibm13.max(), df1.icm13.max()),
+                     '15': max(df1.iam15.max(), df1.ibm15.max(), df1.icm15.max()),
+                     '17': max(df1.iam17.max(), df1.ibm17.max(), df1.icm17.max()),
+                     '19': max(df1.iam19.max(), df1.ibm19.max(), df1.icm19.max()),
+                     '21': max(df1.iam21.max(), df1.ibm21.max(), df1.icm21.max()),}
+        ithd_gb = (62, 62, 44, 21, 28, 24, 12, 18, 16, 8.9)
+        self.ithd_risk = []
+        ithd_value = []
+        for a, b in zip(self.max_vals2.values(), ithd_gb):
+            if a > b:
+                ithd_value.append(str(round(a, 1))+'A')
+                self.ithd_risk.append(list(self.max_vals2.keys())[list(self.max_vals2.values()).index(a)])
+        self.ithd_mv = '、'.join(ithd_value)
+        #self.key_name = max(self.max_vals2, key=self.max_vals2.get)
+        self.max_vals3 = max(self.max_vals2.values())
         self.min_vals = np.min(df1.PF, axis=0)
         self.max_vals4 = np.max([df1.LF, df1.I_UP], axis=1)
         max_values = (self.max_vals1[0], self.max_vals1[1], self.max_vals1[2], self.max_vals3, self.min_vals,
@@ -156,14 +180,14 @@ class Calculate:
         df4.Ia_THD = df4.Ia_THD * df4.Ia / 100
         df4.Ib_THD = df4.Ib_THD * df4.Ib / 100
         df4.Ic_THD = df4.Ic_THD * df4.Ic / 100
-        u_max = np.max([df4.Ua.max(), df4.Ub.max(), df4.Uc.max()], axis=0)
-        u_min = np.min([df4.Ua.min(), df4.Ub.min(), df4.Uc.min()], axis=0)
-        uthd_max = np.max([df4.Ua_THD.max(), df4.Ub_THD.max(), df4.Uc_THD.max()], axis=0)
-        uthd_min = np.min([df4.Ua_THD.min(), df4.Ub_THD.min(), df4.Uc_THD.min()], axis=0)
-        i_max = np.max([df4.Ia.max(), df4.Ib.max(), df4.Ic.max()], axis=0)
-        i_min = np.min([df4.Ia.min(), df4.Ib.min(), df4.Ic.min()], axis=0)
-        ithd_max = np.max([df4.Ia_THD.max(), df4.Ib_THD.max(), df4.Ic_THD.max()], axis=0)
-        ithd_min = np.min([df4.Ia_THD.min(), df4.Ib_THD.min(), df4.Ic_THD.min()], axis=0)
+        u_max = max(df4.Ua.max(), df4.Ub.max(), df4.Uc.max())
+        u_min = min(df4.Ua.min(), df4.Ub.min(), df4.Uc.min())
+        uthd_max = max(df4.Ua_THD.max(), df4.Ub_THD.max(), df4.Uc_THD.max())
+        uthd_min = min(df4.Ua_THD.min(), df4.Ub_THD.min(), df4.Uc_THD.min())
+        i_max = max(df4.Ia.max(), df4.Ib.max(), df4.Ic.max())
+        i_min = min(df4.Ia.min(), df4.Ib.min(), df4.Ic.min())
+        ithd_max = max(df4.Ia_THD.max(), df4.Ib_THD.max(), df4.Ic_THD.max())
+        ithd_min = min(df4.Ia_THD.min(), df4.Ib_THD.min(), df4.Ic_THD.min())
         pf_max = df4.PF.max()
         pf_min = df4.PF.min()
         lf_max = df4.LF.max()
@@ -262,6 +286,24 @@ class Talk:
                    3: '不达标，或是有异常值，异常值一般与现场特殊负载有关；'
                       '或是有2级过载现象，若2级过载，已严重损害变压器；需要尽快排查解决问题。'}
         return talkDic[rank]
+
+    def ithdtalk(self, args):
+        if len(args) < 1:
+            rank = 0
+        elif len(args) >=1 and len(args) <= 2:
+            rank = 1
+        elif len(args) > 2:
+            rank = 2
+        else:
+            return None
+        strs = '、'.join(args)
+        talkDic = {0: '正常健康；各分次谐波电流皆符合要求。',
+                   1: '中以第%s次谐波电流为主，谐波电流不达标。' % strs,
+                   2: '不达标，有多次谐波电流的最大值超过了标准，分别为第%s次。' % strs,}
+        self.result.append(self.rankDic[rank])
+        return talkDic[rank]
+
+
 
 if __name__ == '__main__':
     calc = Calculate()
