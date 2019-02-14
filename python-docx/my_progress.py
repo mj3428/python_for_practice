@@ -25,7 +25,7 @@ from auto_cal import Talk
 import time
 
 
-
+start = time.clock()#计算导入数据时间
 calc = Calculate()
 talk = Talk()
 calc.add_model()
@@ -52,8 +52,6 @@ document = Document('./text/demo.docx')
 #至此时间消耗:1.16-1.32s
 
 
-#last_paragraph = document.paragraphs[-1]
-#last_paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER  # 图片居中设置
 #开始写入
 style_T1 = document.styles.add_style('T1', WD_STYLE_TYPE.PARAGRAPH) #创建T1样式
 style_T1.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER #居中
@@ -90,7 +88,7 @@ document.paragraphs[14].style = 'Date1'
 document.paragraphs[14].add_run(text=now.strftime('%Y')+'年 '+now.strftime('%m')+'月')
 #创建新样式消耗0.01S
 
-start = time.clock()#计算导入数据时间
+
 last = document.paragraphs[-1]
 last.style = 'Heading 1'
 last.add_run(text='一、监测概况及结论')
@@ -169,7 +167,7 @@ document.paragraphs[-1].add_run('该变压器容量为%dKVA，额定电流约%.1
                 '综合来看，监测期间变压器负荷率%s' % conclusion[5])
 document.add_paragraph().add_run('三相电流不平衡体检结论：').bold = True
 document.paragraphs[-1].add_run('正常工作时，三相电流不平衡度均在15%%以内的概率为%.1f%%，' % quality[5] +
-                '带负载时最大为%.1f%%，发生时间为%s' % (calc.unb_max, calc.unb_maxtime) +
+                '带负载时最大为%.1f%%，发生时间为%s。' % (calc.unb_max, calc.unb_maxtime) +
                 '综合来看，三相电流不平衡度数据%s' % conclusion[6])
 attention = document.add_paragraph(style='N1').add_run('注：分析数据来源为%s到%s，' % (STARTDAY, ENDDAY) +
                                  '共采集了%d次（正常情况15分钟为一个周期点，异常时即时推送）'% calc.freq)
@@ -178,8 +176,7 @@ attention.font.size = Pt(7.5)
 document.add_page_break() #插入分页符
 #第一章消耗0.07s
 position = 1
-elapsed = (time.clock() - start)
-print("Time used:", elapsed)
+
 
 document.add_heading('1.3体检不正常项目说明', level=2)###############未判断##################
 document.add_heading('1.3.1谐波电压', level=3)
@@ -357,7 +354,7 @@ document.add_paragraph('图2-8 电流概率分布图')
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 document.add_page_break()
 document.add_heading('3）电流数据合格率', level=4)
-document.add_paragraph('取导出数据中各相电流实际超出454.7A次数，与总次数对比分析得出该合格率，此分析结果可用于查看该时段内各相电'
+document.add_paragraph('取导出数据中各相电流实际超出二次额定电流的次数，与总次数对比分析得出该合格率，此分析结果可用于查看该时段内各相电'
                        '流在标准范围内、外的占比，来判断该时段内的电流数据是否合格。', style='Normal')
 document.add_picture('./pic/I_Pie.png', height=Cm(5.74), width=Cm(17.21))
 document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
@@ -378,15 +375,16 @@ document.add_paragraph('根据国标JGJ16-2008《民用建筑电气设计手册�
 document.add_paragraph('--------------------------------------------------------------------', style='Normal')
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
 document.add_heading('2.4 谐波电流数据', level=2)
-document.add_heading('2.4.1 谐波电流体检数据分析小结', level=3)###################进度#####################
+document.add_heading('2.4.1 谐波电流体检数据分析小结', level=3)
 document.add_paragraph('从以下分析中可以看出三相各分次谐波电流值，根据‘国标《GB/T14549-1993》注入公共连接点的谐波电流允许值’中'
-                       '规定，该电网谐波电流X次、7X次、X次、X次、X次、XX次、X次、X次均有超出国家标准范围，'
-                       '以其中X次、X次谐波为主，X次最大值为216.7A，X次最大值为195.5A，'
-                       '电流谐波不达标，需要进行谐波治理。', style='Normal')
+                       '规定，该电网谐波电流第%s次均有超出国家标准范围，' % talk.strs +
+                       '谐波电流%s' % conclusion[3] + '对应的最大值分别为%s' % calc.ithd_mv, style='Normal')
 document.add_page_break()
 document.add_heading('1）谐波电流趋势图', level=4)
-document.add_paragraph('12月份时段内监测数据，下图中最大值71.6A，最小值1A，用户可在平台内自行查看，一周内每日显示96个数据点，'
-                       '一月内显示每日平均值，可根据此图(该图使用2小时均值聚合而成)看出该时段内谐波电流变化状态，'
+document.add_paragraph('12月份时段内监测数据，'
+                       '下图中最大值%.1fA，最小值%.1fA，' % (max_trend[3], min_trend[3]) +
+                       '用户可在平台内自行查看，一周内每日显示96个数据点，一月内显示每日平均值，'
+                       '可根据此图(该图使用2小时均值聚合而成)看出该时段内谐波电流变化状态，'
                        '用来分析电网谐波含量情况。', style='Normal')
 document.add_picture('./pic/ITHD_trend.png', height=Cm(8.47), width=Cm(16.36))
 document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
@@ -428,7 +426,7 @@ r1 = document.add_paragraph(style='Normal').add_run()
 r1.add_picture('./pic/thdi_format.png', width=Cm(3.3), height=Cm(1.2))
 document.add_heading('3）参考标准', level=4)
 document.add_paragraph('依据《GB/T14549-1993》电能质量公用电网谐波国家标准进行。\n\t'
-                       '国标《GB/T14549-1993》中注入公共连接点的谐波电流允许值：',style='Normal')
+                       '国标《GB/T14549-1993》中注入公共连接点的谐波电流允许值：', style='Normal')
 table3 = document.add_table(rows=1, cols=14)
 hdr_cells3 = table3.rows[0].cells
 thead3 = ('标准电压（KV）', '基准短路容量（MVA）', '谐波次数及谐波电流允许值（A）')
@@ -477,11 +475,14 @@ document.add_paragraph('--------------------------------------------------------
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
 document.add_heading('2.5 功率因数数据', level=2)
 document.add_heading('2.5.1 总功率因数体检数据分析小结', level=3)
-document.add_paragraph('根据国标《JGJ16-2008》中要求，功率因数不宜低于0.9。从以下分析中可以看出功率因数0.9到1的占比为XXX%%，'
-                       '0.9以下占比XXX%%，基本符合要求，应到加强对功率因数的巡查监管，避免可能带来的功率因数罚款。', style='Normal')
+document.add_paragraph('根据国标《JGJ16-2008》中要求，功率因数不宜低于0.9。'
+                       '从以下分析中可以看出功率因数0.9到1的占比为%.1f%%，' % (qramount[3] * 100) +
+                       '0.9以下占比%.1f%%，安全提示：若是功率因数偏低，应加强对功率因数' % ((1 - qramount[3]) * 100) +
+                       '的巡查监管，避免可能带来的功率因数罚款。', style='Normal')
 document.add_page_break()
 document.add_heading('1）总功率因数趋势图', level=4)
-document.add_paragraph('12月份时段内监测数据，标准限值0.9，下图中最大值XXX，最小值XXX，用户可在平台内自行查看，'
+document.add_paragraph('12月份时段内监测数据，标准限值0.9，'
+                       '下图中最大值%.1f，最小值%.1f，用户可在平台内自行查看，' % (max_trend[4], min_trend[4]) +
                        '一周内每日显示96个数据点，一月内显示每日平均值，可根据此图(该图使用2小时均值聚合而成)看出该时段内功率因数变'
                        '化状态，用来分析功率因数是否达标。')
 document.add_picture('./pic/PF_trend.png', height=Cm(8.7), width=Cm(16.3))
@@ -520,10 +521,13 @@ document.add_paragraph('--------------------------------------------------------
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
 document.add_heading('2.6 负荷率数据', level=2)
 document.add_heading('2.6.1 负荷率体检数据分析小结', level=3)
-document.add_paragraph('从以下分析中可以看出最大负荷率在XXX，负荷率已达XXX左右，属于二级超载，基本是长时间处于超载状态，'
-                       '长期在此状态工作可能会发生安全隐患，建议进行整改。', style='Normal')
+document.add_paragraph('在正常工作时，最大负荷率在%.1f%%，' % max_value[5] +
+                       '负荷率%s' % conclusion[5] +
+                       '安全提示:若是负荷率长期在过载状态工作可能会发生安全隐患。', style='Normal')
 document.add_heading('1）负荷率趋势图', level=4)
-document.add_paragraph('12月份时段内监测数据，标准限值85%，下图中最大值XX，最小值XX%，用户可在平台内自行查看，一周内每日'
+document.add_paragraph('%s至%s时段内监测数据，标准限值85%%，' % (STARTDAY, ENDDAY) +
+                       '下图中最大值%.1f%%，最小值%.1f%%，' % (max_trend[5], min_trend[5]) +
+                       '用户可在平台内自行查看，一周内每日'
                        '显示96个数据点，一月内显示每日平均值，可根据此图(该图使用2小时均值聚合而成)看'
                        '出该时段内负荷率变化状态，用来分析用电情况。', style='Normal')
 document.add_page_break()
@@ -555,11 +559,11 @@ document.add_paragraph('根据国标JGJ16-2008《民用建筑电气设计手册�
                        '作负载率不宜大于85%。', style='Normal')
 document.add_heading('2.7 三相电流不平衡数据', level=2)
 document.add_heading('2.7.1三相电流不平衡体检数据分析小结', level=3)
-document.add_paragraph('从以下分析可以看出三相电流不平衡度最大为XX%，结合电流趋势图可以看出此时负载未全部开启，'
-                       '属于小电流超标，但在大量负载启用时电流不平衡度也可达XX%，主要是因为C相电流一直高于其他两相，'
-                       '导致电流不平衡度被放大，三相电流不平衡度已超出国家标准15%限值，建议对其进行治理。', style='Normal')
+document.add_paragraph('正常工作时三相电流不平衡度最大为%.1f%%，' % max_value[6] +
+                       '其中已经剔除了轻负载时的不平衡度，可以得出，三相电流不平衡度%s' , style='Normal')
 document.add_heading('1）三相电流不平衡趋势图', level=4)
-document.add_paragraph('XXX时段内监测数据，标准限值15%，下图中最大值145.6%，最小值60.4%，用户可在平台内自行查看，'
+document.add_paragraph('%s至%s时段内监测数据，标准限值15%%，' % (STARTDAY, ENDDAY) +
+                       '下图中最大值%.1f%%，最小值%.1f%%，用户可在平台内自行查看，' % (max_trend[6], min_trend[6])+
                        '一周内每日显示96个数据点，一月内显示每日平均值，可根据此图(该图使用2小时均值聚合而成)'
                        '看出该时段内三相电流不平衡状态，用来分析各相用电情况。', style='Normal')
 document.add_picture('./pic/Unb_trend.png', height=Cm(8.8), width=Cm(16.2))
@@ -594,15 +598,16 @@ document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
 document.add_page_break()
 document.add_heading('三、我们的服务', level=1)
 document.add_heading('3.1健康体检', level=2)
-document.add_paragraph('在12月份时段内，为您的1#变压器做了电流数据、电压数据、谐波电压、谐波电流、三相不平衡、功率因数、变压器负'
+document.add_paragraph('在%s至%s时段内，为您的%s变压器' % (STARTDAY, ENDDAY, TRANSFORMER) +
+                       '做了电流数据、电压数据、谐波电压、谐波电流、三相不平衡、功率因数、变压器负'
                        '荷率数据的采集及分析管理服务，数据界面在PC和微信公众号界面均有呈现，采集时间为15分钟一次'
                        '（异常时即时采集），可随时随地读取、查看各个回路参数信息。电能健康体检设备可以动态体检，'
                        '把每天采集的多个点形成趋势图记录下来，以便后续分析查看。可监测多个项目，如您需要监测'
                        '其他参数，我们可以根据您的需求提供相应的监测服务。', style='Normal')
-document.add_heading('3.2隐患管理', level=2)
+document.add_heading('3.2隐患管理', level=2)###################进度#####################
 document.add_paragraph('设备采集的数据经过阿里云混合云服务器的解析，结合国家标准对隐患级别进行分类、分级管理。使得其各类'
                        '参数的更清楚、更明确的呈现出来，隐患变得一目了然。\n\t在数据时段内，对各监测项XXX条信息进行了'
-                       '分析，其中高危xxx条，隐患xxx条，详情如下表格：')
+                       '分析，其中高危xxx条，隐患xxx条，详情如下表格：') #手动填写
 table4 = document.add_table(rows=1, cols=9)
 th4 = ('体检项', '电压', '电流', '电压谐波含量', '谐波电流', '电流不平衡', '功率因数', '负荷率', '温度')
 tr4 = (('高危（次）',	0, 255, 2, 2, 0, 0, 79, '-'), ('隐患（次）', 527, 735, 5, 5, 302, 2, 721, '-'),
@@ -629,9 +634,10 @@ document.add_heading('3.3健康干预', level=2)
 document.add_heading('\t“未病先防，既病防变”', level=4)
 document.add_paragraph('在隐患分类分级后，健康干预也会针对不同隐患等级有不同的推送方式，这些通知方式也是可供用户自主选择的，在'
                        '用户没有提出通知方式之前，我们对用户的健康干预考虑了有效实时，不会对用户生活造成干扰。当预警达到一定的数量'
-                       '的时候，而这时用户自身没有留意到风险本身，XXXX的专业团队便会对风险用户进行致电，甚至就风险问题根源'
+                       '的时候，而这时用户自身没有留意到风险本身，%s的专业团队' % POWERYUN_BRAND +
+                       '便会对风险用户进行致电，甚至就风险问题根源'
                        '进行上门排查、解决。\n\t在数据时段内，系统共监测到2665条预警信息，'
-                       '并以线上和客服方式通知，共预警了338条，详情如下表格：', style='Normal')
+                       '并以线上和客服方式通知，共预警了XXX条，详情如下表格：', style='Normal')
 table5 = document.add_table(rows=1, cols=5)
 th5 = ('干预方式', '微信通知', '短信通知', '邮件通知', '客服致电')
 tr5 = ('干预次数', 388, 0, 0, 0)
@@ -648,27 +654,29 @@ for j in range(0, 5):
 table5.style = 'ListCLF3'
 document.add_page_break()
 document.add_heading('3.4 O2O服务', level=2)
-document.add_paragraph('线上对线上，当用户在有困惑时，点击“呼叫服务”，XXXX就能知晓客户有疑问与反馈，在客户未'
-                        '拨通客服电话，乃至在拨通电话前，XXXX的健康指导师会直接联系客户，或微信，'
+document.add_paragraph('线上对线上，当用户在有困惑时，点击“呼叫服务”，%s就能知晓客户有疑问与反馈，在客户未' % POWERYUN_BRAND +
+                        '拨通客服电话，乃至在拨通电话前，%s的健康指导师会直接联系客户，或微信，' % POWERYUN_BRAND +
                         '或电话，直至将客户的心中的疑虑排除。\n\t已为您提供O2O服务0次。', style='Normal')
 r4 = document.add_paragraph().add_run()
 r4.add_picture('./pic/phone_poweryun.png', height=Cm(4.15), width=Cm(6.59))
 r4.add_picture('./pic/service_poweryun.png', height=Cm(10.37), width=Cm(5.84))
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 document.add_heading('3.5电能健康档案', level=2)
-document.add_paragraph('客户使用我们的Nande Cloud电能大脑，自设备建点那一刻起就建立了档案，您的电能健康档案已于2018年10月11日建立，'
+document.add_paragraph('客户使用我们的Nande Cloud电能大脑，自设备建点那一刻起就建立了档案，'
+                       '您的电能健康档案已于XXXX年XX月XX日建立，'
                        '并长期有效存储在阿里云服务器中，数据传输以15分钟为间隔，都存档在案，若追溯，最长可长达2年。'
                        '也就是病史可查，若经过治理，治理前与治理后的数据可轻松调用对比。', style='Normal')
 document.add_paragraph('如您对电能质量隐患有治理需求可与我公司联系，我公司将派专业服务团队进行对接！', style='N1')
 r5 = document.add_paragraph().add_run()
 r5.add_picture('./pic/poweryun_seal.png', height=Cm(2.31), width=Cm(3.16))
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
-document.add_paragraph('XXX(部门) XX年XX月XX日', style='Normal')
+document.add_paragraph('工程服务部 %s' % (datetime.datetime.strftime(now, '%y-%m-%d')), style='Normal')
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
 
 
 
 document.save('./text/test.docx')
-
+elapsed = (time.clock() - start)
+print("Time used:", elapsed)
 
 
