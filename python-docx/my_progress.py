@@ -47,76 +47,6 @@ brush = {'green': RGBColor(0x00, 0xB0, 0x50),
          'yellow': RGBColor(0xff, 0xff, 0x00),
          'red': RGBColor(0xff, 0x00, 0x00)}
 chapter = ('电压', '谐波电压', '电流', '谐波电流', '功率因数', '负荷率', '三相电流不平衡度')
-result = []
-brush_color = []
-for i in res_color:
-    result.append(resDic[i])
-for i in res_color:
-    brush_color.append(brush[i])
-ele_n = KVA * 1.44
-now = datetime.datetime.now() #当前时间的datetime
-document = Document('./text/demo.docx')
-#至此时间消耗:1.16-1.32s
-
-
-#开始写入
-style_T1 = document.styles.add_style('T1', WD_STYLE_TYPE.PARAGRAPH) #创建T1样式
-style_T1.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER #居中
-document.styles['T1'].font.name = u'宋体' #T1样式使用字体
-document.styles['T1']._element.rPr.rFonts.set(qn('w:eastAsia'), u'宋体')
-document.styles['T1'].font.size = Pt(26)
-document.styles['T1'].font.bold = True
-
-style_T2 = document.styles.add_style('T2', WD_STYLE_TYPE.PARAGRAPH) #创建T2样式
-style_T2.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER #居中#!/usr/bin/env python
-# encoding: utf-8
-'''
-@author: miaojue
-@contact: major3428@foxmail.com
-@software: pycharm
-@file: test.py
-@time: 2018-10-16 下午 2:54
-@desc:
-'''
-
-from docx import Document
-from docx.shared import Cm, RGBColor
-from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-from docx.enum.style import WD_STYLE_TYPE
-from docx.shared import Pt
-from docx.enum.table import WD_TABLE_ALIGNMENT
-import numpy as np
-import pandas as pd
-from docx.oxml.ns import qn
-import datetime
-from auto_config import *
-from auto_cal import Calculate
-from auto_cal import Talk
-import time
-
-
-start = time.clock()#计算导入数据时间
-calc = Calculate()
-talk = Talk()
-calc.add_model()
-quality = calc.quality()
-max_value = calc.calculate()
-max_value = np.around(max_value, 2)
-conclusion = (talk.utalk(quality[0]), talk.uthdtalk(quality[1]), talk.lftalk(max_value[5]),
-              talk.ithdtalk(calc.ithd_risk), talk.pftalk(calc.pf_mean),
-              talk.lftalk(max_value[5]), talk.unbtalk(quality[5]))
-riskamount = calc.count_risk()
-qramount = calc.qramount
-max_trend = calc.group()
-min_trend = calc.min_trend
-res_color = talk.result
-resDic = {'green': '—',
-          'yellow': '↑',
-          'red': '↑',}
-brush = {'green': RGBColor(0x00, 0xB0, 0x50),
-         'yellow': RGBColor(0xff, 0xff, 0x00),
-         'red': RGBColor(0xff, 0x00, 0x00)}
-chapter = ('电压', '谐波电压', '电流', '谐波电流', '功率因数', '负荷率', '三相电流不平衡度')
 risk_list = []
 result = []
 brush_color = []
@@ -769,7 +699,7 @@ document.add_paragraph('在%s至%s时段内，为您的%s变压器' % (STARTDAY,
                        '（异常时即时采集），可随时随地读取、查看各个回路参数信息。电能健康体检设备可以动态体检，'
                        '把每天采集的多个点形成趋势图记录下来，以便后续分析查看。可监测多个项目，如您需要监测'
                        '其他参数，我们可以根据您的需求提供相应的监测服务。', style='Normal')
-document.add_heading('3.2隐患管理', level=2)
+document.add_heading('3.2隐患管理', level=2)###################进度#####################
 document.add_paragraph('设备采集的数据经过阿里云混合云服务器的解析，结合国家标准对隐患级别进行分类、分级管理。使得其各类'
                        '参数的更清楚、更明确的呈现出来，隐患变得一目了然。\n\t在数据时段内，对各监测项XXX条信息进行了'
                        '分析，其中高危xxx条，隐患xxx条，详情如下表格：') #手动填写
