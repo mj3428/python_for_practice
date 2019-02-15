@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 '''
-@author: miaojue
+@author: miaoj
 @contact: major3428@foxmail.com
 @software: pycharm
 @file: test.py
@@ -46,7 +46,7 @@ resDic = {'green': '—',
 brush = {'green': RGBColor(0x00, 0xB0, 0x50),
          'yellow': RGBColor(0xff, 0xff, 0x00),
          'red': RGBColor(0xff, 0x00, 0x00)}
-chapter = ('电压', '谐波电压', '电流', '谐波电流', '功率因数', '负荷率', '三相不平衡度')
+chapter = ('电压', '谐波电压', '电流', '谐波电流', '功率因数', '负荷率', '三相电流不平衡度')
 result = []
 brush_color = []
 for i in res_color:
@@ -97,6 +97,8 @@ document.paragraphs[14].add_run(text=now.strftime('%Y')+'年 '+now.strftime('%m'
 
 
 last = document.paragraphs[-1]
+for i in document.paragraphs[11:20]:
+    print(i.text)
 last.style = 'Heading 1'
 last.add_run(text='一、监测概况及结论')
 document.add_heading('1.1电能参数体检结果', level=2)
@@ -188,13 +190,90 @@ attention.font.size = Pt(7.5)
 document.add_page_break() #插入分页符
 #第一章消耗0.07s
 
+def explain(unquality):
+    if unquality == '谐波电压':
+        document.add_paragraph('电网中存在电压谐波主要是因为谐波电流，因为谐波电压是谐波电流流过线路阻抗时产生的，'
+                               '对于特定的配电系统，谐波电流与谐波电压之间的关系为（欧姆定律）：谐波电压=谐波电流*电网阻抗。'
+                               '电压谐波主要有以下设备产生：整流器、变频器、开关电源、静态换流器、'
+                               '晶闸管系统及其他SCR控制系统等电力电子设备，和变压器、电动机、发电机等非线性设备，'
+                               '以及电弧炉设备及气体电光源设备。', style='Normal')
+        document.add_paragraph().add_run('可能会造成危害：').bold = True
+        document.add_paragraph('1)	降低电网电压，增加线路损耗，浪费电网容量；\n\t'
+                '2)	影响无功补偿设备，电容柜无法正常投切，严重时烧坏电容器，还会将电网谐波进一步放大；\n\t'
+                '3)	影响设备的稳定性，尤其是对继电保护装置，容易在其动作时造成拉弧，危害特大。\n\t'
+                '4)	造成电动机效率下降，噪声增大；\n\t'
+                '5)	使低压开关设备产生误动作；\n\t'
+                '6)	对通讯造成干扰，影响电力电子计量设备的准确性，甚至经常有电子烧坏现象。\n\t'
+                '7)	增加电力变压器的铜损和铁损，影响变压器的使用容量、效率；造成变压器噪声增加，缩短变压器寿命。', style='Normal')
+        document.add_paragraph().add_run('调整建议：').bold = True
+        document.add_paragraph('电压谐波含量主要由谐波电流引起，'
+                               '有效的治理电网谐波电流含量后电网谐波电压含量便会降低。', style='Normal')
+
+    if unquality == '谐波电流':
+        document.add_paragraph('供电系统谐波的定义是对周期性非正弦电量进行傅立叶级数分解，除了得到与电网基波频率相同的分量，'
+                               '还得到一系列大于电网基波频率的分量，这部分电量称为谐波。', style='Normal')
+        document.add_paragraph().add_run('可能会造成危害：').bold = True
+        document.add_paragraph('1)	降低发电、输电及用电设备的效率，使线路过热甚至发生火灾。\n\t'
+                '2)	谐波影响各种电气设备的正常工作，谐波会造成设备产生机械振动、噪声和过电压；\n\t'
+                '3)	谐波使电容器、电缆等设备过热、绝缘老化、寿命缩短，以至损坏，发生火灾，甚至发生爆炸；\n\t'
+                '4)	引起公用电网并联谐振和串联谐振，从而使谐波放大，使上述（1、2、3）的危害大大增加；\n\t'
+                '5)	谐波会导致继电保护和自动装置的误动作，并会使电气测量仪表计量不准确；\n\t'
+                '6)	谐波会对邻近的通信系统产生干扰，轻者产生噪声，降低通信质量；'
+                '重者导致数据丢失，使通信系统无法正常工作。', style='Normal')
+        document.add_paragraph().add_run('调整建议：').bold = True
+        document.add_paragraph('1)	减少非线性用电设备与电源间的电气距离：减少系统阻抗，提高供电电压等级。\n\t'
+                '2)	安装滤波器：目前对变电所侧和用户侧谐波治理的方法，多采用安装滤波器来减少'
+                '谐波分量。滤波器分为有源滤波器和无源滤波器两大类。', style='Normal')
+
+    if unquality == '功率因数':
+        document.add_paragraph('功率因数就是有功功率与视在功率的比值，通俗地讲就是用电设备的实际出力'
+                               '与用电设备的容量的比值，又简称为力率。', style='Normal')
+        document.add_paragraph().add_run('可能会造成危害：').bold = True
+        document.add_paragraph('1)	发电机组需要多做功，降低发电机的出力；\n\t'
+                '2)	占用输、变、配电设备的资源，增加设备投资金额；\n\t'
+                '3)	会使线路未端电压偏低，造成设备供电电压不足，会使线路电流、线损增加，增大电费支出；\n\t'
+                '4)	力调电费罚款。', style='Normal')
+        document.add_paragraph().add_run('调整建议：').bold = True
+        document.add_paragraph('1)	检查无功补偿设备线路是否故障；\n\t'
+                                '2)	电容本体烧坏、容量衰减，更换新电容本体；\n\t'
+                                '3)	负载量增加，补偿容量不足，增加补偿容量；\n\t'
+                                '4)	负载无功变化较快，传统补偿设备响应时间较慢，更换动态补偿设备；\n\t'
+                                '5)	升级老旧无功补偿设备。', style='Normal')
+    if unquality == '负荷率':
+        document.add_paragraph('变压器的超负荷运转是指变压器运转时超越了铭牌上规则的电流值。变压器长时间处于严重超载'
+                               '运行，不仅使变压器出力降低，而且还使变损增大，以及还会'
+                               '出现变台设备损坏的情况，这不利于变压器经济安全运行。', style='Normal')
+        document.add_paragraph().add_run('可能会造成危害：').bold = True
+        document.add_paragraph('1)	输出电压降低；\n\t'
+                '2)	变压器的损耗增大，寿命减少；\n\t'
+                '3)	严重时烧坏变压器。', style='Normal')
+        document.add_paragraph().add_run('调整建议：').bold = True
+        document.add_paragraph('1)	更换变压器，增加变压器容量；\n\t'
+                '2)	减少负载使用量；\n\t'
+                '3)	长期监控变压器运行状态，合理分配负载。', style= 'Normal')
+    if unquality == '三相电流不平衡度':
+        document.add_paragraph('低压配电网络中，当三相电压对称三相负荷也对称的情况下，三相电流也将是对称的。'
+                               '各相负荷的有功功率和无功功率不全相等且三相电流的相量和不等于零，'
+                               '称为三相电流不平衡。', style='Normal')
+        document.add_paragraph().add_run('可能会造成危害：').bold = True
+        document.add_paragraph('1)	增加线路和变压器的电能损耗；\n\t'                        
+                '2)	配变出力减少；\n\t'
+                '3)	产生零序电流；\n\t'
+                '4)	影响用电设备的安全运行；\n\t'
+                '5)	电动机效率降低。', style='Normal')
+        document.add_paragraph().add_run('调整建议：').bold = True
+        document.add_paragraph('1)	均匀合理的分配单相负载；\n\t'
+                '2)	调整负荷较大一相至其他两相；\n\t'
+                '3)	安装三相电流不平衡调节装置。', style='Normal')
+
 if '↑' in result:
-    sum = 0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
-    document.add_heading('1.3体检不正常项目说明', level=2)###############未判断##################
-    document.add_heading('1.3.1谐波电压', level=3)
-    document.add_paragraph('...')
-    document.add_heading('1.3.2谐波电流', level=3)
-    document.add_paragraph('...')
+    sum = 0
+    for a, b in zip(result, chapter):
+        if a == '↑' and b != '电压' and b != '电流':
+            sum += 1
+            print(b)
+            document.add_heading('1.3.' + str(sum) + b, level=3)
+            explain(b)
     document.add_page_break() #插入分页符
 document.add_heading('二、专项体检数据分析说明', level=2)
 document.add_paragraph('数据点为%s变压器，变压器容量%dKVA。'% (TRANSFORMER, KVA) +
