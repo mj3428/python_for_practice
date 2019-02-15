@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 '''
-@author: miaoj
+@author: miaojue
 @contact: major3428@foxmail.com
 @software: pycharm
 @file: test.py
@@ -43,9 +43,16 @@ res_color = talk.result
 resDic = {'green': '—',
           'yellow': '↑',
           'red': '↑',}
+brush = {'green': RGBColor(0x00, 0xB0, 0x50),
+         'yellow': RGBColor(0xff, 0xff, 0x00),
+         'red': RGBColor(0xff, 0x00, 0x00)}
+chapter = ('电压', '谐波电压', '电流', '谐波电流', '功率因数', '负荷率', '三相不平衡度')
 result = []
+brush_color = []
 for i in res_color:
     result.append(resDic[i])
+for i in res_color:
+    brush_color.append(brush[i])
 ele_n = KVA * 1.44
 now = datetime.datetime.now() #当前时间的datetime
 document = Document('./text/demo.docx')
@@ -114,12 +121,12 @@ for sty, res, mv, ran, txt in records:
     row_cells[2].text = mv
     row_cells[3].text = ran
     row_cells[4].text = txt
-
+#表格宽度设置
 widths = [3.99, 2.64, 3.15, 3.53, 4.11]
 for i in range(0, 5):
     for cell in table1.columns[i].cells:
         cell.width = Cm(widths[i])
-
+#表格中字体都设置为蓝色和居中
 for i in range(0, 8):
     for j in range(0, 5):
         cell = table1.cell(i, j)
@@ -127,7 +134,12 @@ for i in range(0, 8):
         cell_font.color.rgb = RGBColor(0x36, 0x5f, 0x91)
         cell.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
         cell.paragraphs[0].paragraph_format.left_indent = -Cm(0.74)
-#cell.font.color.rgb = RGBColor(0x36, 0x5f, 0x91)
+#表格填充颜色
+for a,b in zip(range(1, 8), range(0, 7)):
+    cell = table1.cell(a, 1)
+    cell.paragraphs[0].runs[0].font.color.rgb = brush_color[b]
+    cell.paragraphs[0].runs[0].font.bold = True
+
 table1.style = 'ListCLF'
 note = document.add_paragraph("注：（1）‘", style='N1')
 fine = note.add_run("—")
@@ -175,15 +187,15 @@ attention.bold = True
 attention.font.size = Pt(7.5)
 document.add_page_break() #插入分页符
 #第一章消耗0.07s
-position = 1
 
-
-document.add_heading('1.3体检不正常项目说明', level=2)###############未判断##################
-document.add_heading('1.3.1谐波电压', level=3)
-document.add_paragraph('...')
-document.add_heading('1.3.2谐波电流', level=3)
-document.add_paragraph('...')
-document.add_page_break() #插入分页符
+if '↑' in result:
+    sum = 0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+    document.add_heading('1.3体检不正常项目说明', level=2)###############未判断##################
+    document.add_heading('1.3.1谐波电压', level=3)
+    document.add_paragraph('...')
+    document.add_heading('1.3.2谐波电流', level=3)
+    document.add_paragraph('...')
+    document.add_page_break() #插入分页符
 document.add_heading('二、专项体检数据分析说明', level=2)
 document.add_paragraph('数据点为%s变压器，变压器容量%dKVA。'% (TRANSFORMER, KVA) +
             '从%s到%s共采集了%d次数据，'%(STARTDAY, ENDDAY, calc.freq) +
