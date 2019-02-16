@@ -431,7 +431,7 @@ document.add_paragraph('该变压器容量为%dKVA，则二次侧额定电流约
 document.add_page_break()
 document.add_heading('1）电流趋势图', level=4)
 document.add_paragraph('%s至%s时段内监测数据，标准限值%dA（变压器额定电流），' % (STARTDAY, ENDDAY, KVA) +
-                       '下图中最大值%.1fA，最小值%.1fA，用户可在' % (max_trend[2], max_trend[2]) +
+                       '下图中最大值%.1fA，最小值%.1fA，用户可在' % (max_trend[2], min_trend[2]) +
                        '平台内自行查看，一周内每日显示96个数据点，一月内显示每日平均值，可根据此图(该图使用2小时均值聚合而成)'
                        '看出该时段内电流变化状态，用来分析用电情况。', style='Normal')
 document.add_picture('./pic/I_trend.png', height=Cm(9.2), width=Cm(17.2))
@@ -699,7 +699,7 @@ document.add_paragraph('在%s至%s时段内，为您的%s变压器' % (STARTDAY,
                        '（异常时即时采集），可随时随地读取、查看各个回路参数信息。电能健康体检设备可以动态体检，'
                        '把每天采集的多个点形成趋势图记录下来，以便后续分析查看。可监测多个项目，如您需要监测'
                        '其他参数，我们可以根据您的需求提供相应的监测服务。', style='Normal')
-document.add_heading('3.2隐患管理', level=2)###################进度#####################
+document.add_heading('3.2隐患管理', level=2)
 document.add_paragraph('设备采集的数据经过阿里云混合云服务器的解析，结合国家标准对隐患级别进行分类、分级管理。使得其各类'
                        '参数的更清楚、更明确的呈现出来，隐患变得一目了然。\n\t在数据时段内，对各监测项XXX条信息进行了'
                        '分析，其中高危xxx条，隐患xxx条，详情如下表格：') #手动填写
@@ -757,7 +757,7 @@ r4.add_picture('./pic/phone_poweryun.png', height=Cm(4.15), width=Cm(6.59))
 r4.add_picture('./pic/service_poweryun.png', height=Cm(10.37), width=Cm(5.84))
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 document.add_heading('3.5电能健康档案', level=2)
-document.add_paragraph('客户使用我们的Nande Cloud电能大脑，自设备建点那一刻起就建立了档案，'
+document.add_paragraph('客户使用我们的%s，自设备建点那一刻起就建立了档案，' % POWERYUN_BRAND +
                        '您的电能健康档案已于XXXX年XX月XX日建立，'
                        '并长期有效存储在阿里云服务器中，数据传输以15分钟为间隔，都存档在案，若追溯，最长可长达2年。'
                        '也就是病史可查，若经过治理，治理前与治理后的数据可轻松调用对比。', style='Normal')
