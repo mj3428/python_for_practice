@@ -274,7 +274,7 @@ class Talk:
             rank = 0
         elif args >85 and args <= 100:
             rank = 1
-        elif args > 100:
+        elif args > 100 and args <=110:
             rank = 2
         elif args > 110 and args <=150:
             rank = 3
