@@ -56,7 +56,7 @@ for i in res_color:
     brush_color.append(brush[i])
 ele_n = KVA * 1.44
 now = datetime.datetime.now() #当前时间的datetime
-document = Document('./text/demo.docx')
+document = Document(POWERYUN_MODEL)
 #至此时间消耗:1.16-1.32s
 
 
@@ -167,7 +167,7 @@ document.add_paragraph().add_run('电压体检结论：').bold = True
 document.paragraphs[-1].add_run('该变压器在此数据时段内，正常工作时，电压数据%s' % conclusion[0] +
                 '谐波电压含量约%d%%左右符合国家标准，电网谐波电压含量%s' % (quality[1] * 100, conclusion[1]))
 document.add_paragraph().add_run('电流体检结论：').bold = True
-document.paragraphs[-1].add_run('该变压器低压侧额定电流约%.1fA' % (ele_n) +
+document.paragraphs[-1].add_run('该变压器低压侧额定电流约%.1fA，' % (ele_n) +
                 '电流%s' % conclusion[2] +
                 '谐波电流%s' % conclusion[3] + '对应的最大值分别为%s' % calc.ithd_mv)
 document.add_paragraph().add_run('功率因数体检结论：').bold = True
@@ -773,4 +773,3 @@ document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
 document.save('./text/test.docx')
 elapsed = (time.clock() - start)
 print("Time used:", elapsed)
-
