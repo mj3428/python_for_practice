@@ -1,5 +1,5 @@
 #参数配置
-COM_NAME = '恒生印染' #公司名
+COM_NAME = '厦门毅昌科技' #公司名
 
 TRANSFORMER = '东1#' #变压器名
 
@@ -18,10 +18,11 @@ ELECTRIC = {'200': 21.45, '250': 26.81, '315': 33.78, '400': 42.90, '500': 53.63
 
 PATH = './data/yichang1_Dec.csv'
 
-POWERYUN_MODEL = './text/demo.docx'
+POWERYUN_MODEL = './text/poweryun_demo.docx'
 
-NANDECLOUD_MODEL = 'XXXX.docx'
+NANDECLOUD_MODEL = './text/zjnad_demo.docx'
 
 POWERYUN_BRAND = '电能卫士'
 
 NANDECLOUD_BRAND = 'Nande Cloud电能大脑'
+#但凡新的文件参照模板都需要创建ListCLF 清单1着色1; ListCLF2 清单2； ListCLF3清单1着色1； N1 六号加粗宋体 右对齐 1.2倍; 正文1.2倍;
