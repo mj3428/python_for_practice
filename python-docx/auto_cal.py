@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 '''
-@author: miaoj
+@author: miaojue
 @contact: major3428@foxmail.com
 @software: pycharm
 @file: auto_cal.py
@@ -197,6 +197,7 @@ class Calculate:
         self.max_trend = (u_max, uthd_max, i_max, ithd_max, pf_max, lf_max, unb_max)
         self.min_trend = (u_min, uthd_min, i_min, ithd_min, pf_min, lf_min, unb_min)
         return self.max_trend
+
 class Talk:
     def __init__(self):
         self.untext = ['不合格。', '未达标。', '不达标。', '不理想。']
@@ -296,10 +297,10 @@ class Talk:
             rank = 2
         else:
             return None
-        strs = '、'.join(args)
+        self.strs = '、'.join(args)
         talkDic = {0: '正常健康；各分次谐波电流皆符合要求。',
-                   1: '中以第%s次谐波电流为主，谐波电流不达标。' % strs,
-                   2: '不达标，有多次谐波电流的最大值超过了标准，分别为第%s次。' % strs,}
+                   1: '中以第%s次谐波电流为主，谐波电流不达标。' % self.strs,
+                   2: '不达标，有多次谐波电流的最大值超过了标准，分别为第%s次。' % self.strs,}
         self.result.append(self.rankDic[rank])
         return talkDic[rank]
 
@@ -320,3 +321,4 @@ if __name__ == '__main__':
     #talk.utalk(quality[0])
     #print(calc.quality())
     #print(calc.freq)
+
