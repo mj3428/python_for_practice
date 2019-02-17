@@ -20,8 +20,8 @@ import pandas as pd
 from docx.oxml.ns import qn
 import datetime
 from auto_config import *
-from auto_cal import Calculate
-from auto_cal import Talk
+from auto_600cal import Calculate
+from auto_600cal import Talk
 import time
 
 
@@ -30,6 +30,7 @@ calc = Calculate()
 talk = Talk()
 calc.add_model()
 quality = calc.quality()
+print(quality)
 max_value = calc.calculate()
 max_value = np.around(max_value, 2)
 conclusion = (talk.utalk(quality[0]), talk.uthdtalk(quality[1]), talk.lftalk(max_value[5]),
@@ -91,9 +92,9 @@ style_D1.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER #居中
 document.styles['Date1'].font.name = u'宋体' #T1样式使用字体
 document.styles['Date1']._element.rPr.rFonts.set(qn('w:eastAsia'), u'宋体')
 document.styles['Date1'].font.size = Pt(14)
-document.paragraphs[19].clear()
-document.paragraphs[19].style = 'Date1'
-document.paragraphs[19].add_run(text=now.strftime('%Y')+'年 '+now.strftime('%m')+'月')
+document.paragraphs[22].clear()
+document.paragraphs[22].style = 'Date1'
+document.paragraphs[22].add_run(text=now.strftime('%Y')+'年 '+now.strftime('%m')+'月')
 #创建新样式消耗0.01S
 
 last = document.paragraphs[-1]
@@ -167,7 +168,7 @@ document.add_paragraph().add_run('电压体检结论：').bold = True
 document.paragraphs[-1].add_run('该变压器在此数据时段内，正常工作时，电压数据%s' % conclusion[0] +
                 '谐波电压含量约%d%%左右符合国家标准，电网谐波电压含量%s' % (quality[1] * 100, conclusion[1]))
 document.add_paragraph().add_run('电流体检结论：').bold = True
-document.paragraphs[-1].add_run('该变压器低压侧额定电流约%.1fA' % (ele_n) +
+document.paragraphs[-1].add_run('该变压器低压侧额定电流约%.1fA，' % (ele_n) +
                 '电流%s' % conclusion[2] +
                 '谐波电流%s' % conclusion[3] + '对应的最大值分别为%s' % calc.ithd_mv)
 document.add_paragraph().add_run('功率因数体检结论：').bold = True
