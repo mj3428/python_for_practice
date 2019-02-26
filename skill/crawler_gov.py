@@ -283,8 +283,8 @@ class CorpSearch(object):
             返回滑动距离
         '''
 
-        befor_click_img = "D:\\Anaconda3\\Lib\\captcha\\gt_validate\\befor_click.png"
-        after_click_path = "D:\\Anaconda3\\Lib\\captcha\\gt_validate\\after_click.png"
+        befor_click_img = "E:\\Anaconda3\\Lib\\captcha\\gt_validate\\befor_click.png"
+        after_click_path = "E:\\Anaconda3\\Lib\\captcha\\gt_validate\\after_click.png"
         befor_img = cv2.imread(befor_click_img)
         after_img = cv2.imread(after_click_path)
 
@@ -458,8 +458,8 @@ class CorpSearch(object):
         pic_id = coord_result.get("pic_id")
         points = [[int(num) for num in group.split(',')] for group in groups]
 
-        #        tip_img_path="D:\\Anaconda3\\Lib\\captcha\\gt_validate\\tip_img.png"
-        #        click_img_path="D:\\Anaconda3\\Lib\\captcha\\gt_validate\\click_img.png"
+        #        tip_img_path="E:\\Anaconda3\\Lib\\captcha\\gt_validate\\tip_img.png"
+        #        click_img_path="E:\\Anaconda3\\Lib\\captcha\\gt_validate\\click_img.png"
 
         #        num=self.cal_char_num(tip_img_path)
         #        points=self.char_absolute_coord(click_img_path,num)
