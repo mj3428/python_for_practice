@@ -1,5 +1,16 @@
 #!/usr/bin/env python
 # encoding: utf-8
+
+"""
+@version: ??
+@author: miaoj
+@license: Apache Licence 
+@file: test2.py
+@time: 2019-01-14 19:04
+"""
+
+#!/usr/bin/env python
+# encoding: utf-8
 import time
 import random
 import json
@@ -167,7 +178,7 @@ class CorpSearch(object):
         self.max_entertimes = max_click
         self.click_valitimes = 0
         self.action = ActionChains(self.driver)
-        self.gt_shot = GtClickShot("******", "******")
+        self.gt_shot = GtClickShot("****", "********")
         self.options = webdriver.ChromeOptions()
         self.headers = headers
         for option in self.headers:
@@ -283,8 +294,8 @@ class CorpSearch(object):
             返回滑动距离
         '''
 
-        befor_click_img = "E:\\Anaconda3\\Lib\\captcha\\gt_validate\\befor_click.png"
-        after_click_path = "E:\\Anaconda3\\Lib\\captcha\\gt_validate\\after_click.png"
+        befor_click_img = "C:\\Anaconda3\\Lib\\captcha\\gt_validate\\befor_click.png"
+        after_click_path = "C:\\Anaconda3\\Lib\\captcha\\gt_validate\\after_click.png"
         befor_img = cv2.imread(befor_click_img)
         after_img = cv2.imread(after_click_path)
 
@@ -359,7 +370,7 @@ class CorpSearch(object):
 
         click_img_element = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "geetest_widget")))
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "geetest_item_img")))
-        time.sleep(random.randint(1, 5) / 10)
+        time.sleep(random.uniform(0.2, 0.6))
         click_position = self.get_position(click_img_element)
         all_screenshot = self.get_screenshot()
         click_img = all_screenshot.crop(click_position)
@@ -442,7 +453,6 @@ class CorpSearch(object):
     def click_captcha_validate(self):
 
         '''根据打码平台返回的坐标进行验证
-
         return:
             仅仅用于方法返回
         '''
@@ -470,9 +480,9 @@ class CorpSearch(object):
         for position in mouse_track:
             self.action.move_by_offset(position[0], position[1])
             self.action.click()
-            self.action.pause(random.randint(3, 7) / 10)
+            self.action.pause(random.uniform(0.8, 2.0))
         self.action.perform()
-        time.sleep(random.randint(4, 6) / 10)
+        time.sleep(random.uniform(0.8, 2.0))
         click_submit_btn = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'geetest_commit_tip')))
         click_submit_btn.click()
         self.action.reset_actions()
@@ -600,7 +610,6 @@ class CorpSearch(object):
             keyword:查询关键词
         kargs:
             start_pg:是否需要初始化访问加速乐，默认要
-
         '''
 
         if start_pg == "homepage":
@@ -616,7 +625,6 @@ class CorpSearch(object):
         '''保存cookie（用于requests请求及详情解析）和查询结果
         args:
             cookie_name:cookie文件名称
-
         '''
         cookies = self.driver.get_cookies()
         jsn_cookies = json.dumps(cookies)
@@ -672,3 +680,4 @@ if __name__ == '__main__':
         print(detail)
     time.sleep(5)
     test1.driver.quit()
+
