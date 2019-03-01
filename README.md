@@ -15,3 +15,4 @@ Python 3不会以任意隐式的方式混用str和bytes，正是这使得两者�
 --> merge.py # 合并用到createVar  
 --> change_utc8.py #处理数据类型  
 --> change_colname.py #改变列名称  
+## 在win上markdown用Typroa
