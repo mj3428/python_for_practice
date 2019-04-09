@@ -45,3 +45,10 @@ M=[0 0 1 0]
   [1 0 0 0]
   [0 0 0 0]
   [0 1 0 0]
+
+
+阈值大于0.005时，很多图重叠在一起，可以采用nx.circular_layout(graph)来进行显示。
+这样可以让筛选出来的点都分布到一个圆上，来显示出来他们之间的关系。
+
+pagerank_list = nx.pagerank(G) #alpha为阻尼因子，默认值：0.85
+print("pagerank值是：", pagerank_list)
