@@ -30,7 +30,7 @@ data[u'攻击范围']=data[u'攻击范围'].map({'远程':1,'近战':0})
 # 采用 Z-Score 规范化数据，保证每个特征维度的数据均值为 0，方差为 1
 ss = StandardScaler()
 data = ss.fit_transform(data)
-# 构造 GMM 聚类
+# 构造 GMM 聚类 n_components代表聚类个数
 gmm = GaussianMixture(n_components=30, covariance_type='full')
 gmm.fit(data)
 # 训练数据
@@ -40,5 +40,7 @@ print(prediction)
 data_ori.insert(0, '分组', prediction)
 data_ori.to_csv('./hero_out.csv', index=False, sep=',')
 
+# 聚类的结果评估不像分类准确率一样直观，那么有没有聚类结果的评估方式呢?这里我们可以采用 Calinski-Harabaz 指标
+# 得到的分数越高代表聚类效果越好
 from sklearn.metrics import calinski_harabaz_score
 print(calinski_harabaz_score(data, prediction))
