@@ -20,8 +20,8 @@ import pandas as pd
 from docx.oxml.ns import qn
 import datetime
 from auto_config import *
-from auto_600cal import Calculate
-from auto_600cal import Talk
+from auto_cal import Calculate
+from auto_cal import Talk
 import time
 
 
@@ -30,7 +30,6 @@ calc = Calculate()
 talk = Talk()
 calc.add_model()
 quality = calc.quality()
-print(quality)
 max_value = calc.calculate()
 max_value = np.around(max_value, 2)
 conclusion = (talk.utalk(quality[0]), talk.uthdtalk(quality[1]), talk.lftalk(max_value[5]),
@@ -76,13 +75,13 @@ document.styles['T2']._element.rPr.rFonts.set(qn('w:eastAsia'), u'宋体')
 document.styles['T2'].font.size = Pt(22)
 document.styles['T2'].font.bold = True
 
-document.paragraphs[13].style = 'T1'
-document.paragraphs[13].add_run(text=COM_NAME+'有限公司')
-document.paragraphs[14].clear()
-document.paragraphs[14].style = 'T2'
-document.paragraphs[14].add_run(text=TRANSFORMER+'变压器')
-document.paragraphs[15].style = 'T2'
-document.paragraphs[15].add_run(text='电能健康分析评估报告\n')
+document.paragraphs[14].style = 'T1'
+document.paragraphs[14].add_run(text=COM_NAME+'有限公司')
+document.paragraphs[16].clear()
+document.paragraphs[16].style = 'T2'
+document.paragraphs[16].add_run(text=TRANSFORMER+'变压器')
+document.paragraphs[18].style = 'T2'
+document.paragraphs[18].add_run(text='电能健康分析评估报告\n')
 
 #插入印章
 #picture = document.add_picture('./pic/poweryun_seal.png', height=Cm(4.00), width=Cm(4.32))
@@ -92,9 +91,9 @@ style_D1.paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER #居中
 document.styles['Date1'].font.name = u'宋体' #T1样式使用字体
 document.styles['Date1']._element.rPr.rFonts.set(qn('w:eastAsia'), u'宋体')
 document.styles['Date1'].font.size = Pt(14)
-document.paragraphs[22].clear()
-document.paragraphs[22].style = 'Date1'
-document.paragraphs[22].add_run(text=now.strftime('%Y')+'年 '+now.strftime('%m')+'月')
+document.paragraphs[25].clear()
+document.paragraphs[25].style = 'Date1'
+document.paragraphs[25].add_run(text=now.strftime('%Y')+'年 '+now.strftime('%m')+'月')
 #创建新样式消耗0.01S
 
 last = document.paragraphs[-1]
@@ -103,16 +102,16 @@ last.add_run(text='一、监测概况及结论')
 document.add_heading('1.1电能参数体检结果', level=2)
 records = (('电压数据', result[0], str(max_value[0]) + 'V', '205~235V', '《GB/T 12325-2008》'),
           ('谐波电压数据', result[1], str(max_value[1]) + '%', '＜5%', '《GB/T14549-1993》'),
-          ('电流数据', result[2], str(max_value[2]) + 'A', '＜In100%', '《JGJ16-2008》'),
+          ('电流数据', result[2], str(max_value[2]) + 'A', '＜%dA' % ele_n, '《JGJ16-2008》'),
           ('谐波电流数据', result[3], str(max_value[3]) + 'A', '＜各分次国标限值', '《GB/T14549-1993》'),
-          ('功率因数', result[4], str(max_value[4]), '0.9~1.0', '《JGJ16-2008》'),
+          ('功率因数', result[4], str(max_value[4]) + '(Min)', '0.9~1.0', '《JGJ16-2008》'),
           ('负荷率', result[5], str(max_value[5]) + '%', '＜额定容量85%', '《JGJ16-2008》'),
           ('三相电流不平衡度', result[6], str(max_value[6]) + '%', '＜15%', '《GB/T 1094-2013》'))
 table1 = document.add_table(rows=1, cols=5)
 hdr_cells = table1.rows[0].cells
 hdr_cells[0].text = '体检项目'
 hdr_cells[1].text = '体检结果'
-hdr_cells[2].text = '体检值(MAX)'
+hdr_cells[2].text = '体检值(Max)'
 hdr_cells[3].text = '参考值'
 hdr_cells[4].text = '参考标准'
 for sty, res, mv, ran, txt in records:
@@ -161,12 +160,12 @@ document.paragraphs[-1].add_run("’为已达临界标准")
 document.add_paragraph("（2）以上依据原始导出数据分析，见附件一或用户由平台自行导出", style='N1')
 document.add_heading('1.2体检结论说明', level=2)
 document.add_paragraph('此结论为%s变压器体检结果，' % TRANSFORMER +
-                '变压器容量为%dKVA。' % KVA +
+                '变压器容量为%dkVA。' % KVA +
                 '%s到%s共采集了%d次数据，高危共计%d次，隐患共%d次。' % (STARTDAY, ENDDAY, calc.freq, HIGHRISK, HIDDENRISK) +
                 '以各体检项目在该时段内发生次数及超出各项标准次数进行分析得出：', style='Normal')
 document.add_paragraph().add_run('电压体检结论：').bold = True
 document.paragraphs[-1].add_run('该变压器在此数据时段内，正常工作时，电压数据%s' % conclusion[0] +
-                '谐波电压含量约%d%%左右符合国家标准，电网谐波电压含量%s' % (quality[1] * 100, conclusion[1]))
+                '谐波电压含量约%d%%时段不符合国家标准，电网谐波电压含量%s' % ((1 - quality[1]) * 100, conclusion[1]))
 document.add_paragraph().add_run('电流体检结论：').bold = True
 document.paragraphs[-1].add_run('该变压器低压侧额定电流约%.1fA，' % (ele_n) +
                 '电流%s' % conclusion[2] +
@@ -175,7 +174,7 @@ document.add_paragraph().add_run('功率因数体检结论：').bold = True
 document.paragraphs[-1].add_run('工作时，功率因数在0.9~1之间的占比为%.1f%%，' % (quality[3] * 100) +
                 '功率因数%s' % conclusion[4])
 document.add_paragraph().add_run('负荷率体检结论：').bold = True
-document.paragraphs[-1].add_run('该变压器容量为%dKVA，额定电流约%.1fA，' % (KVA, ele_n) +
+document.paragraphs[-1].add_run('该变压器容量为%dkVA，额定电流约%.1fA，' % (KVA, ele_n) +
                 '工作时，变压器负荷率基本在%.1f%%左右运行，' % calc.lf_mean +
                 '综合来看，监测期间变压器负荷率%s' % conclusion[5])
 document.add_paragraph().add_run('三相电流不平衡体检结论：').bold = True
@@ -426,9 +425,10 @@ document.add_paragraph('--------------------------------------------------------
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.DISTRIBUTE
 document.add_heading('2.3 电流数据', level=2)
 document.add_heading('2.3.1 电流数据体检分析小结', level=3)
-document.add_paragraph('该变压器容量为%dKVA，则二次侧额定电流约为%dA。' % (KVA, ele_n) +
+document.add_paragraph('该变压器容量为%dkVA，则二次侧额定电流约为%dA。' % (KVA, ele_n) +
             '监测时间段三相电流%s，' % conclusion[4] +
-            '单相最大电流为%.1fA，最高时超出额定电%.1f%%左右。' % (max_value[2], max_value[2] / ele_n), style='Normal')
+            '单相最大电流为%.1fA，' % max_value[2] +
+            '最高时超出额定电流%.1f%%左右。' % ((max_value[2] / ele_n) -1) * 100 , style='Normal')
 document.add_page_break()
 document.add_heading('1）电流趋势图', level=4)
 document.add_paragraph('%s至%s时段内监测数据，标准限值%dA（变压器额定电流），' % (STARTDAY, ENDDAY, KVA) +
@@ -441,7 +441,7 @@ document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 document.add_paragraph('图2-7 电流趋势图')
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 document.add_heading('2）电流数据详情', level=4)
-document.add_paragraph('根据导出数据中各相电流发生次数分析得出该概率图，标准限值454.7A。此分析结果可用于观察该时段内电流主要分'
+document.add_paragraph('根据导出数据中各相电流发生次数分析得出该概率图，标准限值%dA。此分析结果可用于观察该时段内电流主要分' % ele_n +
                        '布在多少范围内，并可以看出该范围内电流值发生的概率，以及超出标准的概率。', style='Normal')
 document.add_picture('./pic/I.png', height=Cm(6.6), width=Cm(17.2))
 document.paragraphs[-1].paragraph_format.left_indent = -Cm(0.74)
@@ -702,8 +702,9 @@ document.add_paragraph('在%s至%s时段内，为您的%s变压器' % (STARTDAY,
                        '其他参数，我们可以根据您的需求提供相应的监测服务。', style='Normal')
 document.add_heading('3.2隐患管理', level=2)
 document.add_paragraph('设备采集的数据经过阿里云混合云服务器的解析，结合国家标准对隐患级别进行分类、分级管理。使得其各类'
-                       '参数的更清楚、更明确的呈现出来，隐患变得一目了然。\n\t在数据时段内，对各监测项XXX条信息进行了'
-                       '分析，其中高危xxx条，隐患xxx条，详情如下表格：') #手动填写
+                       '参数的更清楚、更明确的呈现出来，隐患变得一目了然。\n\t在数据时段内，'
+                       '对各监测项%d条信息进行了' % (HIGHRISK + HIGHRISK) +
+                       '分析，其中高危%d条，隐患%d条，详情如下表格：' % (HIGHRISK, HIDDENRISK)) #手动填写
 table4 = document.add_table(rows=1, cols=9)
 th4 = ('体检项', '电压', '电流', '电压谐波含量', '谐波电流', '电流不平衡', '功率因数', '负荷率', '温度')
 tr4 = (('高危（次）',	0, 255, 2, 2, 0, 0, 79, '-'), ('隐患（次）', 527, 735, 5, 5, 302, 2, 721, '-'),
@@ -732,7 +733,7 @@ document.add_paragraph('在隐患分类分级后，健康干预也会针对不�
                        '用户没有提出通知方式之前，我们对用户的健康干预考虑了有效实时，不会对用户生活造成干扰。当预警达到一定的数量'
                        '的时候，而这时用户自身没有留意到风险本身，%s的专业团队' % NANDECLOUD_BRAND +
                        '便会对风险用户进行致电，甚至就风险问题根源'
-                       '进行上门排查、解决。\n\t在数据时段内，系统共监测到2665条预警信息，'
+                       '进行上门排查、解决。\n\t在数据时段内，系统共监测到%d条预警信息，'
                        '并以线上和客服方式通知，共预警了XXX条，详情如下表格：', style='Normal')
 table5 = document.add_table(rows=1, cols=5)
 th5 = ('干预方式', '微信通知', '短信通知', '邮件通知', '客服致电')
@@ -754,8 +755,8 @@ document.add_paragraph('线上对线上，当用户在有困惑时，点击“�
                         '拨通客服电话，乃至在拨通电话前，%s的健康指导师会直接联系客户，或微信，' % NANDECLOUD_BRAND +
                         '或电话，直至将客户的心中的疑虑排除。\n\t已为您提供O2O服务0次。', style='Normal')
 r4 = document.add_paragraph().add_run()
-r4.add_picture('./pic/phone_nande.png', height=Cm(4.15), width=Cm(6.59))
-r4.add_picture('./pic/service_nande.png', height=Cm(10.37), width=Cm(5.84))
+r4.add_picture('./pic/phone_poweryun.png', height=Cm(4.15), width=Cm(6.59))
+r4.add_picture('./pic/service_poweryun.png', height=Cm(10.37), width=Cm(5.84))
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 document.add_heading('3.5电能健康档案', level=2)
 document.add_paragraph('客户使用我们的%s，自设备建点那一刻起就建立了档案，' % NANDECLOUD_BRAND +
@@ -764,13 +765,13 @@ document.add_paragraph('客户使用我们的%s，自设备建点那一刻起就
                        '也就是病史可查，若经过治理，治理前与治理后的数据可轻松调用对比。', style='Normal')
 document.add_paragraph('如您对电能质量隐患有治理需求可与我公司联系，我公司将派专业服务团队进行对接！', style='N1')
 r5 = document.add_paragraph().add_run()
-r5.add_picture('./pic/nande_seal.png', height=Cm(2.31), width=Cm(3.16))
+r5.add_picture('./pic/poweryun_seal.png', height=Cm(2.31), width=Cm(3.16))
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
-document.add_paragraph('工程服务部 %s' % (datetime.datetime.strftime(now, '%y-%m-%d')), style='Normal')
+document.add_paragraph('技术中心技术二部 %s' % (datetime.datetime.strftime(now, '%y-%m-%d')), style='Normal')
 document.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
 
 
 
-document.save('./text/nande_test.docx')
+document.save('./text/test.docx')
 elapsed = (time.clock() - start)
 print("Time used:", elapsed)
