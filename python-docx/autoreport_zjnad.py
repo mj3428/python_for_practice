@@ -140,7 +140,6 @@ for i in range(0, 8):
 for a,b in zip(range(1, 8), range(0, 7)):
     cell = table1.cell(a, 1)
     cell.paragraphs[0].runs[0].font.color.rgb = brush_color[b]
-    cell.paragraphs[0].runs[0].font.name = u'华文琥珀'
     cell.paragraphs[0].runs[0].font.bold = True
 
 table1.style = 'ListCLF'
