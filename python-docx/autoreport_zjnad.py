@@ -40,6 +40,7 @@ qramount = calc.qramount
 max_trend = calc.group()
 min_trend = calc.min_trend
 res_color = talk.result
+print(res_color)
 resDic = {'green': '—',
           'yellow': '↑',
           'red': '↑',}
@@ -54,7 +55,7 @@ for i in res_color:
     result.append(resDic[i])
 for i in res_color:
     brush_color.append(brush[i])
-ele_n = KVA * 1.44
+ele_n = KVA * 1.4434
 now = datetime.datetime.now() #当前时间的datetime
 document = Document(NANDECLOUD_MODEL)
 #至此时间消耗:1.16-1.32s
@@ -76,12 +77,12 @@ document.styles['T2'].font.size = Pt(22)
 document.styles['T2'].font.bold = True
 
 document.paragraphs[14].style = 'T1'
-document.paragraphs[14].add_run(text=COM_NAME+'有限公司')
+document.paragraphs[14].add_run(text= COM_NAME+'有限公司')
 document.paragraphs[16].clear()
 document.paragraphs[16].style = 'T2'
-document.paragraphs[16].add_run(text=TRANSFORMER+'变压器')
-document.paragraphs[18].style = 'T2'
-document.paragraphs[18].add_run(text='电能健康分析评估报告\n')
+document.paragraphs[16].add_run(text='('+ MONTH +TRANSFORMER+'变压器)')
+#document.paragraphs[18].style = 'T2'
+#document.paragraphs[18].add_run(text='电能健康分析评估报告\n')
 
 #插入印章
 #picture = document.add_picture('./pic/poweryun_seal.png', height=Cm(4.00), width=Cm(4.32))
@@ -100,9 +101,10 @@ last = document.paragraphs[-1]
 last.style = 'Heading 1'
 last.add_run(text='一、监测概况及结论')
 document.add_heading('1.1电能参数体检结果', level=2)
+
 records = (('电压数据', result[0], str(max_value[0]) + 'V', '205~235V', '《GB/T 12325-2008》'),
-          ('谐波电压数据', result[1], str(max_value[1]) + '%', '＜5%', '《GB/T14549-1993》'),
-          ('电流数据', result[2], str(max_value[2]) + 'A', '＜%dA' % ele_n, '《JGJ16-2008》'),
+          ('谐波电压数据', result[1], str(max_value[1]) + '%%', '＜5%', '《GB/T14549-1993》'),
+          ('电流数据', result[2], str(max_value[2]) + 'A', '＜%.1fA' % ele_n, '《JGJ16-2008》'),
           ('谐波电流数据', result[3], str(max_value[3]) + 'A', '＜各分次国标限值', '《GB/T14549-1993》'),
           ('功率因数', result[4], str(max_value[4]) + '(Min)', '0.9~1.0', '《JGJ16-2008》'),
           ('负荷率', result[5], str(max_value[5]) + '%', '＜额定容量85%', '《JGJ16-2008》'),
@@ -138,6 +140,7 @@ for i in range(0, 8):
 for a,b in zip(range(1, 8), range(0, 7)):
     cell = table1.cell(a, 1)
     cell.paragraphs[0].runs[0].font.color.rgb = brush_color[b]
+    cell.paragraphs[0].runs[0].font.name = u'华文琥珀'
     cell.paragraphs[0].runs[0].font.bold = True
 
 table1.style = 'ListCLF'
@@ -178,7 +181,7 @@ document.paragraphs[-1].add_run('该变压器容量为%dkVA，额定电流约%.1
                 '工作时，变压器负荷率基本在%.1f%%左右运行，' % calc.lf_mean +
                 '综合来看，监测期间变压器负荷率%s' % conclusion[5])
 document.add_paragraph().add_run('三相电流不平衡体检结论：').bold = True
-document.paragraphs[-1].add_run('正常工作时，三相电流不平衡度均在15%%以内的概率为%.1f%%，' % quality[5] +
+document.paragraphs[-1].add_run('正常工作时，三相电流不平衡度均在15%%以内的概率为%.1f%%，' % (quality[5] * 100) +
                 '带负载时最大为%.1f%%，发生时间为%s。' % (calc.unb_max, calc.unb_maxtime) +
                 '综合来看，三相电流不平衡度数据%s' % conclusion[6])
 attention = document.add_paragraph(style='N1').add_run('注：分析数据来源为%s到%s，' % (STARTDAY, ENDDAY) +
@@ -280,7 +283,7 @@ for a, b in zip(result, chapter):
     if a == '↑':
         risk_list.append(b)
 
-document.add_paragraph('数据点为%s变压器，变压器容量%dKVA。'% (TRANSFORMER, KVA) +
+document.add_paragraph('数据点为%s变压器，变压器容量%dkVA。'% (TRANSFORMER, KVA) +
             '从%s到%s共采集了%d次数据，'%(STARTDAY, ENDDAY, calc.freq) +
             '结合各项标准，此时段内存在%s超标隐患。' % ('、'.join(risk_list)) +
             '此时段电压数据超出标准限值约%d次；谐波电压含量超出标准限值约%d次；' % (riskamount[0], riskamount[1]) +
@@ -428,7 +431,7 @@ document.add_heading('2.3.1 电流数据体检分析小结', level=3)
 document.add_paragraph('该变压器容量为%dkVA，则二次侧额定电流约为%dA。' % (KVA, ele_n) +
             '监测时间段三相电流%s，' % conclusion[4] +
             '单相最大电流为%.1fA，' % max_value[2] +
-            '最高时超出额定电流%.1f%%左右。' % ((max_value[2] / ele_n) -1) * 100 , style='Normal')
+            '最高时超出额定电流%.1f%%左右。' % (((max_value[2] / ele_n) -1) * 100) , style='Normal')
 document.add_page_break()
 document.add_heading('1）电流趋势图', level=4)
 document.add_paragraph('%s至%s时段内监测数据，标准限值%dA（变压器额定电流），' % (STARTDAY, ENDDAY, KVA) +
