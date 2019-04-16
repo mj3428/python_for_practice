@@ -51,6 +51,9 @@ print("准确率 %0.4lf" %accuracy_score(test_y, predict_y))
 
 
 '''
+1.对GridSearchCV的理解：就是在之前的经验的基础上选择了一些较好的取值备选，
+然后分别去试，得到一个好的性能。比直接选择参数多了一些保障，但是也增加一些计算负担。
+
 Name: default.payment.next.month, dtype: int64
 GridSearch最优参数： {'n_estimators': 10}
 GridSearch最优分数： 0.8187
