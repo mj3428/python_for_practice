@@ -48,3 +48,11 @@ print("GridSearch最优参数：", clf.best_params_)
 print("GridSearch最优分数： %0.4lf" %clf.best_score_)
 predict_y=clf.predict(test_x)
 print("准确率 %0.4lf" %accuracy_score(test_y, predict_y))
+
+
+'''
+Name: default.payment.next.month, dtype: int64
+GridSearch最优参数： {'n_estimators': 10}
+GridSearch最优分数： 0.8187
+准确率 0.8129
+'''
