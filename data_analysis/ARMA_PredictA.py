@@ -67,6 +67,10 @@ date_list = [datetime(2018, 11, 30), datetime(2018, 12, 31), datetime(2019, 1, 3
 future = pd.DataFrame(index=date_list, columns= df_month.columns)
 df_month2 = pd.concat([df_month2, future])
 df_month2['forecast'] = best_model.predict(start=0, end=91)
+'''
+start=0表示从第0课数据开始计算
+end=348是指需要计算348个数据，即从1990-12-19到2019-12-31一共有348个月，所以有348个数据
+'''
 # 比特币预测结果显示
 plt.figure(figsize=(20,7))
 df_month2.Weighted_Price.plot(label='实际金额')
