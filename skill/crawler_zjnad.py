@@ -51,7 +51,7 @@ def parse_page(html_source):
         if i == result.group():
             table_data.remove(i)
     length = len(table_data)
-    table_data = list(table_data[i:i+12] for i in range(0,length,12))
+    table_data = list(table_data[i:i+11] for i in range(0,length,11)) #12项内容删除了账号改为11项
     #print (length)
     return table_data
 
