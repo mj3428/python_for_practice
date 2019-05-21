@@ -45,4 +45,17 @@ gb18030 和 utf-8 的区别。utf-8 是国际通用字符编码，gb18030是新�
                        
                        ```
    比.iterrows()方法，比.apply()方法快
-6. **df.cut()**
+6. **df.cut()**  
+7. **HDFstore**  
+   Pandas的HDFstore方法可以将DataFrame存储在HDF5文件中，可以有效读写，同时仍然保留DataFrame各列的数据类型和其他元数据。  
+   它是一个类似字典的类，因此可以像Python中的dict类一样读写
+   
+   ```
+   # 创建存储类文件并命名 `processed_data`
+   data_store = pd.HDFStore('processed_data.h5')
+
+   #将DataFrame写入存储文件中，并设置键（key） 'preprocessed_df'
+   data_store['preprocessed_df'] = df
+   data_store.close()
+   ```
+   
