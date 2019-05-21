@@ -31,14 +31,14 @@ gb18030 和 utf-8 的区别。utf-8 是国际通用字符编码，gb18030是新�
 4. **df.apply()** ，但这仍然不够快，原因是.apply()内部尝试在Cython迭代器上完成循环。  
    但是在这种情况下，lambda中传递了一些无法在Cython中处理的输入  
 5. **.isin()筛选** ,如：定义每个时段的布尔型数组(Boolean)  
-                       ···
+                       ```
                        peak_hours = df.index.hour.isin(range(17, 24))  
                        shoulder_hours = df.index.hour.isin(range(7, 17))  
                        off_peak_hours = df.index.hour.isin(range(0, 7)) 
-                       ···
+                       ```  
                        计算不同时段的电费
-                       ···
+                       ```
                        df.loc[peak_hours, 'cost_cents'] = df.loc[peak_hours, 'energy_kwh'] * 28
                        df.loc[shoulder_hours,'cost_cents'] = df.loc[shoulder_hours, 'energy_kwh'] * 20
                        df.loc[off_peak_hours,'cost_cents'] = df.loc[off_peak_hours, 'energy_kwh'] * 12
-                       ···
+                       ```
