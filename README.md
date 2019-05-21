@@ -36,10 +36,9 @@ gb18030 和 utf-8 的区别。utf-8 是国际通用字符编码，gb18030是新�
                        peak_hours = df.index.hour.isin(range(17, 24))  
                        shoulder_hours = df.index.hour.isin(range(7, 17))
                        off_peak_hours = df.index.hour.isin(range(0, 7)) 
-                       ```  
-                       计算不同时段的电费  
                        
-                       ```
+                       计算不同时段的电费  
+
                        df.loc[peak_hours, 'cost_cents'] = df.loc[peak_hours, 'energy_kwh'] * 28
                        df.loc[shoulder_hours,'cost_cents'] = df.loc[shoulder_hours, 'energy_kwh'] * 20
                        df.loc[off_peak_hours,'cost_cents'] = df.loc[off_peak_hours, 'energy_kwh'] * 12
