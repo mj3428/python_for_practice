@@ -1,6 +1,7 @@
 # python
 此仓库始于用python来做数字货币和量化  
-现在拓展了方向，更多来用于整体的学习与练习
+现在拓展了方向，更多来用于整体的学习与练习  
+**注：在win上markdown用Typroa**
 
 ## 注意事项：
 Python 3最重要的新特性大概要算是对文本和二进制数据作了更为清晰的区分。文本总是Unicode，由str类型表示，二进制数据则由bytes类型表示。  
@@ -15,4 +16,13 @@ gb18030 和 utf-8 的区别。utf-8 是国际通用字符编码，gb18030是新�
 --> merge.py # 合并用到createVar  
 --> change_utc8.py #处理数据类型  
 --> change_colname.py #改变列名称  
-## 注：在win上markdown用Typroa
+
+## 关于提升效率
+默认类object不仅是str类的容器，而且不能齐整的适用于某一种数据类型。字符串str类型的日期在数据处理中是非常低效的，同时内存效率也是低下的  
+1. 所以时间尽量改为datetime,如：pd.to_datetime★参数里加上format = '%Y-%m-%d %H:%M:&S"会更快
+2. 使用了timing装饰器，这里将装饰器称为@timeit, 这个装饰器模仿了Python标准库中的timeit.repeat() 方法，  
+   但是它可以返回函数的结果，并且打印多次重复调试的平均运行时间。  
+   将装饰器@timeit放在函数上方，每次运行函数时可以同时打印该函数的运行时间。  
+3. 
+
+
