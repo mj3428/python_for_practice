@@ -64,8 +64,8 @@ class MainHandler(cqplus.CQPlusHandler):
                     line = f.readlines()
                 poem_p = line[random.randint(0,1690)].strip('\n').decode('gbk')
 
-            time.sleep(random.uniform(0.4,1.8))
-            cqplus._api.send_private_msg(params["env"], params["from_qq"], '好哒！小三已将数据存入本地\n此时此刻还想吟诗一首:' + poem_p)
+                time.sleep(random.uniform(0.4,1.8))
+                cqplus._api.send_private_msg(params["env"], params["from_qq"], '好哒！小三已将数据存入本地\n此时此刻还想吟诗一首:' + poem_p)
             
 #            for key in params:
 #                self.logging.debug(key + " value : "+ str(type(params[key])))                
@@ -93,8 +93,8 @@ class MainHandler(cqplus.CQPlusHandler):
                     line = f.readlines()
                 poem_g = line[random.randint(0,1690)].strip('\n').decode('gbk')
 
-            time.sleep(random.uniform(0.4,1.8))
-            cqplus._api.send_group_msg(params["env"], params["from_group"], '好哒！小三已将数据存入本地\n此时此刻还想吟诗一首:' + poem_g)
+                time.sleep(random.uniform(0.4,1.8))
+                cqplus._api.send_group_msg(params["env"], params["from_group"], '好哒！小三已将数据存入本地\n此时此刻还想吟诗一首:' + poem_g)
             
             
 
