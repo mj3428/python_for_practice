@@ -44,6 +44,11 @@ class Calculate:
                             'C相电流H21': 'Ic_H21'
                             }, inplace=True)
         self.freq = len(df0.ds)
+        #清洗数据
+        for nam in df0.columns:
+            if df0[nam].isnull().any() == True:
+                df0[nam].fillna(df0[nam].mean(), inplace=True)
+                
         df0['I_ave'] = (df0.Ia + df0.Ib + df0.Ic) / 3
         df0['U_ave'] = (df0.Ua + df0.Ub + df0.Uc) / 3
         df0['LF'] = np.sqrt(pow(df0.P, 2) + pow(df0.Q, 2)) / (self.kva * 10)
