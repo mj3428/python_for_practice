@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 '''
-@author: miaojue
+@author: miaoj
 @contact: major3428@foxmail.com
 @software: pycharm
 @file: auto_cal.py
@@ -47,6 +47,10 @@ class Calculate:
                    '电网电流C相19次谐波含有率': 'Ic_H19', '电网电流C相21次谐波含有率': 'Ic_H21'
                    },inplace = True)
         self.freq = len(df0.ds)
+        #清洗数据
+        for nam in df0.columns:
+            if df0[nam].isnull().any() == True:
+                df0[nam].fillna(df0[nam].mean(), inplace=True)
         df0['I_ave'] = (df0.Ia + df0.Ib + df0.Ic) / 3
         df0['U_ave'] = (df0.Ua + df0.Ub + df0.Uc) / 3
         df0['LF'] = (np.sqrt(pow(df0.P, 2) + pow(df0.Q, 2)) * 100) / self.kva
