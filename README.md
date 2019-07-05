@@ -36,7 +36,7 @@ gb18030 和 utf-8 的区别。utf-8 是国际通用字符编码，gb18030是新�
   df.loc[off_peak_hours,'cost_cents'] = df.loc[off_peak_hours, 'energy_kwh'] * 12
 
   ```
-   比.iterrows()方法，比.apply()方法快
+   比.iterrows()方法，比.apply()方法快  
 6. **df.cut()**  
 7. **HDFstore**  
    Pandas的HDFstore方法可以将DataFrame存储在HDF5文件中，可以有效读写，同时仍然保留DataFrame各列的数据类型和其他元数据。  
