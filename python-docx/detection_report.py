@@ -45,20 +45,22 @@ records = (('项目名称', COMPANY + '测试报告'),
            ('联系人联系方式', 'XXX 1XXXXX'),
            ('变压器编号及容量', 'XXXkVA 箱变'),
            ('负荷类型', 'XXX'),
-           ('基本情况描述', '1、XXX\n2、XXX\n3、XXX'),
+           ('基本情况描述', '1、XXX'),
+           ('', '2、XXX'),
+           ('', '3、XXX'),
            ('测试时间', 'XXX')
            )
 table1 = docx.add_table(rows=0, cols=2)
 for state, content in records:
     row_cells = table1.add_row().cells
-    row_cells[0].text = state
-    row_cells[0].paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    row_cells[0].paragraphs[0].paragraph_format.left_indent = -Cm(0.74)
-    row_cells[1].text = content
-    row_cells[1].paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-    row_cells[1].paragraphs[0].paragraph_format.left_indent = -Cm(0.74)
-
-
+    row_cells[0].paragraphs[0].add_run(state).font.name = 'Microsoft YaHei UI'
+    row_cells[0].paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+    row_cells[0].paragraphs[0].paragraph_format.left_indent = Cm(-0.74)
+    row_cells[1].paragraphs[0].add_run(content).font.name = 'Microsoft YaHei UI'
+    row_cells[1].paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+    row_cells[1].paragraphs[0].paragraph_format.left_indent = Cm(-0.74)
+table1.cell(5, 0).merge(table1.cell(7, 0))
+table1.cell(5, 1).merge(table1.cell(7, 1))
 #表格宽度设置
 widths = [4.01, 11.02]
 for i in range(0, 2):
@@ -416,7 +418,7 @@ pic3.font.bold = True
 docx.add_heading('6 测试结果及其分析', level=1)
 docx.add_heading('6.1 电压', level=2)
 docx.add_heading('6.1.1 电压有效值变化趋势图', level=3)
-docx.add_paragraph('测试期间，光伏发电开启无功补偿柜投入时，三相电压变化趋势图如下图所示（线电压）')
+docx.add_paragraph('测试期间，________________，三相电压变化趋势图如下图所示（线电压）')
 docx.add_picture('./detect_pic/Virms_line.png', height=Cm(8.28), width=Cm(14.63))
 pic4 = docx.add_paragraph().add_run('图4：电压有效值变化趋势图')
 docx.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
@@ -487,17 +489,17 @@ for nam, maxv, minv, perc in records5:
 table8.style = 'MyTable'
 docx.add_heading('6.2.2分析结论', level=3)
 docx.add_paragraph('根据国家标准，380V电压值偏差范围应该在±7％范围内，分析上述数据，'
-                   '可得出下述结论：A、B、C三相最大电压未超出国家标准7％范围，电压合格。')
+                   '可得出下述结论：A、B、C三相最大电压_____超出国家标准7％范围，电压______。')
 docx.add_page_break()
 docx.add_heading('6.3 电压谐波', level=2)
-docx.add_heading('6.3.1电容投入时电压谐波总含有率THDU变化趋势', level=3)
-docx.add_paragraph('测试期间，无功补偿电容器投入时，THDU变化趋势图如下图所示')
+docx.add_heading('6.3.1电容______电压谐波总含有率THDU变化趋势', level=3)
+docx.add_paragraph('测试期间，无功补偿电容器______，THDU变化趋势图如下图所示')
 docx.add_picture('./detect_pic/THDU.png', width=Cm(14.63), height=Cm(7.91))
-pic5 = docx.add_paragraph().add_run('图5：电容器投入时电压谐波THDU总含有率变化趋势图')
+pic5 = docx.add_paragraph().add_run('图5：电压谐波THDU总含有率变化趋势图')
 docx.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 pic5.font.size = Pt(10.5)
 pic5.font.bold = True
-docx.add_heading('6.3.2电容器未投入时电压谐波总含有率值', level=3)
+docx.add_heading('6.3.2电容器______电压谐波总含有率值', level=3)
 list7 = docx.add_paragraph().add_run('表7：THDU测试结果（单位：%）')
 docx.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 list7.font.bold = True
@@ -537,6 +539,7 @@ wid = (4.7, 2.45, 2.45, 2.45, 2.45)
 for i in range(0, 5):
     for cell in table9.columns[i].cells:
         cell.width = Cm(wid[i])
+docx.add_heading('6.3.2 主要分次电压谐波含有率变化趋势图', level=3)
 Ulist = []
 sum = 0
 for files in os.walk('./detect_pic/'):
@@ -636,15 +639,15 @@ table11.style = 'MyTable'
 docx.add_page_break()
 docx.add_heading('6.4.3 分析结论', level=3)
 docx.add_paragraph().add_run('根据变压器容量————kVA计算可得变压器二次侧额定电流———A，测量期'
-                             '间变压器95%概率值负荷率—————%，最高负荷—————%，变压器正常运行。')
+                             '间变压器95%概率值负荷率—————%，最高负荷—————%，变压器________。')
 docx.add_heading('6.5 电流谐波',level=2)
 docx.add_heading('6.5.1电流谐波总含有率THDI变化趋势', level=3)
-docx.add_paragraph().add_run('测试期间，无功补偿电容器投入时，电流谐波总含有率变化趋势图如下图所示')
+docx.add_paragraph().add_run('测试期间，无功补偿电容器________时，电流谐波总含有率变化趋势图如下图所示')
 docx.add_picture('./detect_pic/THDI.png', height=Cm(8.4), width=Cm(14.63))
 print(sum)
 docx.add_paragraph().add_run('图%d：电流谐波总含有率变化趋势图' % (sum + 7)).bold = True
 docx.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-docx.add_heading('6.5.2 电容器投入时电流谐波总含有率值', level=3)
+docx.add_heading('6.5.2 电容器______时电流谐波总含有率值', level=3)
 list10 = docx.add_paragraph().add_run('表10：电流谐波总含有率（%）').bold = True
 docx.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
@@ -799,11 +802,11 @@ for i in range(2, 14):
         cell.width = Cm(1.0)
 table15.style = 'MyTable'
 docx.add_paragraph('由上表可以得出：')
-docx.paragraphs[-1].add_run('当电容器投入时________次电流谐波值均超出国家标准范围。').bold = True
+docx.paragraphs[-1].add_run('___________。').bold = True
 docx.add_page_break()
-docx.add_heading('6.6补偿投入时功率因数和无功功率', level=2)
+docx.add_heading('6.6__________时功率因数和无功功率', level=2)
 docx.add_heading('6.6.1功率因数值变化趋势', level=3)
-docx.add_paragraph('测试期间，无功补偿电容器投入时，三相功率因数变化趋势图如下图所示')
+docx.add_paragraph('测试期间，____________时，三相功率因数变化趋势图如下图所示')
 docx.add_picture('./detect_pic/cos_phi.png', height=Cm(7.93), width=Cm(14.63))
 docx.add_paragraph().add_run('图%d：功率因素值变化趋势' % (sum + 8)).font.bold = True
 docx.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
@@ -819,9 +822,9 @@ records9 = (('A相功率因数', df['Cos Phi AN Avg'].max(), df['Cos Phi AN Avg'
             np.percentile(df['Cos Phi AN Avg'], 95, axis=0)),
             ('B相功率因数', df['Cos Phi BN Avg'].max(), df['Cos Phi BN Avg'].min(), df['Cos Phi BN Avg'].mean(),
             np.percentile(df['Cos Phi BN Avg'], 95, axis=0)),
-            ('C相功率因数', df['Cos Phi CN Avg'].max(), df['Cos Phi CN Avg'].min(), df['Cos Phi CN Avg'].min(),
+            ('C相功率因数', df['Cos Phi CN Avg'].max(), df['Cos Phi CN Avg'].min(), df['Cos Phi CN Avg'].mean(),
             np.percentile(df['Cos Phi CN Avg'], 95, axis=0)),
-            ('合计', df['Cos Phi Total Avg'].max(), df['Cos Phi Total Avg'].min(), df['Cos Phi Total Avg'].min(),
+            ('合计', df['Cos Phi Total Avg'].max(), df['Cos Phi Total Avg'].min(), df['Cos Phi Total Avg'].mean(),
             np.percentile(df['Cos Phi Total Avg'], 95, axis=0)))
 for nam, maxv, minv, meanv,perc in records9:
     row_cells = table16.add_row().cells
@@ -843,7 +846,7 @@ for nam, maxv, minv, meanv,perc in records9:
 table16.style = 'MyTable'
 docx.add_page_break()
 docx.add_heading('6.6.3无功功率值变化趋势', level=3)
-docx.add_paragraph('测试期间，无功补偿电容器投入时，总无功功率变化趋势图如下图所示')
+docx.add_paragraph('测试期间，____________时，总无功功率变化趋势图如下图所示')
 docx.add_picture('./detect_pic/reactive.png', height=Cm(8.03), width=Cm(14.63))
 docx.add_paragraph().add_run('图%d：无功功率变化趋势' % (sum + 9)).font.bold = True
 docx.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
@@ -899,3 +902,4 @@ docx.add_paragraph('浙江南德电气有限公司技术部\n').add_run(text=now
                                               now.strftime('%d') + '日')
 docx.paragraphs[-1].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
 docx.save('./text/'+ COMPANY + '.docx')
+
