@@ -594,7 +594,7 @@ docx.paragraphs[-1].add_run('________________________。').font.bold = True
 docx.add_page_break()
 docx.add_heading('6.4 电流有效值', level=2)
 docx.add_heading('6.4.1电流有效值变化趋势', level=3)
-docx.add_paragraph('测试期间，无功补偿电容器投入时，三相电流变化趋势图如下图所示：')
+docx.add_paragraph('测试期间，_________时，三相电流变化趋势图如下图所示：')
 docx.add_picture('./detect_pic/current.png', height=Cm(8.4), width=Cm(14.63))
 pic_num = docx.add_paragraph().add_run('图%d：电流有效值变化趋势图' % (sum + 6))
 docx.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
@@ -607,7 +607,7 @@ records7 = (('A相电流有效值', df['Current A Avg'].max(), df['Current A Avg
             np.percentile(df['Current A Avg'], 95, axis=0)),
             ('B相电流有效值', df['Current B Avg'].max(), df['Current B Avg'].min(), df['Current B Avg'].mean(),
             np.percentile(df['Current B Avg'], 95, axis=0)),
-            ('C相电有效值', df['Current C Avg'].max(), df['Current C Avg'].min(), df['Current C Avg'].mean(),
+            ('C相电流有效值', df['Current C Avg'].max(), df['Current C Avg'].min(), df['Current C Avg'].mean(),
             np.percentile(df['Current C Avg'], 95, axis=0)))
 
 table11 = docx.add_table(rows=1, cols=5)
@@ -898,6 +898,7 @@ docx.add_paragraph('本次测试电网存在三相负荷不平衡，电网中的
                    '的铁损，降低变压器的输出能力甚至会影响变压器的安全运行，造成如下常见的危害：')
 docx.add_paragraph('1.增加线路的电能损耗。\n\t2.增加配电变压器的电能损耗。\n\t3.配变出力减少。\n\t4.配变产生零序电流。\n\t'
                    '5.影响用电设备的安全运行。\n\t6.变压器、铜排异响变色等现象')
+docx.add_picture(PICPATH + 'zjnadseal.png', height=Cm(3.91), width=Cm(3.91))
 docx.add_paragraph('浙江南德电气有限公司技术部\n').add_run(text=now.strftime('%Y') + '年' + now.strftime('%m') + '月' +
                                               now.strftime('%d') + '日')
 docx.paragraphs[-1].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
