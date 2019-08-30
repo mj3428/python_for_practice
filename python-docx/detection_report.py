@@ -539,7 +539,7 @@ wid = (4.7, 2.45, 2.45, 2.45, 2.45)
 for i in range(0, 5):
     for cell in table9.columns[i].cells:
         cell.width = Cm(wid[i])
-docx.add_heading('6.3.2 主要分次电压谐波含有率变化趋势图', level=3)
+docx.add_heading('6.3.3 主要分次电压谐波含有率变化趋势图', level=3)
 Ulist = []
 sum = 0
 for files in os.walk('./detect_pic/'):
@@ -894,13 +894,10 @@ docx.add_paragraph('并且从无功补偿方面进行考虑会出现：\n\t').ad
                                                     '3、电容投切器件也会因为谐波影响，造成触点寿寿损伤及烧结现象，'
                                                     '导致无法正常运行。\n\t4、当前普通无功补偿对谐波抑制能力不足，'
                                                     '会出现采样偏差大，抑制失效等不良情况。\n\t')
-docx.add_paragraph('本次测试电网存在三相负荷不平衡，电网中的不平衡电流会增加线路及变压器的铜损、还会增加变压器'
-                   '的铁损，降低变压器的输出能力甚至会影响变压器的安全运行，造成如下常见的危害：')
-docx.add_paragraph('1.增加线路的电能损耗。\n\t2.增加配电变压器的电能损耗。\n\t3.配变出力减少。\n\t4.配变产生零序电流。\n\t'
-                   '5.影响用电设备的安全运行。\n\t6.变压器、铜排异响变色等现象')
+
 docx.add_picture(PICPATH + 'zjnadseal.png', height=Cm(3.91), width=Cm(3.91))
+docx.paragraphs[-1].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
 docx.add_paragraph('浙江南德电气有限公司技术部\n').add_run(text=now.strftime('%Y') + '年' + now.strftime('%m') + '月' +
                                               now.strftime('%d') + '日')
 docx.paragraphs[-1].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
 docx.save('./text/'+ COMPANY + '.docx')
-
