@@ -590,7 +590,7 @@ table10.style = 'MyTable'
 docx.add_heading('6.3.4分析结论', level=3)
 docx.add_paragraph('根据国标GB/T14549-93的要求，0.38kV级电网公共连接点电压总谐波畸变率限值为5%，'
                    '奇次谐波含有率4％，偶次谐波含有率2％，上述测试数据表明：')
-docx.paragraphs[-1].add_run('________________________。').font.bold = True
+docx.paragraphs[-1].add_run('电容器投入时A、B、C相电压谐波总含有率（THDU）均_______国家标准范围。').font.bold = True
 docx.add_page_break()
 docx.add_heading('6.4 电流有效值', level=2)
 docx.add_heading('6.4.1电流有效值变化趋势', level=3)
@@ -802,7 +802,7 @@ for i in range(2, 14):
         cell.width = Cm(1.0)
 table15.style = 'MyTable'
 docx.add_paragraph('由上表可以得出：')
-docx.paragraphs[-1].add_run('___________。').bold = True
+docx.paragraphs[-1].add_run('电容投入时各分次电流谐波值均___________（是/否）超出国家标准范围。').bold = True
 docx.add_page_break()
 docx.add_heading('6.6__________时功率因数和无功功率', level=2)
 docx.add_heading('6.6.1功率因数值变化趋势', level=3)
@@ -877,7 +877,9 @@ row_cells2[3].paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.
 row_cells2[3].paragraphs[0].paragraph_format.left_indent = -Cm(0.74)
 table17.style = 'MyTable'
 docx.add_heading('6.6.5分析结论', level=3)
-docx.add_paragraph().add_run('________________')
+docx.add_paragraph().add_run('该现场用电性质属于工业用电，功率因数考核标准为0.90。测试时段内，无功补偿投入时，'
+                             '平均功率因素是________，95%概率值功率因素是______，功率因数_______(是/否)达标，'
+                             '测量期间功率因素_______。').bold = True
 docx.add_page_break()
 docx.add_heading('7 总结', level=1)
 docx.add_paragraph('通过本次测试结合现场调查： ')
@@ -897,7 +899,7 @@ docx.add_paragraph('并且从无功补偿方面进行考虑会出现：\n\t').ad
 
 docx.add_picture(PICPATH + 'zjnadseal.png', height=Cm(3.91), width=Cm(3.91))
 docx.paragraphs[-1].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
-docx.add_paragraph('浙江南德电气有限公司技术部\n').add_run(text=now.strftime('%Y') + '年' + now.strftime('%m') + '月' +
+docx.add_paragraph('XXXXX有限公司技术部\n').add_run(text=now.strftime('%Y') + '年' + now.strftime('%m') + '月' +
                                               now.strftime('%d') + '日')
 docx.paragraphs[-1].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
 docx.save('./text/'+ COMPANY + '.docx')
