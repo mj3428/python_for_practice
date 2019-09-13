@@ -18,3 +18,8 @@ super()是py的内置函数，可以用来调用父类的方法，这在方法�
 - 使用style属性直接将CSS样式应用在HTML元素上，这种样式表叫作“内联样式Inline style”
   语法：`<element style="property1:value1;property2:value2...propertyN:valueN"/>`property是CSS样式属性名，value是样式属性值。  
 - 在HTML元素外部声明CSS样式并应用在元素上,语法: `selector {property1:value1;property2:value2...propertyN:valueN}`
+### 选择器
+* 类选择器；语法：`.class {property1:value1;property2:value2...propertyN:valueN}`  
+* 后代选择器；语法：`Selector1 selector2 {property1:value1;property2:value2...propertyN:valueN}`,比如style里设置p下的span颜色为
+  红色，那么p元素下再span元素里的字体将变为红色  
+* 另外，选择如果设置样式相同，可以简写代码：`p, table, span{color: grey;}`即p、table、span元素都被分在同一组，减少代码量
