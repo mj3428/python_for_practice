@@ -43,7 +43,7 @@ last.add_run(text='1 测试概况')
 records = (('项目名称', COMPANY + '测试报告'),
            ('项目地址', 'XXX'),
            ('联系人联系方式', 'XXX 1XXXXX'),
-           ('变压器编号及容量', 'XXXkVA 箱变'),
+           ('变压器编号及容量', 'XXXkVA'),
            ('负荷类型', 'XXX'),
            ('基本情况描述', '1、XXX'),
            ('', '2、XXX'),
@@ -430,11 +430,11 @@ docx.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 list5.font.bold = True
 records4 = (('项目名称', '最大值', '最小值', '95%概率值'),
             ('A相电压有效值', df['Vrms ph-ph AB Avg'].max(), df['Vrms ph-ph AB Avg'].min(),
-             np.percentile(df['Vrms ph-ph AB Avg'], 95, axis=0)),
+             round(np.percentile(df['Vrms ph-ph AB Avg'], 95, axis=0),2)),
             ('B相电压有效值', df['Vrms ph-ph BC Avg'].max(), df['Vrms ph-ph BC Avg'].min(),
-             np.percentile(df['Vrms ph-ph BC Avg'], 95, axis=0)),
+             round(np.percentile(df['Vrms ph-ph BC Avg'], 95, axis=0),2)),
             ('C相电压有效值', df['Vrms ph-ph CA Avg'].max(), df['Vrms ph-ph CA Avg'].min(),
-             np.percentile(df['Vrms ph-ph CA Avg'], 95, axis=0)))
+             round(np.percentile(df['Vrms ph-ph CA Avg'], 95, axis=0),2)))
 table7 = docx.add_table(rows=0, cols=4)
 for nam, maxv, minv, perc in records4:
     row_cells = table7.add_row().cells
@@ -590,7 +590,7 @@ table10.style = 'MyTable'
 docx.add_heading('6.3.4分析结论', level=3)
 docx.add_paragraph('根据国标GB/T14549-93的要求，0.38kV级电网公共连接点电压总谐波畸变率限值为5%，'
                    '奇次谐波含有率4％，偶次谐波含有率2％，上述测试数据表明：')
-docx.paragraphs[-1].add_run('电容器投入时A、B、C相电压谐波总含有率（THDU）均_______国家标准范围。').font.bold = True
+docx.paragraphs[-1].add_run('电容器_____(投入/未投)时A、B、C相电压谐波总含有率（THDU）均_______国家标准范围。').font.bold = True
 docx.add_page_break()
 docx.add_heading('6.4 电流有效值', level=2)
 docx.add_heading('6.4.1电流有效值变化趋势', level=3)
@@ -808,7 +808,7 @@ docx.add_heading('6.6__________时功率因数和无功功率', level=2)
 docx.add_heading('6.6.1功率因数值变化趋势', level=3)
 docx.add_paragraph('测试期间，____________时，三相功率因数变化趋势图如下图所示')
 docx.add_picture('./detect_pic/cos_phi.png', height=Cm(7.93), width=Cm(14.63))
-docx.add_paragraph().add_run('图%d：功率因素值变化趋势' % (sum + 8)).font.bold = True
+docx.add_paragraph().add_run('图%d：功率因数值变化趋势' % (sum + 8)).font.bold = True
 docx.paragraphs[-1].alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 docx.add_heading('6.6.2功率因数值', level=3)
 list12 = docx.add_paragraph().add_run('表12：功率因数值测试结果').font.bold = True
@@ -877,9 +877,9 @@ row_cells2[3].paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.
 row_cells2[3].paragraphs[0].paragraph_format.left_indent = -Cm(0.74)
 table17.style = 'MyTable'
 docx.add_heading('6.6.5分析结论', level=3)
-docx.add_paragraph().add_run('该现场用电性质属于工业用电，功率因数考核标准为0.90。测试时段内，无功补偿投入时，'
-                             '平均功率因素是________，95%概率值功率因素是______，功率因数_______(是/否)达标，'
-                             '测量期间功率因素_______。').bold = True
+docx.add_paragraph().add_run('该现场用电性质属于工业用电，功率因数考核标准为0.90。测试时段内，无功补偿_____(投入/未投)时，'
+                             '平均功率因数是________，95%概率值功率因数是______，功率因数_______(是/否)达标，'
+                             '测量期间功率因数_______。').bold = True
 docx.add_page_break()
 docx.add_heading('7 总结', level=1)
 docx.add_paragraph('通过本次测试结合现场调查： ')
@@ -893,13 +893,14 @@ docx.add_paragraph('第一：导致电缆发热；\n\t第二：导致变压器�
                    '能损耗，电费成本增加；\n\t第七：造成采样误差偏大，控制失效等不良情况。')
 docx.add_paragraph('并且从无功补偿方面进行考虑会出现：\n\t').add_run('1、电容器会对谐波电流进行放大，对电网产生二次污染。\n\t'
                                                     '2、电容器本身出现电流过载现象，影响使用寿命甚至造成损坏。\n\t'
-                                                    '3、电容投切器件也会因为谐波影响，造成触点寿寿损伤及烧结现象，'
+                                                    '3、电容投切器件也会因为谐波影响，造成触点寿命损伤及烧结现象，'
                                                     '导致无法正常运行。\n\t4、当前普通无功补偿对谐波抑制能力不足，'
                                                     '会出现采样偏差大，抑制失效等不良情况。\n\t')
 
 docx.add_picture(PICPATH + 'zjnadseal.png', height=Cm(3.91), width=Cm(3.91))
 docx.paragraphs[-1].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
-docx.add_paragraph('XXXXX有限公司技术部\n').add_run(text=now.strftime('%Y') + '年' + now.strftime('%m') + '月' +
+docx.add_paragraph('浙江南德电气有限公司技术部\n').add_run(text=now.strftime('%Y') + '年' + now.strftime('%m') + '月' +
                                               now.strftime('%d') + '日')
 docx.paragraphs[-1].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
 docx.save('./text/'+ COMPANY + '.docx')
+
