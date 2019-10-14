@@ -21,7 +21,7 @@ from detectconf import *
 
 df = pd.read_excel(FILENAME, index_col=None)
 for files in os.walk('./detect_pic/'):
-    for i in range(2, 13):
+    for i in range(2, 26):
         if 'Vharm' + str(i) + '.png' in files[2]:
             os.remove('./detect_pic/Vharm' + str(i) + '.png')
         if 'Iharm' + str(i) + '.png' in files[2]:
