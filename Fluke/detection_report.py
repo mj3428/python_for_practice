@@ -686,7 +686,7 @@ table12.style = 'MyTable'
 ilist = []
 docx.add_heading('6.5.3主要分次电流谐波值变化趋势', level=3)
 for files in os.walk('./detect_pic/'):
-    for i in range(2, 13):
+    for i in range(2, 26):
         if 'Iharm' + str(i) + '.png' in files[2]:
             sum += 1
             ilist.append(i)
