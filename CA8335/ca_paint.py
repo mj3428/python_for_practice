@@ -494,7 +494,7 @@ for a,b in zip(range(3, 26, 2), ithd_gb):
         # print(trans_arrray0)
         thd_ia = go.Scatter(
             x=df2['时间'],
-            y=trans_arrray0 / 100.0,
+            y=trans_arrray0,
             xaxis='x20' + str(a),
             yaxis='y20' + str(a),
             mode='lines',
@@ -503,7 +503,7 @@ for a,b in zip(range(3, 26, 2), ithd_gb):
         )
         thd_ib = go.Scatter(
             x=df2['时间'],
-            y=trans_arrray1  / 100.0,
+            y=trans_arrray1,
             xaxis='x21' + str(a),
             yaxis='y21' + str(a),
             mode='lines',
@@ -512,7 +512,7 @@ for a,b in zip(range(3, 26, 2), ithd_gb):
         )
         thd_ic = go.Scatter(
             x=df2['时间'],
-            y=trans_arrray2  / 100.0,
+            y=trans_arrray2,
             xaxis='x22' + str(a),
             yaxis='y22' + str(a),
             mode='lines',
